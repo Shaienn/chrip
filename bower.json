@@ -1,0 +1,51 @@
+{
+  "name": "chrip-nw",
+  "version": "1.0.0",
+  "authors": [
+    "Shaienn"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "backbone": "~1.2.3",
+    "backbone-modal": "~1.1.5",
+    "bootstrap": "~3.3.5",
+    "font-awesome": "~4.4.0",
+    "marionette": "marionette#~2.4.2",
+    "jquery.boxfit": "~1.2.4"
+  },
+  "dependenciesIgnore": {
+    "backbone": [
+      "**/!(backbone.js)"
+    ],
+    "jquery": [
+      "**/!(dist)"
+    ],
+    "font-awesome": [
+      "less",
+      "scss",
+      ".*"
+    ],
+    "underscore": [
+      "**/!(underscore.js)"
+    ],
+    "marionette": [
+      "**/!(lib)"
+    ],
+    "backbone.babysitter": [
+      "**/!(lib)"
+    ],
+    "backbone.wreqr": [
+      "**/!(lib)"
+    ],
+    "bootstrap": [
+      "**/!(dist)"
+    ]
+  }
+}

@@ -1,0 +1,48 @@
+#churchservice-control-contain .content {
+    height: calc(100vh - 102px);
+    width: 100%;
+    float: left;
+    background-color: inherit;
+    background: rgba(0,0,0,0.5);
+}
+
+
+#playList {
+    width: 20%;
+    float: left;
+    position: relative;
+    top: 0;
+    height: inherit;
+}
+
+#controlPanel {
+    float: right;
+    width: 80%;
+    height: inherit;
+}
+
+#churchservice-playlist {
+    height: inherit;
+    position: relative;
+    top: 0;
+}
+
+#playlist_list {
+    background: inherit;
+    height: calc(100% - 38px);
+    width: 100%;
+    position: relative;
+    right: 0;
+    top: 0;
+    border-bottom: 3px solid #17181b;
+    border-right: 3px solid #17181b;
+}
+
+#playlist_bottomtoolbar {
+    position: relative;
+    background: inherit;
+    height: 35px;
+    width: 100%;
+    right: 0;
+    bottom: 0;
+}

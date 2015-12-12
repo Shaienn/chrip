@@ -1,0 +1,234 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : Dec 9, 2015, 4:32:03 PM
+    Author     : shaienn
+*/
+
+/*************** META *************/
+
+
+
+.song-author, .song-author-selector, .song-name, .song-name-input{
+    width: 50%;
+    float: left;
+    padding: 2%;
+}
+
+.song-author-selector{
+
+}
+
+.song-name{
+
+}
+
+.song-name-input{
+
+}
+
+
+#song-parts-list{
+    min-width: 420px;
+    height: 100%;
+}
+
+.songparts .songpart-type{
+    width: 100%;
+    text-align: center;
+} 
+
+.songparts .songpart-type.verse{
+    background-color: #49a078;
+    -webkit-transition: background 0.2s;
+    transition: background 0.2s;
+
+}
+
+.songparts .songpart-item.selected .songpart-type{
+    background-color: green;
+    -webkit-transition: background 0.2s;
+    transition: background 0.2s;
+}
+
+
+/* Remove songpart block */
+.songpart-container{
+    position: relative;
+    width: 100%;
+}
+
+.songpart-remove{
+    display: flex;
+    position: absolute;
+    align-items: center;
+    width: 10%;
+    right: -11%;
+    height: 100%;
+    text-align: center;
+    background: #6b0f1a;
+}
+
+.songpart-remove i{
+    width: 100%;
+}
+
+#song-meta, #songpart-details{
+    display: block;
+    max-width: calc(100% - 420px);
+    width: 70%;
+}
+
+#song-meta{
+    height: 50%;
+}
+
+#songpart-details{
+    height: 50%;
+}
+
+.songpart-type-selector 
+{
+    display:inline-flex;
+    border:1px solid #bbbbbb;
+    position:relative;
+    margin-top: 1%;
+}
+
+.song-author-selector select, .songpart-type-selector select {
+    width:100%;
+    background-color:#ededed;
+    border:none;
+    outline:none;
+    padding:1%;
+    margin:0px;
+    position:relative;
+}
+
+#songpart-type-area{
+    width: 100%;
+    float: left;
+}
+
+.songpart-textarea{
+    height: 100%;
+    width: 50%;
+    float: left;
+}
+
+.songpart-textarea textarea{
+    height: 100%;
+    width: 100%;
+}
+
+.songpart-preview{
+    height: 100%;
+    padding: 2%;
+    width: 50%;
+    float: left;
+    display: flex;
+    justify-content: center;
+}
+
+.songpart-editor{
+    height: 70%;
+    width: 100%;
+    margin: 1% 0;
+    float: left;
+}
+
+.songpart-preview .slide-item{
+    width: 100%;
+    height: 100%;
+}
+
+
+
+/* item */
+
+.songparts .songpart-text-container {
+    padding: 2% 0;
+    display: flex;
+    justify-content: center;
+}
+
+/*.songparts .songpart-item:nth-child(even){
+    margin-left: 20%;
+}
+
+.songparts .songpart-item:nth-child(odd){
+    margin-right: 20%;
+}*/
+
+.songparts .songpart-item {
+    float: left;
+    width: calc(98% - 10px);
+    font-size: 1em;
+    color: white;
+    background: #122b40;
+    cursor: pointer;
+    border-radius: 20px;
+    overflow: hidden;
+    margin: 1%;
+}
+
+.songparts .songpart-item.passive {
+    background: #668586;
+    opacity: 0.5;
+}
+
+.songparts .songpart-item.active {
+    background: #114c61;
+    -webkit-transition: background 0.5s;
+    transition: background 0.5s;
+    opacity: 1;
+}
+
+
+/* list */
+
+.songparts.list {
+    height: inherit;
+    width: 100%;
+    position: relative;
+    top: 0;
+    left: 0;
+    text-align: left;
+    overflow-x: hidden;
+    overflow-y: overlay;
+    -webkit-overflow-scrolling: touch;
+}
+
+.songparts.list::-webkit-scrollbar {
+    width: 10px;
+}
+
+.songparts.list::-webkit-scrollbar-track {
+    background-color: #30333c;
+    -webkit-border-radius: 2px;
+    border-radius: 2px;
+}
+
+.songparts.list::-webkit-scrollbar-thumb {
+    background-color: #83888c;
+    -webkit-border-radius: 2px;
+    border-radius: 2px;
+}
+
+.songparts.list::-webkit-scrollbar-thumb:hover {
+    background-color: #93989c;
+}
+
+.songparts.list::-webkit-resizer,
+.songparts.list::-webkit-scrollbar-corner,
+.songparts.list::-webkit-scrollbar-button,
+.songparts.list::-webkit-scrollbar-track-piece {
+    display: none;
+}
+
+.songparts.list::-webkit-scrollbar-track {
+    margin-top: 0;
+}

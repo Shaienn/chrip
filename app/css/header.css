@@ -1,0 +1,193 @@
+#header {
+    z-index: 10;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    opacity: 0.97;
+    height: 32px;
+    background-color: #17181b;
+    padding: 13px 0 0;
+    text-align: center;
+    -webkit-app-region: drag;
+}
+#header .tooltip {
+    white-space: nowrap;
+}
+#header h1 {
+    color: #fff;
+    font-size: 0.9em;
+    top: -3px;
+    position: relative;
+}
+#header .btn-set {
+    position: absolute;
+    left: 15px;
+    z-index: 10;
+}
+#header nav {
+    -webkit-app-region: no-drag;
+}
+#header nav.darwin {
+    position: absolute;
+    left: 15px;
+}
+#header nav.fs-darwin {
+    top: 0px;
+    right: 7px;
+    left: initial;
+}
+#header nav.win32,
+#header nav.linux {
+    right: 7px;
+    left: initial;
+}
+#header nav.fs-win32,
+#header nav.fs-linux {
+    position: absolute;
+    left: 2px;
+    top: 2px;
+}
+#header .btn-os {
+    float: left;
+    margin: 0 6px 0 0;
+    background-color: #000;
+    -webkit-background-size: 77px 12px;
+    background-size: 77px 12px;
+    background-image: url("../images/icons/topbar_sprite.png");
+    -webkit-border-radius: 30px;
+    border-radius: 30px;
+    border: 0;
+    color: transparent;
+    display: inline-block;
+    font-size: 10px;
+    height: 12px;
+    padding: 0;
+    text-align: center;
+    width: 12px;
+    cursor: pointer;
+}
+#header .btn-os.os-min {
+    background-position: 0px 0px;
+}
+#header .btn-os.os-max {
+    background-position: -13px 0px;
+}
+#header .btn-os.os-close {
+    background-position: -26px 0px;
+}
+#header .btn-os.os-min:hover {
+    background-position: -39px 0px;
+}
+#header .btn-os.os-max:hover {
+    background-position: -52px 0px;
+}
+#header .btn-os.os-close:hover {
+    background-position: -65px 0px;
+}
+#header .btn-os.fullscreen {
+    color: #000;
+    background: transparent;
+    margin: 0;
+    z-index: 10;
+    width: 30px;
+    height: 28px;
+    -webkit-border-radius: 0;
+    border-radius: 0;
+    display: block;
+}
+#header .btn-os.fullscreen::before {
+    content: "\e000";
+    font-family: VideoJS;
+    font-size: 1.85em;
+    line-height: 0.2em;
+    background: none;
+    display: block;
+    text-shadow: 0 1px 0 rgba(255,255,255,0.1);
+}
+#header .btn-os.fullscreen.active::before {
+    content: "\e00B";
+}
+#header .btn-os.fullscreen:hover {
+    color: #b2b2b2;
+}
+#header .btn-set.win32 {
+    -webkit-background-size: auto auto;
+    background-size: auto auto;
+    top: 6px;
+    right: 3px;
+}
+#header .btn-set.win32 .btn-os {
+    float: left;
+    margin: 0 2px 0 0;
+    background: #000;
+    -webkit-border-radius: 0px;
+    -webkit-border-radius: 0px;
+    border-radius: 0px;
+    border: 0;
+    color: transparent;
+    display: inline-block;
+    font-size: 10px;
+    height: 16px;
+    padding: 0;
+    text-align: center;
+    width: 20px;
+    cursor: pointer;
+    background: url("../images/icons/topbar_sprite_win.png");
+    -webkit-filter: brightness(1);
+}
+#header .btn-set.win32 .btn-os.os-close {
+    background-position: -40px 0px;
+}
+#header .btn-set.win32 .btn-os.os-max {
+    background-position: -20px 0px;
+}
+#header .btn-set.win32 .btn-os.os-max.os-is-max {
+    background-position: -120px 0px;
+}
+#header .btn-set.win32 .btn-os.os-min {
+    background-position: 0px 0px;
+}
+#header .btn-set.win32 .btn-os.os-close:hover {
+    background-position: -100px 0px;
+    -webkit-filter: brightness(1);
+}
+#header .btn-set.win32 .btn-os.os-max:hover {
+    background-position: -80px 0px;
+    -webkit-filter: brightness(1);
+}
+#header .btn-set.win32 .btn-os.os-max:hover.os-is-max:hover {
+    background-position: -140px 0px;
+}
+#header .btn-set.win32 .btn-os.os-min:hover {
+    background-position: -60px 0px;
+    -webkit-filter: brightness(1);
+}
+#header .btn-set.darwin .btn-os {
+    background-image: none;
+    background-repeat: no-repeat;
+}
+#header .btn-set.darwin .btn-os.os-close {
+    background-color: #fc5753;
+}
+#header .btn-set.darwin .btn-os.os-max {
+    background-color: #33c748;
+}
+#header .btn-set.darwin .btn-os.os-min {
+    background-color: #fdbc40;
+}
+#header .btn-set.darwin:hover .btn-os {
+    background-image: url("../images/icons/topbar_sprite.png");
+}
+#header .btn-set.darwin:hover .btn-os.os-min {
+    background-position: -39px 0px;
+}
+#header .btn-set.darwin:hover .btn-os.os-max {
+    background-position: -52px 0px;
+}
+#header .btn-set.darwin:hover .btn-os.os-close {
+    background-position: -65px 0px;
+}
+.header-shadow {
+    -webkit-box-shadow: 0px 6px 8px -4px rgba(0,0,0,0.9);
+    box-shadow: 0px 6px 8px -4px rgba(0,0,0,0.9);
+}

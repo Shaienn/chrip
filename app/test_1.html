@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <link rel="stylesheet" type="text/css" href="css/app.css">
+        <link rel="stylesheet" type="text/css" href="css/btn.css">
+        <link rel="stylesheet" type="text/css" href="css/control.css">
+        <link rel="stylesheet" type="text/css" href="css/toolbar.css">
+        <link rel="stylesheet" type="text/css" href="css/header.css">
+        <link rel="stylesheet" type="text/css" href="css/songbase.css">
+        <link rel="stylesheet" type="text/css" href="css/slide.css">
+        <link rel="stylesheet" type="text/css" href="css/appmode.css">
+        <link rel="stylesheet" type="text/css" href="css/common.css">
+        <link rel="stylesheet" type="text/css" href="css/settings.css">
+        <link rel="stylesheet" type="text/css" href="css/editor.css">
+        <link rel="stylesheet" type="text/css" href="css/visual.css">
+        <link rel="stylesheet" type="text/css" href="css/author-modal.css">
+        <link rel="stylesheet" type="text/css" href="css/loader.css">
+        <link rel="stylesheet" type="text/css" href="css/bible.css">
+        <link rel="stylesheet" type="text/css" href="css/videoplayer.css">
+        <link rel="stylesheet" type="text/css" href="css/media-control.css">
+
+        <script src="vendor/jquery/dist/jquery.min.js"></script>
+        <script src="vendor/scripts/jquery-bigtext.js"></script>
+        <script src="vendor/jquery.boxfit/dist/jquery.boxfit.min.js"></script>
+
+        <style type="text/css">
+            .a{
+                display: flex;
+                align-items: center;
+            }
+
+            .b{
+                position: relative;
+            }
+
+            .st{
+                display: block;
+                position: absolute;
+                top: 0px;
+                height: 100%;
+                width: 100%;
+            }
+
+            .b img{
+                display: block;
+                height: auto;
+                max-height: 1080px;
+                max-width: 1920px;
+                width: 100%;
+            }
+        </style>
+    </head>
+    <body>
+        <div>TODO write content</div>
+
+
+        <!--        <div class="slide-item" style="width: 300px; height: 200px">
+                    <div class="slide-container" style="background-image: url(/home/shaienn/Workspace/nodejs/testBackbone/src/app/backgrounds/10.jpg); height: 1080px; width: 1920px">
+                        <div class="slide-verse-text"></div>
+                        <div class="slide-verse-link">1Цар 1:7</div>
+                    </div>
+                </div>-->
+
+        <div class="a" style="width: 500px; height: 500px;">
+            <div class="b">
+                <img src="backgrounds/1.jpg" width="1920px" height="1080px"/>
+                <div class="st">
+
+                </div>
+            </div>
+        </div>
+
+
+
+
+        <script>
+
+            $(document).ready(function () {
+                console.log("document loaded");
+                var text = "<span>Ты велик!<br>Ты велик!<br>Меня покрыла милость Твоя,<br>К новой жизни воскресила она!</span>";
+
+                $('.st').html(text);
+                $('.st span').bigText();
+
+            });
+
+        </script>
+
+    </body>
+</html>

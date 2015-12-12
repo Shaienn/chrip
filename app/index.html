@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+
+        <link rel="stylesheet" type="text/css" href="vendor/bootstrap/dist/css/bootstrap.css">
+        <link rel="stylesheet" type="text/css" href="vendor/bootstrap/dist/css/bootstrap-theme.css">
+        <link rel="stylesheet" type="text/css" href="vendor/font-awesome/css/font-awesome.min.css">
+        <link rel="stylesheet" type="text/css" href="vendor/backbone-modal/backbone.modal.css">
+        <link rel="stylesheet" type="text/css" href="vendor/backbone-modal/backbone.modal.theme.css">
+        <link rel="stylesheet" type="text/css" href="css/app.css">
+        <link rel="stylesheet" type="text/css" href="css/btn.css">
+        <link rel="stylesheet" type="text/css" href="css/control.css">
+        <link rel="stylesheet" type="text/css" href="css/toolbar.css">
+        <link rel="stylesheet" type="text/css" href="css/header.css">
+        <link rel="stylesheet" type="text/css" href="css/songbase.css">
+        <link rel="stylesheet" type="text/css" href="css/slide.css">
+        <link rel="stylesheet" type="text/css" href="css/appmode.css">
+        <link rel="stylesheet" type="text/css" href="css/common.css">
+        <link rel="stylesheet" type="text/css" href="css/settings.css">
+        <link rel="stylesheet" type="text/css" href="css/editor.css">
+        <link rel="stylesheet" type="text/css" href="css/visual.css">
+        <link rel="stylesheet" type="text/css" href="css/author-modal.css">
+        <link rel="stylesheet" type="text/css" href="css/loader.css">
+        <link rel="stylesheet" type="text/css" href="css/bible.css">
+        <link rel="stylesheet" type="text/css" href="css/videoplayer.css">
+        <link rel="stylesheet" type="text/css" href="css/media-control.css">
+        <link rel="stylesheet" type="text/css" href="css/songparts.css">
+
+    </head>
+    <body>
+
+        <div class="main-window-region"></div>
+
+        <!-- Templates -->
+        <script id="main-window-tpl"
+                src="templates/main-window.tpl"
+                type="text/x-template">
+        </script>
+
+        <script id="initializing-tpl"
+                src="templates/initializing.tpl"
+                type="text/x-template">
+        </script>
+
+        <script id="main-window-toptoolbar-tpl"
+                src="templates/main-window-toptoolbar.tpl"
+                type="text/x-template">
+        </script>
+
+        <script id="header-tpl"
+                src="templates/header.tpl"
+                type="text/x-template">
+        </script>
+
+        <script id="churchservice-tpl"
+                src="templates/songservice/churchservice.tpl"
+                type="text/x-template">
+        </script>
+
+        <script id="bible-tpl"
+                src="templates/bible/bible.tpl"
+                type="text/x-template">
+        </script>
+
+        <script id="bible-control-tpl"
+                src="templates/bible/bible-control.tpl"
+                type="text/x-template">
+        </script>
+
+        <script id="bible-search-tpl"
+                src="templates/bible/bible-search.tpl"
+                type="text/x-template">
+        </script>
+
+
+        <script id="videoplayer-tpl"
+                src="templates/videoplayer/videoplayer.tpl"
+                type="text/x-template">
+        </script>
+
+        <script id="videoplayer-control-tpl"
+                src="templates/videoplayer/videoplayer-control.tpl"
+                type="text/x-template">
+        </script>
+
+        <script id="videoplayer-bottomtoolbar-tpl"
+                src="templates/videoplayer/videoplayer-bottomtoolbar.tpl"
+                type="text/x-template">
+        </script>
+
+        <script id="churchservice-control-tpl"
+                src="templates/songservice/churchservice-control.tpl"
+                type="text/x-template">
+        </script>
+
+        <script id="churchservice-settings-tpl"
+                src="templates/songservice/churchservice-settings.tpl"
+                type="text/x-template">
+        </script>
+
+        <script id="churchservice-songbase-tpl"
+                src="templates/songservice/churchservice-songbase.tpl"
+                type="text/x-template">
+        </script>
+
+        <script id="songpart-details-tpl"
+                src="templates/songservice/songedit_modal/songpart-details.tpl"
+                type="text/x-template">
+        </script>
+
+        <script id="song-meta-tpl"
+                src="templates/songservice/songedit_modal/song-meta.tpl"
+                type="text/x-template">
+        </script>
+
+
+        <script id="author-itemview-tpl"
+                src="templates/songservice/author-itemview.tpl"
+                type="text/x-template">
+        </script>
+
+        <script id="song-itemview-tpl"
+                src="templates/songservice/song-itemview.tpl"
+                type="text/x-template">
+        </script>
+
+        <script id="songpart-itemview-tpl"
+                src="templates/songservice/songpart-itemview.tpl"
+                type="text/x-template">
+        </script>
+
+        <script id="playlist-itemview-tpl"
+                src="templates/songservice/playlist-itemview.tpl"
+                type="text/x-template">
+        </script>
+
+        <script id="search-itemview-tpl"
+                src="templates/bible/search-itemview.tpl"
+                type="text/x-template">
+        </script>
+
+        <script id="queue-itemview-tpl"
+                src="templates/bible/queue-itemview.tpl"
+                type="text/x-template">
+        </script>    
+
+        <script id="medialist-itemview-tpl"
+                src="templates/videoplayer/medialist-itemview.tpl"
+                type="text/x-template">
+        </script>
+
+        <script id="media-control-tpl"
+                src="templates/videoplayer/media-control.tpl"
+                type="text/x-template">
+        </script>
+
+        <script id="churchservice-playlist-bottomtoolbar-tpl"
+                src="templates/songservice/churchservice-playlist-bottomtoolbar.tpl"
+                type="text/x-template">
+        </script>
+
+        <script id="songbase-toptoolbar-tpl"
+                src="templates/songservice/songbase-toptoolbar.tpl"
+                type="text/x-template">
+        </script>
+
+        <script id="songeditor-songbase-tpl"
+                src="templates/songeditor/songeditor-songbase.tpl"
+                type="text/x-template">
+        </script>
+
+        <script id="appmode-menu-tpl"
+                src="templates/appmode-menu.tpl"
+                type="text/x-template">
+        </script>
+
+        <!-- Slides TPL -->
+
+        <script id="slide-tpl"
+                src="templates/songservice/slide.tpl"
+                type="text/x-template">
+        </script>
+
+        <script id="verse-slide-tpl"
+                src="templates/bible/verse-slide.tpl"
+                type="text/x-template">
+        </script>
+
+        <script id="songeditor-main-window-tpl"
+                src="templates/songeditor/songeditor-main-window.tpl"
+                type="text/x-template">
+        </script>
+
+        <script id="inputarea-tpl"
+                src="templates/songeditor/inputarea.tpl"
+                type="text/x-template">
+        </script>
+
+        <script id="previewarea-tpl"
+                src="templates/songeditor/previewarea.tpl"
+                type="text/x-template">
+        </script>
+
+        <script id="author-edit-modal-tpl"
+                src="templates/songservice/author-edit-modal.tpl"
+                type="text/x-template">
+        </script>
+
+        <script id="author-delete-modal-tpl"
+                src="templates/songservice/author-delete-modal.tpl"
+                type="text/x-template">
+        </script>
+
+        <script id="song-edit-modal-tpl"
+                src="templates/songservice/song-edit-modal.tpl"
+                type="text/x-template">
+        </script>
+
+        <script id="song-delete-modal-tpl"
+                src="templates/songservice/song-delete-modal.tpl"
+                type="text/x-template">
+        </script>
+
+
+        <script src="vendor/jquery/dist/jquery.min.js"></script>
+        <script src="vendor/jquery-ui/jquery-ui.min.js"></script>
+        <script src="vendor/underscore/underscore.js"></script>
+        <script src="vendor/backbone/backbone.js"></script>
+        <script src="vendor/backbone.wreqr/lib/backbone.wreqr.js"></script>
+        <script src="vendor/backbone.babysitter/lib/backbone.babysitter.js"></script>
+        <script src="vendor/marionette/lib/backbone.marionette.js"></script>
+        <script src="vendor/bootstrap/dist/js/bootstrap.js"></script>
+        <script src="vendor/scripts/jquery.suggest.js"></script>
+        <script src="vendor/scripts/jquery.ddslick.min.js"></script>
+        <script src="vendor/backbone-modal/backbone.modal-bundled-min.js"></script>
+        <script src="vendor/scripts/jquery-bigtext.js"></script>
+        <script src="vendor/jquery.boxfit/dist/jquery.boxfit.min.js"></script>
+
+        <script src="app.js"></script>
+        <script src="lib/config.js"></script>
+        <script src="lib/behaviours/sortable.js"></script>
+        <script src="lib/slidegenerator.js"></script>
+        <script src="database.js"></script>
+        <script src="settings.js"></script>
+        <script src="presentation.js"></script>
+
+        <script src="lib/models/common_parts/slide.js"></script>
+        <script src="lib/models/common_parts/control.js"></script>
+
+        <script src="lib/models/songservice/playlist.js"></script>
+        <script src="lib/models/songservice/author.js"></script>
+        <script src="lib/models/songservice/song.js"></script>
+        <script src="lib/models/songservice/songpart.js"></script>
+        <script src="lib/models/songservice/preview.js"></script>
+
+        <script src="lib/models/bible/verselist.js"></script>
+        <script src="lib/models/bible/verse.js"></script>
+
+        <script src="lib/models/videoplayer/medialist.js"></script>
+        <script src="lib/models/videoplayer/media.js"></script>
+
+        <!-- Common -->
+
+        <script src="lib/views/common_parts/slide.js"></script>
+
+        <!-- Views -->
+
+        <script src="lib/views/title_bar.js"></script>
+        <script src="lib/views/appmode-menu.js"></script>
+        <script src="lib/views/main_window.js"></script>
+        <script src="lib/views/init_modal.js"></script>
+        <script src="lib/views/main-window-toptoolbar.js"></script>
+
+        <script src="lib/views/songservice/churchservice.js"></script>
+        <script src="lib/views/songservice/churchservice-control.js"></script>
+        <script src="lib/views/songservice/churchservice-settings.js"></script>
+        <script src="lib/views/songservice/songbase-toolbar.js"></script>
+        <script src="lib/views/songservice/churchservice-songbase.js"></script>
+        <script src="lib/views/songservice/churchservice-control-bottomtoolbar.js"></script>
+        <script src="lib/views/songservice/control.js"></script>
+
+        <!-- Songs -->
+
+        <script src="lib/views/songservice/author.js"></script>
+        <script src="lib/views/songservice/song.js"></script>
+        <script src="lib/views/songservice/songpart.js"></script>
+        <script src="lib/views/songservice/preview.js"></script>
+        <script src="lib/views/songservice/playlist.js"></script>
+        <script src="lib/views/songservice/author-edit-form.js"></script>
+        <script src="lib/views/songservice/song-edit-form.js"></script>
+
+
+        <!-- Bible part -->
+
+        <script src="lib/views/bible/bible.js"></script>
+        <script src="lib/views/bible/bible-control.js"></script>
+        <script src="lib/views/bible/bible-search.js"></script>
+        <script src="lib/views/bible/verselist.js"></script>
+        <script src="lib/views/bible/control.js"></script>
+        <script src="lib/views/bible/verse.js"></script>
+
+        <!-- Videoplayer part -->
+
+        <script src="lib/views/videoplayer/videoplayer.js"></script>
+        <script src="lib/views/videoplayer/videoplayer-control.js"></script>
+        <script src="lib/views/videoplayer/videoplayer-bottomtoolbar.js"></script>
+        <script src="lib/views/videoplayer/medialist.js"></script>
+        <script src="lib/views/videoplayer/media-control.js"></script>
+
+
+
+        <script src="bootstrap.js"></script>
+    </body>
+</html>

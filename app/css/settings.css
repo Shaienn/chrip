@@ -1,0 +1,696 @@
+.settings-container-contain {
+    z-index: 1;
+    background-color: #17181b;
+    height: 100%;
+    width: calc(100% - 5px);
+    position: fixed;
+    overflow-x: hidden;
+    overflow-y: overlay;
+    -webkit-overflow-scrolling: touch;
+}
+
+.settings-container-contain::-webkit-scrollbar {
+    width: 5px;
+}
+
+.settings-container-contain::-webkit-scrollbar-track {
+    background-color: #30333c;
+    -webkit-border-radius: 2px;
+    border-radius: 2px;
+}
+
+.settings-container-contain::-webkit-scrollbar-thumb {
+    background-color: #83888c;
+    -webkit-border-radius: 2px;
+    border-radius: 2px;
+}
+
+.settings-container-contain::-webkit-scrollbar-thumb:hover {
+    background-color: #93989c;
+}
+
+.settings-container-contain::-webkit-resizer,
+.settings-container-contain::-webkit-scrollbar-corner,
+.settings-container-contain::-webkit-scrollbar-button,
+.settings-container-contain::-webkit-scrollbar-track-piece {
+    display: none;
+}
+
+.settings-container-contain::-webkit-scrollbar-track {
+    margin-top: 32px;
+}
+
+.settings-container-contain .settings-container {
+    z-index: 1;
+    width: 100%;
+    height: auto;
+    position: absolute;
+    background-color: #17181b;
+    -webkit-user-select: none;
+    padding-bottom: 20px;
+}
+
+/*.settings-container-contain .preview-container {*/
+    /*z-index: 1;*/
+    /*width: 50%;*/
+    /*left: 50%;*/
+    /*height: auto;*/
+    /*float: left;*/
+    /*position: absolute;*/
+    /*background-color: #17181b;*/
+    /*-webkit-user-select: none;*/
+    /*padding-bottom: 20px;*/
+/*}*/
+
+.settings-container-contain .preview-container img{
+    width: 100%;
+}
+
+.settings-container-contain .settings-container section {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: box;
+    display: flex;
+    -webkit-box-orient: horizontal;
+    -webkit-flex-direction: row;
+    flex-direction: row;
+    -webkit-box-pack: start;
+    -webkit-justify-content: flex-start;
+    justify-content: flex-start;
+    -webkit-box-orient: horizontal;
+    -webkit-box-lines: multiple;
+    -webkit-flex-flow: row wrap;
+    flex-flow: row wrap;
+    width: 92%;
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+    /* overlay styles, all needed */
+}
+
+.settings-container-contain .settings-container section .title {
+    padding-top: 26px;
+    color: #2d75df;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 17px;
+    width: 160px;
+    margin-right: 30px;
+    position: relative;
+    border-right: 1px solid #3a3b3e;
+}
+
+.settings-container-contain .settings-container section .content {
+    position: relative;
+    padding-top: 30px;
+    padding-left: 10px;
+    float: right;
+    width: calc(100% - 190px);
+    height: 100%;
+    color: #c3c5c7;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 13px;
+    border-bottom: 1px solid #3a3b3e;
+}
+
+.settings-container-contain .settings-container section .content span {
+    float: left;
+    width: 100%;
+    height: 40px;
+}
+
+.settings-container-contain .settings-container section .content span p {
+    min-width: 200px;
+    color: #c3c5c7;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 13px;
+    float: left;
+}
+
+.settings-container-contain .settings-container section .content span em {
+    color: #8a8b8e;
+    font-size: 12px;
+}
+
+.settings-container-contain .settings-container #qrcode-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 99998;
+}
+
+.settings-container-contain .settings-container #qrcode-modal {
+    display: none;
+    position: fixed;
+    top: 35%;
+    left: 40%;
+    background-color: #fff;
+    -webkit-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    border: 1px solid #000;
+    padding: 30px 10px 0px;
+    z-index: 99999;
+}
+
+.settings-container-contain .settings-container #qrcode-modal #qrcode-close {
+    color: #000;
+    cursor: pointer;
+    position: absolute;
+    top: -11px;
+    right: -10px;
+    background: #fff;
+    -webkit-border-radius: 51px;
+    border-radius: 51px;
+    padding: 0;
+    width: 21px;
+    height: 21px;
+}
+
+.settings-container-contain .settings-container #qrcode-modal #qrcode {
+    margin-bottom: 10px;
+}
+
+.settings-container-contain .settings-container #title .title {
+    color: #fff;
+    padding-top: 5px;
+    font-size: 22px;
+}
+
+.settings-container-contain .settings-container #title .content {
+    padding-top: 5px;
+    height: 30px;
+    border-bottom: 1px solid transparent;
+}
+
+.settings-container-contain .settings-container #title .content label {
+    margin-top: -7px;
+}
+
+.settings-container-contain .settings-container #title .content .keyboard,
+.settings-container-contain .settings-container #title .content .help {
+    font-size: 21px;
+    margin-right: 25px;
+    color: #a3a5a7;
+    cursor: pointer;
+    -webkit-transition: all 0.5s;
+    transition: all 0.5s;
+}
+
+.settings-container-contain .settings-container #title .content .keyboard:hover,
+.settings-container-contain .settings-container #title .content .help:hover {
+    color: #fff;
+    -webkit-transition: all 0.5s;
+    transition: all 0.5s;
+}
+
+.settings-container-contain .settings-container #user-interface .subtitles-language > select,
+.settings-container-contain .settings-container #user-interface .pct-theme > select,
+.settings-container-contain .settings-container #user-interface .start-screen > select,
+.settings-container-contain .settings-container #user-interface .watchedCovers > select {
+    width: 158px;
+}
+
+.settings-container-contain .settings-container #subtitles .subtitles-language-default > select,
+.settings-container-contain .settings-container #subtitles .subtitles-font > select,
+.settings-container-contain .settings-container #subtitles .subtitles-decoration > select {
+    width: 158px;
+}
+
+.settings-container-contain .settings-container #subtitles .subtitles-size > select {
+    width: 67px;
+}
+
+.settings-container-contain .settings-container #subtitles .subtitles-custom > .settings-label {
+    margin-left: 40px;
+}
+
+.settings-container-contain .settings-container #subtitles .subtitles-custom .colorsub {
+    cursor: pointer;
+}
+
+.settings-container-contain .settings-container #trakt-tv .trakt-options {
+    color: #c3c5c7;
+}
+
+.settings-container-contain .settings-container #trakt-tv .trakt-options a {
+    display: inline-block;
+}
+
+.settings-container-contain .settings-container #trakt-tv .trakt-options .unauthtext {
+    margin-left: 5px;
+    color: #2468cc;
+}
+
+.settings-container-contain .settings-container #trakt-tv .trakt-options .unauthtext:hover {
+    color: #225694;
+}
+
+.settings-container-contain .settings-container #trakt-tv .trakt-options .loading-spinner {
+    -webkit-animation-duration: 0.75s;
+    animation-duration: 0.75s;
+    -webkit-animation-iteration-count: infinite;
+    animation-iteration-count: infinite;
+    -webkit-animation-name: rotate-forever;
+    animation-name: rotate-forever;
+    -webkit-animation-timing-function: linear;
+    animation-timing-function: linear;
+    width: 15px;
+    height: 15px;
+    border: 3px solid #2d75df;
+    border-right-color: transparent;
+    -webkit-border-radius: 50%;
+    border-radius: 50%;
+    display: -webkit-inline-box;
+    display: -webkit-inline-flex;
+    display: -ms-inline-flexbox;
+    display: inline-box;
+    display: inline-flex;
+    position: absolute;
+    left: 0;
+    margin-left: 20px;
+}
+
+.settings-container-contain .settings-container #trakt-tv .trakt-options .syncTrakt {
+    margin-bottom: 15px;
+    margin-top: -10px;
+}
+
+.settings-container-contain .settings-container #tvshowtime .tvshowtime-options {
+    margin-bottom: 35px;
+}
+
+.settings-container-contain .settings-container #tvshowtime .tvshowtime-options a {
+    display: inline-block;
+}
+
+.settings-container-contain .settings-container #tvshowtime .tvshowtime-options .unauthtext {
+    margin-left: 5px;
+    color: #2468cc;
+}
+
+.settings-container-contain .settings-container #tvshowtime .tvshowtime-options .unauthtext:hover {
+    color: #225694;
+}
+
+.settings-container-contain .settings-container #tvshowtime .tvshowtime-options #connect-with-tvst {
+    margin-top: -12px;
+}
+
+.settings-container-contain .settings-container #tvshowtime .tvshowtime-options .tvst-loading-spinner {
+    -webkit-animation-duration: 0.75s;
+    animation-duration: 0.75s;
+    -webkit-animation-iteration-count: infinite;
+    animation-iteration-count: infinite;
+    -webkit-animation-name: rotate-forever;
+    animation-name: rotate-forever;
+    -webkit-animation-timing-function: linear;
+    animation-timing-function: linear;
+    width: 15px;
+    height: 15px;
+    border: 3px solid #2d75df;
+    border-right-color: transparent;
+    -webkit-border-radius: 50%;
+    border-radius: 50%;
+    display: -webkit-inline-box;
+    display: -webkit-inline-flex;
+    display: -ms-inline-flexbox;
+    display: inline-box;
+    display: inline-flex;
+    position: absolute;
+    left: 0;
+    margin-left: 20px;
+    margin-top: -2px;
+}
+
+.settings-container-contain .settings-container #connection #overallRatio {
+    pointer-events: none;
+    -webkit-user-select: none;
+}
+
+.settings-container-contain .settings-container #connection #overallRatio i {
+    padding-left: 4px;
+    padding-right: 8px;
+}
+
+.settings-container-contain .settings-container #connection .reset-tvAPI {
+    font-size: 13px;
+    color: #8a8b8e;
+    -webkit-transition: all 0.5s;
+    transition: all 0.5s;
+}
+
+.settings-container-contain .settings-container #connection .reset-tvAPI:hover {
+    cursor: pointer;
+    color: #2468cc;
+    -webkit-transition: all 0.5s;
+    transition: all 0.5s;
+}
+
+.settings-container-contain .settings-container .open-tmp-folder {
+    font-size: 16px;
+    margin-left: 10px;
+    -webkit-transition: all 0.5s;
+    transition: all 0.5s;
+}
+
+.settings-container-contain .settings-container .open-tmp-folder:hover {
+    cursor: pointer;
+    color: #2468cc;
+    -webkit-transition: all 0.5s;
+    transition: all 0.5s;
+}
+
+.settings-container-contain .settings-container #database .open-database-folder {
+    font-size: 16px;
+    margin-left: 10px;
+    -webkit-transition: all 0.5s;
+    transition: all 0.5s;
+}
+
+.settings-container-contain .settings-container #database .open-database-folder:hover {
+    cursor: pointer;
+    color: #2468cc;
+    -webkit-transition: all 0.5s;
+    transition: all 0.5s;
+}
+
+.settings-container-contain .settings-container #vpn .vpn-buttons {
+    margin-bottom: 10px;
+}
+
+.settings-container-contain .settings-container .btns {
+    padding-top: 10px;
+    padding-right: 2%;
+    float: right;
+}
+
+.settings-container-contain .settings-container .btns.database {
+    float: left;
+    padding-top: 0;
+    padding-bottom: 13px;
+}
+
+.settings-container-contain .settings-container .btn-settings {
+    position: relative;
+    margin-top: 13px;
+    float: left;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-right: 20px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+    height: 35px;
+    background-color: #1f375f;
+    text-align: center;
+    color: #e3e5e7;
+    font-family: 'Open Sans Semibold', sans-serif;
+    font-size: 12px;
+    line-height: 34px;
+    cursor: pointer;
+    -webkit-transition: background-color 0.5s;
+    transition: background-color 0.5s;
+}
+
+.settings-container-contain .settings-container .btn-settings.database {
+    margin-top: 0;
+}
+
+.settings-container-contain .settings-container .btn-settings:hover {
+    background-color: #225694;
+    color: #e3e5e7;
+    text-decoration: none;
+}
+
+.settings-container-contain .settings-container .btn-settings.disabled {
+    background-color: #393b3d;
+}
+
+.settings-container-contain .settings-container .btn-settings.disabled:hover {
+    background-color: #393b3d;
+}
+
+.settings-container-contain .settings-container .btn-settings.disabled:active {
+    background-color: #393b3d;
+}
+
+.settings-container-contain .settings-container .btn-settings.ok {
+    background-color: #27ae60;
+}
+
+.settings-container-contain .settings-container .btn-settings.warning {
+    background-color: #f15153;
+}
+
+.settings-container-contain .settings-container .btn-settings:active {
+    -webkit-box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.6);
+    box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.6);
+    background: #2468cc;
+}
+
+.settings-container-contain .settings-container .dropdown select {
+    margin-left: 10px;
+    position: relative;
+    padding-left: 5px;
+    border: 0 !important;
+    -webkit-appearance: none;
+    height: 30px;
+    line-height: 25px;
+    margin-top: -9px;
+    background-color: #393b3d;
+    cursor: pointer;
+    color: #c3c5c7;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 13px;
+    float: left;
+    outline: 0;
+    padding-right: 15px;
+    width: 270px;
+}
+
+.settings-container-contain .settings-container .dropdown option {
+    background: #393b3d;
+    border: 0 !important;
+    outline: 0;
+}
+
+.settings-container-contain .settings-container .dropdown .dropdown-arrow {
+    width: 0;
+    height: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 5px solid #c3c5c7;
+    top: 4px;
+    margin-left: -13px;
+    position: relative;
+    float: left;
+    cursor: pointer;
+}
+
+.settings-container-contain .success_alert {
+    position: fixed;
+    top: 45px;
+    right: 50px;
+    color: #fff;
+    font-family: 'Open Sans Semibold', sans-serif;
+    font-size: 16px;
+}
+
+.settings-container-contain .success_alert #checkmark-notify {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    -webkit-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+
+.settings-container-contain .success_alert #stem-notify {
+    position: absolute;
+    width: 3px;
+    height: 12px;
+    background-color: #fff;
+    left: 11px;
+    top: 6px;
+}
+
+.settings-container-contain .success_alert #kick-notify {
+    position: absolute;
+    width: 6px;
+    height: 3px;
+    background-color: #fff;
+    left: 6px;
+    top: 15px;
+}
+
+.settings-container-contain input[type="text"],
+.settings-container-contain input[type="password"],
+.settings-container-contain input[type="number"],
+.settings-container-contain input[type="color"] {
+    margin-left: 10px;
+    margin-top: -9px;
+    padding-left: 10px;
+    height: 30px;
+    border: 0 !important;
+    line-height: 15px;
+    background-color: #393b3d;
+    resize: none;
+    color: #c3c5c7;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 13px;
+    cursor: text;
+    outline: 0 !important;
+    width: 270px;
+}
+
+.settings-container-contain input[type="text"]#fakedatabaseLocation,
+.settings-container-contain input[type="password"]#fakedatabaseLocation,
+.settings-container-contain input[type="number"]#fakedatabaseLocation,
+.settings-container-contain input[type="color"]#fakedatabaseLocation {
+    pointer-events: none;
+    -webkit-user-select: none;
+}
+
+.settings-container-contain input[type="text"]#fakedatabaseLocation,
+.settings-container-contain input[type="password"]#fakedatabaseLocation,
+.settings-container-contain input[type="number"]#fakedatabaseLocation,
+.settings-container-contain input[type="color"]#fakedatabaseLocation,
+.settings-container-contain input[type="text"]#settingsIpAddr,
+.settings-container-contain input[type="password"]#settingsIpAddr,
+.settings-container-contain input[type="number"]#settingsIpAddr,
+.settings-container-contain input[type="color"]#settingsIpAddr {
+    pointer-events: none;
+    -webkit-user-select: none;
+}
+
+.settings-container-contain input[type='color'] {
+    -webkit-appearance: none;
+    width: 67px;
+}
+
+.settings-container-contain input[type='color']::-webkit-color-swatch {
+    margin: 3px -9px 3px -3px;
+}
+
+.settings-container-contain input[type='number']::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.settings-container-contain input[type=checkbox].settings-checkbox {
+    position: absolute;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    width: 1px;
+    margin: -1px;
+    padding: 0;
+    border: 0;
+}
+
+.settings-container-contain input[type=checkbox].settings-checkbox + label.settings-label {
+    height: 15px;
+    display: inline-block;
+    line-height: 15px;
+    font-size: 13px;
+    font-family: 'Open Sans', sans-serif;
+    vertical-align: middle;
+    cursor: pointer;
+    color: #c3c5c7;
+}
+
+.settings-container-contain input[type=checkbox].settings-checkbox:checked + label.settings-label:after {
+    opacity: 1;
+}
+
+.settings-container-contain .settings-label:before {
+    content: '\f0c8';
+    font-family: "fontawesome";
+    font-size: 18px;
+    padding-right: 8px;
+    float: left;
+    position: relative;
+    color: #545454;
+}
+
+.settings-container-contain .settings-label:after {
+    content: '\f00c';
+    font-family: "fontawesome";
+    font-size: 12px;
+    margin-right: -14px;
+    color: #4bfff4;
+    position: relative;
+    float: left;
+    left: -21px;
+    opacity: 0;
+    -webkit-transition: opacity 0.1s ease-in-out;
+    transition: opacity 0.1s ease-in-out;
+}
+
+.settings-container-contain .settings-container-check-settings {
+    width: 14px;
+    height: 14px;
+    margin-top: 59px;
+    position: relative;
+}
+
+.settings-container-contain .settings-container-check-settings label {
+    cursor: pointer;
+    position: absolute;
+    top: 0;
+    width: 14px;
+    height: 14px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+    -webkit-background-clip: padding;
+    background-clip: padding-box;
+    background-color: #393b3d;
+}
+
+.settings-container-contain .settings-container-check-settings label:after {
+    opacity: 0;
+    content: '';
+    position: absolute;
+    width: 10px;
+    height: 6px;
+    background: transparent;
+    top: 2px;
+    left: 2px;
+    border: 3px solid #2468cc;
+    border-top: none;
+    border-right: none;
+    -webkit-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+}
+
+.settings-container-contain .settings-container-check-settings input[type=checkbox]:checked + label:after {
+    opacity: 1;
+}
+
+.settings-container section.advanced {
+    display: none;
+}
+
+.settings-container .advanced {
+    display: none;
+}
+
+.slide-settings-container{
+    width: 75%;
+    float: left;
+    max-width: 550px;
+}
+
+.preview-container {
+    float: right;
+    height: 120px;
+    padding: 5px;
+}
+
+.preview-container img{
+    height: 100%;
+    width: auto !important;
+}

@@ -1,0 +1,41 @@
+body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #000;
+}
+
+#presentation-content{
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
+    -webkit-user-select: none;
+    margin: 0;
+    padding: 0;
+    color: white;
+}
+
+#presentation-content .slide{
+    position: absolute;
+    width: inherit;
+    height: inherit;
+    opacity: 0.0;
+}
+
+.nextImage{
+    z-index: 2;
+    position: absolute;
+}
+
+.prevImage{
+    z-index: 3;
+    position: absolute;
+}
+
+.canvas-wrapper, #media-canvas {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+}

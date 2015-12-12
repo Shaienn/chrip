@@ -1,0 +1,212 @@
+div.chordpro-song-editor,
+textarea.chordpro-song-editor {
+    width: 100%;
+    margin: 0;
+    padding: 0 1em 0 1em;
+    display: block;
+
+    border: none;
+    overflow: hidden;
+    outline: none;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+}
+
+textarea.chordpro-song-editor {
+    background-color: transparent;
+    font-family: inherit;
+    border: 1px transparent solid;
+    resize: none;
+    font-size: 100%;
+    overflow: hidden;
+    z-index: 2;
+    position: absolute;
+    height: inherit;
+}
+
+div.chordpro-song-editor {
+    border: 1px #ddd solid;
+    white-space: pre-wrap;
+    counter-reset: verse-counter slide-counter;
+    position: absolute;
+    z-index: 1;
+    color: transparent;
+    background-color: white;
+    height: auto;
+}
+
+div.chordpro-song-editor p {
+    margin-top: 0;
+    margin-bottom: 0;
+    margin-left: -1em;
+    padding-left: 1em;
+    position: relative;
+}
+
+div.chordpro-song-editor p.verse {
+    background-color: #cfc;
+}
+
+div.chordpro-song-editor p.verse:before {
+    content: counter(verse-counter) ".";
+    counter-increment: verse-counter;
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 0.5;
+    color: #000;
+}
+
+div.chordpro-song-editor p.verse_star {
+    background-color: #dfffc0;
+}
+
+div.chordpro-song-editor p.chorus {
+    background-color: #efe;
+    border-left: .2em black solid;
+    margin-left: -.5em;
+    padding-left: .3em;
+}
+
+div.chordpro-song-editor p.bridge {
+    background-color: #efe;
+    border-left: .2em black dashed;
+    margin-left: -.5em;
+    padding-left: .3em;
+}
+
+/* Show the type of paragraph (chorus & co.) */
+div.chordpro-song-editor p:after {
+    position: absolute;
+    top: 0;
+    right: 0;
+    opacity: 0.5;
+    font-family: monospace;
+    color: #000;
+}
+
+div.chordpro-song-editor p.verse:after {
+    content: "Куплет";
+}
+
+div.chordpro-song-editor p.verse_star:after {
+    content: "Verse*";
+}
+
+div.chordpro-song-editor p.chorus:after {
+    content: "Припев";
+}
+
+div.chordpro-song-editor p.bridge:after {
+    content: "Bridge";
+}
+
+/* Caracters that do not belong to the text */
+div.chordpro-song-editor span.chord,
+div.chordpro-song-editor span.control-chars {
+    background-color: #eee;
+}
+
+div.chordpro-song-editor p.code-comment {
+    background-color: #eee;
+}
+
+div.chordpro-song-editor p.code-comment:after {
+    content: "#";
+    color: black;
+}
+
+/* Emphasize error location */
+div.chordpro-song-editor span.error-line {
+    background-color: #FF9C9C;
+    position: relative;
+}
+
+div.chordpro-song-editor span.error-line:before {
+    content: "⚠";
+    position: absolute;
+    left: -1em;
+    color: red;
+    font-weight: bold;
+}
+
+div.chordpro-song-editor span.error-char {
+    border-bottom: red 2px solid;
+}
+
+div.chordpro-song-editor button.switcher.editor {
+    display: none;
+}
+
+div.chordpro-song-editor s {
+    background-color: orange;
+    display: block;
+    opacity: 0.5;
+}
+
+div.chordpro-song-editor s.slide:before {
+    content: "{sos}";
+    display: block;
+}
+
+div.chordpro-song-editor s.slide:after {
+    content: "{eos}";
+    display: block;
+}
+
+/* ----------------------------------------- */
+
+div.chordpro-song-editor .slide_mark {
+    display: block;
+    float: right;
+    color: black;
+    font-family: monospace;
+}
+
+div.chordpro-song-editor .slide_mark:after {
+    content: " " counter(slide-counter);
+    counter-increment: slide-counter;
+}
+
+#songeditor_inputarea {
+    width: 50%;
+    float: left;
+    height: calc(90vh - 67px);
+    position: relative;
+    overflow-y: scroll;
+}
+
+#songeditor_previewarea {
+    width: 50%;
+    float: right;
+    height: calc(90vh - 67px);
+}
+
+#songeditor-main-window {
+    background-color: white;
+}
+
+#songeditor_author_selector {
+    display: table;
+    height: inherit;
+    width: 90%;
+}
+
+span.author_name, span.song_name {
+    color: white;
+    padding: 0 1em;
+}
+
+#songeditor_author_selector select {
+    color: black;
+}
+
+#songeditor_author_selector #inner {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+#song-name-input {
+    width: 20em;
+}

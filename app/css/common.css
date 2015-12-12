@@ -1,0 +1,145 @@
+h2, .h2{
+    font-size: 3em !important;
+}
+
+.fleft {
+    float: left !important;
+}
+
+.fright {
+    float: right !important;
+}
+
+.width-100-percent {
+    width: 100% !important;
+}
+
+.width-70-percent {
+    width: 70% !important;
+}
+
+.width-50-percent {
+    width: 50% !important;
+}
+
+.width-30-percent {
+    width: 30% !important;
+}
+
+#main-window #content {
+    width: 100%;
+    top: 32px;
+    height: calc(100vh - 32px);
+    overflow: hidden;
+    position: absolute;
+}
+
+#app-area {
+    width: 100%;
+    float: left;
+
+}
+
+.close-icon {
+    top: 10px;
+    right: 20px;
+    color: #ccc;
+    font-size: 25px;
+    line-height: 25px;
+    cursor: pointer;
+    z-index: 100;
+    -webkit-transition: all 0.5s;
+    transition: all 0.5s;
+    -webkit-font-smoothing: antialiased;
+    position: relative;
+    float: right;
+}
+
+.close-icon:hover {
+    color: #fff;
+    -webkit-transition: all 0.5s;
+    transition: all 0.5s;
+}
+
+.search form:before {
+    content: '\f002';
+    font-family: FontAwesome;
+    font-style: normal;
+    -webkit-transition: color 0.5s;
+    transition: color 0.5s;
+    color: #909498;
+    position: absolute;
+    top: 11px;
+    left: 7px;
+    z-index: 2;
+    font-size: 1.4em;
+}
+
+.search form.edited .clear {
+    display: block;
+    font-weight: bold;
+    -webkit-transition: color 0.5s;
+    transition: color 0.5s;
+    color: #909498;
+    position: absolute;
+    top: 8px;
+    right: 5px;
+    padding: 3px 5px;
+    font-size: 1.2em;
+}
+
+.search form.edited input,
+.search form input:focus {
+    width: 130px;
+    background-color: #0d0d0e;
+    color: #c3c5c7;
+}
+
+.search form.edited,
+.search form:hover {
+    cursor: pointer;
+}
+
+.search form.edited:before,
+.search form:hover:before {
+    color: #2468cc;
+}
+
+.search form input {
+    line-height: normal;
+    -webkit-app-region: no-drag;
+    outline: none;
+    cursor: text;
+    width: 0px;
+    height: 18px;
+    position: relative;
+    background: #17181b no-repeat right center;
+    background-position: right 3px center;
+    border: solid 0px;
+    margin: 8px 3px 0;
+    padding: 1px 2px 3px;
+    padding-left: 25px;
+    -webkit-border-radius: 10em;
+    border-radius: 10em;
+    -webkit-appearance: textfield;
+    -webkit-box-sizing: content-box;
+    -webkit-transition: width 0.5s;
+    transition: width 0.5s;
+}
+
+.search form input:focus {
+    cursor: auto;
+}
+
+.search form input:focus:before {
+    color: #2468cc;
+}
+
+.search form input::-moz-placeholder,
+.search form input::-webkit-input-placeholder {
+    color: transparent;
+}
+
+.search form input:focus::-webkit-input-placeholder {
+    color: rgba(195, 197, 199, 0.7);
+}

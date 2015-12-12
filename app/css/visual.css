@@ -1,0 +1,203 @@
+div.chordpro-song-visual {
+    margin: 0;
+    padding: 1em 0 0 3em;
+    display: block;
+    width: 50%;
+}
+
+div.chordpro-song-visual {
+    border: none;
+    white-space: pre-wrap;
+    min-height: 5em;
+    counter-reset: verse-counter;
+    position: absolute;
+    overflow-y: overlay;
+    height: inherit;
+}
+
+div.chordpro-song-visual p {
+    margin-top: 0;
+    margin-bottom: 0;
+    margin-left: -1em;
+    padding-left: 1em;
+    position: relative;
+    line-height: 2.5em;
+}
+
+div.chordpro-song-visual p.verse {
+    /*background-color:#cfc;*/
+}
+
+div.chordpro-song-visual p.verse:before {
+    content: counter(verse-counter) ".";
+    counter-increment: verse-counter;
+    display: inline-block;
+    margin-left: -1em;
+    margin-right: 1em;
+    width: 0;
+    color: #333;
+}
+
+div.chordpro-song-visual p.verse_star {
+    /*background-color:#dfffc0;*/
+}
+
+div.chordpro-song-visual p.chorus {
+    font-weight: bold;
+}
+
+div.chordpro-song-visual p.chorus {
+    /*background-color: #efe;*/
+    border-left: .2em black solid;
+    margin-left: -.5em;
+    padding-left: .3em;
+}
+
+div.chordpro-song-visual p.bridge {
+    /*background-color: #efe;*/
+    border-left: .2em black dashed;
+    margin-left: -.5em;
+    padding-left: .3em;
+}
+
+/* Caracters that do not belong to the text */
+div.chordpro-song-visual span.echo {
+    font-style: italic;
+}
+
+div.chordpro-song-visual span.echo:before {
+    content: "(";
+}
+
+div.chordpro-song-visual span.echo:after {
+    content: ")";
+}
+
+div.chordpro-song-visual span.transposition {
+    font-style: italic;
+}
+
+div.chordpro-song-visual span.transposition:before {
+    content: "Transposition: ";
+}
+
+div.chordpro-song-visual span.transposition:after {
+    font-size: 120%;
+}
+
+div.chordpro-song-visual span.transposition.positive:after {
+    content: "⇑";
+}
+
+div.chordpro-song-visual span.transposition.negative:after {
+    content: "⇓";
+}
+
+div.chordpro-song-visual span.repeat {
+    font-style: italic;
+}
+
+div.chordpro-song-visual span.repeat:before {
+    content: "(×";
+}
+
+div.chordpro-song-visual span.repeat:after {
+    content: ")";
+}
+
+div.chordpro-song-visual span.chord {
+    color: green;
+    top: -1.25em;
+    vertical-align: bottom;
+    display: inline-block;
+    position: relative;
+    font-weight: normal;
+    width: 0;
+    white-space: nowrap;
+}
+
+div.chordpro-song-visual span.chord .control-chars:not(:first-of-type) {
+    display: inline;
+    visibility: hidden;
+    width: 50px;
+}
+
+div.chordpro-song-visual span.control-chars,
+div.chordpro-song-visual p.code-comment {
+    display: none;
+}
+
+/* Emphasize error location */
+div.chordpro-song-visual span.error-line {
+    background-color: #FF9C9C;
+    position: relative;
+}
+
+div.chordpro-song-visual span.error-line:before {
+    content: "⚠";
+    position: absolute;
+    left: -1em;
+    color: red;
+    font-weight: bold;
+}
+
+div.chordpro-song-visual span.error-char {
+    border-bottom: red 2px solid;
+}
+
+div.chordpro-song-visual s {
+    text-decoration: none;
+}
+
+#preview_content_slide .contain{
+    width: inherit;
+    height: 100%;
+}
+
+#preview_content_slide .contain img {
+    width: auto;
+    margin: 0 auto;
+    max-width: 100%;
+    max-height: 100%;
+}
+
+#preview_content_slide {
+    display: none;
+    height: inherit;
+    overflow-y: overlay;
+    padding: 1em;
+    width: 100%;
+    text-align: center;
+
+}
+
+#preview_content_slide::-webkit-scrollbar {
+    width: 10px;
+}
+
+#preview_content_slide::-webkit-scrollbar-track {
+    background-color: #30333c;
+    -webkit-border-radius: 2px;
+    border-radius: 2px;
+}
+
+#preview_content_slide::-webkit-scrollbar-thumb {
+    background-color: #83888c;
+    -webkit-border-radius: 2px;
+    border-radius: 2px;
+}
+
+#preview_content_slide::-webkit-scrollbar-thumb:hover {
+    background-color: #93989c;
+}
+
+#preview_content_slide::-webkit-resizer,
+#preview_content_slide::-webkit-scrollbar-corner,
+#preview_content_slide::-webkit-scrollbar-button,
+#preview_content_slide::-webkit-scrollbar-track-piece {
+    display: none;
+}
+
+#preview_content_slide::-webkit-scrollbar-track {
+    margin-top: 0;
+}

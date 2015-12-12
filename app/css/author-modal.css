@@ -1,0 +1,23 @@
+#modal-contain input {
+    width: 75%;
+    position: relative;
+    padding: 1em;
+    left: 12.5%;
+    font-size: 1.2em;
+    margin: 1em auto;
+}
+
+#modal-contain input::-webkit-input-placeholder {
+    color: gray;
+}
+
+#modal-contain p {
+    margin: 0 auto;
+    font-size: 1.2em;
+    padding: 1em;
+    text-align: center;
+}
+
+#modal-contain {
+    width: 100%;
+}
