@@ -61,7 +61,7 @@
   "snapshot": "",
   "node-main": "",
   "devDependencies": {
-    "wcjs-custom-renderer": "^0.1.10",
+    "wcjs-multiscreen-renderer": "^0.1.10",
     "webchimera.js": "^0.1.38"
   }
 }

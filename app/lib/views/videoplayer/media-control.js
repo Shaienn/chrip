@@ -1,6 +1,6 @@
 'use strict';
 
-var renderer = require("wcjs-custom-renderer");
+var renderer = require("wcjs-multiscreen-renderer");
 
 (function (App) {
 
