@@ -82,8 +82,8 @@ var renderer = require("wcjs-multiscreen-renderer");
                 wrapper: this.ui.wrapper[0],
             };
 
-            renderer.setMainContext(main_context);
-            renderer.init(App.vlc);
+            renderer.setMainContext(App.vlc, main_context);
+            renderer.init();
 
         },
         onDestroy: function () {

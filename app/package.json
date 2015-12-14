@@ -37,7 +37,7 @@
   "inject-js-start": "",
   "main": "./index.html",
   "homepage": "http://chrip.ru",
-  "chromium-args": "",
+  "chromium-args": "--enable-webgl --ignore-gpu-blacklist",
   "description": "",
   "dependencies": {
     "q": "^1.4.1",
@@ -62,6 +62,6 @@
   "node-main": "",
   "devDependencies": {
     "wcjs-multiscreen-renderer": "^0.1.10",
-    "webchimera.js": "^0.1.38"
+    "wcjs-prebuilt": "latest"
   }
 }

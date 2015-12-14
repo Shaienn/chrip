@@ -21,7 +21,7 @@ var
         PEG = require("pegjs");
 
 var keypress = require('keypress');
-var wcjs = require("webchimera.js");
+var wcjs = require("wcjs-prebuilt");
 
 win.log = console.log.bind(console);
 win.debug = function () {
