@@ -108,21 +108,6 @@
     App.View.SongEditForm = Backbone.Modal.extend({
         id: 'song-modal',
         template: '#song-edit-modal-tpl',
-        slide_pattern: /\{(?:sos|start_of_slide)\}([\w\s\W\S]+?)\{(?:eos|end_of_slide)\}/g,
-        song_parts_patterns: {
-            chorus: {
-                name: "chorus",
-                pattern: /\{(?:soc|start_of_chorus)\}([\w\s\W\S]+?)\{(?:eoc|end_of_chorus)\}/
-            },
-            bridge: {
-                name: "bridge",
-                pattern: /\{(?:sob|start_of_bridge)\}([\w\s\W\S]+?)\{(?:eob|end_of_bridge)\}/
-            },
-            verse: {
-                name: "verse",
-                pattern: /([\w\s\W\S]+)/
-            }
-        },
         collection_view: null,
         ui: {
             songMeta: "#song-meta",
@@ -131,6 +116,7 @@
             songPartPreview: '#songpart-preview'
         },
         events: {
+            'click #add-slide-btn': 'addSongPartHandler',
             'click #save-btn': 'saveBtnHandler',
             'click #cancel-btn': 'cancelBtnHandler',
         },
@@ -178,9 +164,28 @@
         },
         /**********************************************/
 
+        addSongPartHandler: function () {
+            console.log("Add song part handler");
+            var new_part = new App.Model.SongPart();
+            var default_type = "verse";
+            var default_type_index = 0;
+
+            for (var i in App.Config.song_parts_patterns) {
+                if (App.Config.song_parts_patterns[i].name == default_type) {
+                    default_type_index = i;
+                }
+            }
+
+            new_part.set("type", default_type_index);
+            new_part.set("type_visual", default_type);
+
+            this.collection_view.collection.add(new_part);
+            $(this.ui.songPartDetails).html("");
+        },
         removeSongpart: function (songpart) {
             console.log("remove");
             this.collection_view.collection.remove(songpart);
+
             $(this.ui.songPartDetails).html("");
         },
         showSongpartDetails: function (songpart) {
@@ -188,15 +193,26 @@
             var details_template = _.template($('#songpart-details-tpl').html());
             var details = $(this.ui.songPartDetails);
             details.html(details_template({
-                types: this.song_parts_patterns,
+                types: App.Config.song_parts_patterns,
                 songpart: songpart,
             }));
 
             var input = details.find("textarea");
+            var typeSelector = details.find(".songpart-type-selector select");
             var preview = details.find(".songpart-preview .slide-item");
 
             var slide_template = _.template($('#slide-tpl').html());
             var screen_bounds = ((Settings.Utils.getScreens())[Settings.presentation_monitor]).bounds;
+
+            typeSelector.on("change", function () {
+
+                var selected_type = $(this).val();
+                var selected_type_text = $(this).find("option:selected").text();
+
+                songpart.set('type', selected_type);
+                songpart.set('type_visual', selected_type_text);
+
+            });
 
             input.on("change keyup paste", function () {
 
@@ -243,13 +259,14 @@
             var res;
             var songPartCollection = new App.Model.SongPartCollection();
 
-            while ((res = this.slide_pattern.exec(song.get('text'))) != null) {
+            while ((res = App.Config.slide_part.pattern.exec(song.get('text'))) != null) {
 
                 var raw_text = res[1].trim();
 
-                for (var p in this.song_parts_patterns) {
-                    var pattern = this.song_parts_patterns[p].pattern;
-                    var part = pattern.exec(raw_text);
+                for (var p in App.Config.song_parts_patterns) {
+
+                    var part_pattern = App.Config.song_parts_patterns[p].pattern;
+                    var part = part_pattern.exec(raw_text);
 
                     if (part == null) {
                         continue;
@@ -259,13 +276,14 @@
                     var part_text = part[1].trim();
 
                     songPart.set('type', p);
-                    songPart.set('type_visual', this.song_parts_patterns[p].name);
+                    songPart.set('type_visual', App.Config.song_parts_patterns[p].name);
                     songPart.set('text', part_text);
                     songPart.set('text_visual', part_text.replace(/\r\n|\n/g, "<br>"));
 
                     /* Add to collection */
 
                     songPartCollection.add(songPart);
+                    break;
                 }
 
             }
@@ -283,23 +301,36 @@
 
             win.log("save");
 
+            /* Collect all slides contents */
 
-            var text = $(this.ui.textarea).val();
-            var name = $(this.ui.Input).val();
+            var song_text = "";
 
-            if (text == "") {
-                return;
+            for (var i = 0; i < this.collection_view.collection.length; i++) {
+
+                var part = this.collection_view.collection.at(i);
+                var part_wrapper = App.Config.song_parts_patterns[part.get('type')];
+
+                song_text += App.Config.slide_part.init;
+                song_text += part_wrapper.init;
+
+                song_text += part.get('text');
+
+                song_text += part_wrapper.end;
+                song_text += App.Config.slide_part.end;
             }
 
-            if (name == "") {
-                return;
-            }
 
-            var author_key = $('.authors_selector option:selected').val();
+            var author_key = $(this.ui.songMeta).find(".song-author-selector select").val();
             var author = this.authors.models[author_key];
 
-            this.song.set('text', text);
-            this.song.set('name', name);
+            var song_name = $(this.ui.songMeta).find(".song-name-input input").val();
+
+            if (song_name == "") {
+                return;
+            }
+
+            this.song.set('text', song_text);
+            this.song.set('name', song_name);
             this.song.set('aid', author.attributes.aid);
             this.song.set('gaid', author.attributes.gaid);
 

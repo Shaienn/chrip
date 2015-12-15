@@ -1,7 +1,7 @@
 module.exports = {
     options: {
-        buildDir: '<%= settings.dist %>', // Where the build version of my node-webkit app is saved
-        platforms: ['linux32', 'linux64', 'win64'],
+        buildDir: '<%= settings.dist %>', 
+        platforms: ['<%= settings.build_platform %>'],
         version: '0.12.3',
     },
     src: [

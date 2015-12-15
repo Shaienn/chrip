@@ -13,9 +13,9 @@ var Q = require('q');
         db: {},
         //db: new sqlite3.Database('test.db'),
 
-        user_db: new sqlite3.Database(App.Config.db_user),
-        global_db: new sqlite3.Database(App.Config.db_global),
-        bible_db: new sqlite3.Database(App.Config.db_bible),
+        user_db: new sqlite3.Database(App.Config.execDir + App.Config.db_user),
+        global_db: new sqlite3.Database(App.Config.execDir + App.Config.db_global),
+        bible_db: new sqlite3.Database(App.Config.execDir + App.Config.db_bible),
         user_db_check: function () {
 
             /* Check user.db, create tables if not exists */
@@ -54,16 +54,6 @@ var Q = require('q');
         init: function () {
 
             var d = Q.defer();
-
-            var appExecDir = process.cwd();
-
-            if (fs.existsSync(Settings.appDir + Settings.user_db)) {
-                win.debug("Exists");
-            } else {
-                win.debug("Not Exists: " + Settings.appDir + Settings.user_db);
-            }
-                
-            win.debug(appExecDir);    
 
             this.db = new sqlite3.Database(':memory:', function (err) {
 

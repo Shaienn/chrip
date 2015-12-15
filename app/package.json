@@ -23,12 +23,10 @@
     "exe_icon": "",
     "visible": true,
     "as_desktop": false,
-    "width": 640,
     "mac_icon": "",
     "min_width": 1280,
     "position": "center",
     "show_in_taskbar": true,
-    "height": 480,
     "transparent": false,
     "toolbar": true,
     "icon": ""

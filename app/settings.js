@@ -18,7 +18,6 @@ var path = require("path");
 
     /* User interface */
 
-    Settings.appDir = path.dirname( process.execPath );
     Settings.user_db = "/db/user.db";
     Settings.global_db = "/db/global.db";
 

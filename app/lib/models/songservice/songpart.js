@@ -8,6 +8,7 @@
     App.Model.SongPart = Backbone.Model.extend({
         defaults: {
             type: "verse",
+            type_visual: "",
             text: "",
             text_visual: "",
         },

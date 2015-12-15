@@ -116,9 +116,13 @@ var closeApp = function () {
 var initApp = function () {
 
     win.info("Start init app");
+
+    App.Config.execDir = path.dirname(process.execPath);
+
     App.ControlWindow = win;
     App.vlc = wcjs.createPlayer();
 
+    win.maximize();
     win.show();
     win.on("close", closeApp);
 
