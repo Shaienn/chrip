@@ -15,6 +15,7 @@
         db_bible: './db/bible.db',
         /* Song part wrappers */
 
+        chord_pattern: /\[[\w\W\s\S]+?\]/g,
         slide_part: {
             init: "{start_of_slide}",
             end: "{end_of_slide}",

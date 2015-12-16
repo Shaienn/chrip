@@ -70,18 +70,34 @@
             /* Clear song text */
 
             var preview_text = "";
-            var pattern = /\{(?:sos|start_of_slide)\}([\w\s\W\S]+?)\{(?:eos|end_of_slide)\}/g;
-            var chord_pattern = /\[[\w\W\s\S]+?\]/g;
             var res;
 
-            while ((res = pattern.exec(song.get('text'))) != null) {
+            while ((res = App.Config.slide_part.pattern.exec(song.get('text'))) != null) {
 
                 var raw_text = res[1];
 
-                /* remove chords */
+                for (var p in App.Config.song_parts_patterns) {
 
-                var pure_text = raw_text.replace(chord_pattern, "");
-                preview_text += pure_text;
+                    var part_pattern = App.Config.song_parts_patterns[p].pattern;
+                    var part = part_pattern.exec(raw_text);
+
+                    if (part == null) {
+                        continue;
+                    }
+
+                    var songPart = new App.Model.SongPart();
+                    var part_text = part[1].trim();
+
+                    /* remove chords */
+
+                    var pure_text = part_text.replace(App.Config.chord_pattern, "");
+                    preview_text += pure_text;
+
+                    break;
+                }
+
+                preview_text += require('os').EOL + require('os').EOL;
+
             }
 
             var previewModel = new App.Model.Preview({
@@ -157,7 +173,6 @@
 
             this.modals.show(form);
         },
-        
         openAddSongWindow: function () {
 
             var form = new App.View.SongEditForm({
@@ -169,7 +184,6 @@
             this.modals.show(form);
 
         },
-        
         openEditSongWindow: function () {
 
             var form = new App.View.SongEditForm({

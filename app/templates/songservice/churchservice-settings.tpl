@@ -28,32 +28,6 @@
 
                     <span>
 
-                        <div class="dropdown font-align-mode">
-                        <p>Режим выравнивания шрифтов</p>
-                        <%
-                            var font_align_modes = {
-                                'one_font_size_per_slide' : "Один шрифт на слайд",
-                                'one_font_size_per_string' : "Один шрифт на строку"
-                            };
-
-                            var select_font_align_mode = "";
-
-                            for(var key in font_align_modes) {
-                                select_font_align_mode += "<option "+(Settings.slide_string_mode == key? "selected='selected'":"")+" value='"+key+"'>"+(font_align_modes[key])+"</option>";
-                            }
-
-
-                        %>
-
-                        <select name="slide_string_mode"><%=select_font_align_mode%></select>
-                        <div class="dropdown-arrow"></div>
-
-                        </div>
-
-                    </span>
-
-                    <span>
-
                         <div class="dropdown font">
                         <p>Шрифт</p>
                         <%
@@ -130,14 +104,6 @@
                 <div class="preview-container"></div>
 
             </div>
-    </section>
-
-    <section id="presentation">
-
-            <div class="title">Заставка</div>
-            <div class="content">
-            </div>
-
     </section>
 
 

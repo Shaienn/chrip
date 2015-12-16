@@ -10,33 +10,26 @@
 
 
     var ChurchServiceSettings = Backbone.Marionette.ItemView.extend({
-
         template: '#churchservice-settings-tpl',
         className: 'settings-container-contain',
-
-
+        background_loaded: false,
         ui: {
-
             fakeBackgroundsDir: '#fakebackgroundsdir',
             backgrounds_path: '#backgrounds_path',
-
+            slidePreviewArea: '.preview-container',
         },
-
         events: {
             'click .close-icon': 'closeSettings',
             'change select,input': 'saveSetting',
             'click #fakebackgroundsdir': 'showBackgroundsDirectoryDialog',
         },
-
         showBackgroundsDirectoryDialog: function () {
 
             this.ui.backgrounds_path.click();
         },
-
         initialize: function () {
 
         },
-
         onShow: function () {
             that = this;
             this.render();
@@ -44,19 +37,39 @@
             $('#appmode-menu').hide();
             $('#main-window-toptoolbar').hide();
             $('#churchservice-control').hide();
-            $('.preview-container').css('height', $('.slide-settings-container').height() + "px");
+
             this.redrawPreview();
             this.refreshBackgroundFiles();
 
         },
-
         redrawPreview: function () {
-            App.SlideGenerator.fromText_promise("Строка\r\nДлинная строка\r\nСтрока\r\nОчень очень длинная строка").then(function (slideObj) {
-                var img_container = '<img src="data:image/jpg;base64, ' + slideObj.get('slide') + ' ">';
-                $('.preview-container').html(img_container);
-            });
-        },
 
+            App.SlideGenerator.makeSlideFromText("Строка\r\nДлинная строка\r\nСтрока\r\nОчень очень длинная строка")
+                    .then(this.drawSlide);
+
+        },
+        drawSlide: function (slide) {
+
+            console.log(slide);
+
+            var slide_template = _.template($('#slide-tpl').html());
+            that.ui.slidePreviewArea.html(slide_template({
+                background: slide.get("background"),
+                text: slide.get("text"),
+                height: slide.get("height"),
+                width: slide.get("width"),
+                number: slide.get("number"),
+                font: slide.get("font"),
+            }));
+
+            var text_span = that.ui.slidePreviewArea.find('.slide_text span');
+            text_span.hide();
+            that.ui.slidePreviewArea.find('img').load(function () {
+                text_span.show();
+                text_span.bigText();
+            });
+
+        },
         onDestroy: function () {
 
             win.log("settings destroy request");
@@ -66,14 +79,12 @@
             $('#header').removeClass('header-shadow');
             clearInterval(waitComplete);
         },
-
         closeSettings: function () {
 
             win.log("settings close button click");
             App.vent.trigger('settings:close');
 
         },
-
         refreshBackgroundFiles: function () {
 
             var images = Settings.Utils.getBackgrounds();
@@ -84,12 +95,9 @@
                 images_select += "<option " + (Settings.background == images[i].path ? "selected='selected'" : "") + " value='" + images[i].path + "'>" + images[i].name + "</option>";
             }
 
-            win.log(images_select);
-
             $("#backgroundImageSelector").html(images_select);
 
         },
-
         saveSetting: function (e) {
 
             var value = false;
@@ -98,40 +106,35 @@
 
             switch (field.attr('name')) {
 
-            case ('presentation_monitor'):
+                case ('presentation_monitor'):
 
-                value = $('option:selected', field).val();
-                break;
+                    value = $('option:selected', field).val();
+                    break;
 
-            case ('slide_string_mode'):
+                case ('font_family'):
 
-                value = $('option:selected', field).val();
-                break;
+                    value = $('option:selected', field).val();
+                    break;
 
-            case ('font_family'):
+                case ('backgrounds_path'):
 
-                value = $('option:selected', field).val();
-                break;
+                    value = field.val();
+                    $('#fakebackgroundsdir').attr('value', value);
+                    background_path_changed = true;
 
-            case ('backgrounds_path'):
+                    break;
 
-                value = field.val();
-                $('#fakebackgroundsdir').attr('value', value);
-                background_path_changed = true;
+                case ('background_mode'):
 
-                break;
+                    value = $('option:selected', field).val();
 
-            case ('background_mode'):
+                    break;
 
-                value = $('option:selected', field).val();
+                case ('background'):
 
-                break;
+                    value = $('option:selected', field).val();
 
-            case ('background'):
-
-                value = $('option:selected', field).val();
-
-                break;
+                    break;
             }
             win.info('Setting changed: ' + field.attr('name') + ' - ' + value);
             Settings[field.attr('name')] = value;
@@ -151,7 +154,6 @@
             this.redrawPreview();
 
         },
-
     });
 
     App.View.ChurchService.Settings = ChurchServiceSettings;

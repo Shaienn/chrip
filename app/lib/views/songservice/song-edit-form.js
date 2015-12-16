@@ -230,7 +230,9 @@
                     corrected_text += one_line_text.charAt(0).toUpperCase() + one_line_text.slice(1) + '\n';
                 }
 
-                var preparedText = corrected_text.trim().replace(/\r\n|\n/g, "<br>");
+                var preparedText = corrected_text.trim()
+                        .replace(App.Config.chord_pattern, "")
+                        .replace(/\r\n|\n/g, "<br>");
                 songpart.set('text', corrected_text.trim());
                 songpart.set('text_visual', preparedText);
 
@@ -278,7 +280,9 @@
                     songPart.set('type', p);
                     songPart.set('type_visual', App.Config.song_parts_patterns[p].name);
                     songPart.set('text', part_text);
-                    songPart.set('text_visual', part_text.replace(/\r\n|\n/g, "<br>"));
+                    songPart.set('text_visual', part_text.
+                            replace(App.Config.chord_pattern, "").
+                            replace(/\r\n|\n/g, "<br>"));
 
                     /* Add to collection */
 

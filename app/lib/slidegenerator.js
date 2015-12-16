@@ -26,9 +26,9 @@
             /* Change newline characters for <br> tag. Needs for bigtext script */
 
             var sourceText = verse.get('text');
-            
+
             /* Find _strings_ and make it italic */
-            
+
             var preparedText = sourceText.trim().replace(/_(.*?)_/g, "<span class='italic'>$1</span>");
             var screen_bounds = ((Settings.Utils.getScreens())[Settings.presentation_monitor]).bounds;
 
@@ -94,11 +94,11 @@
 
             var screen_bounds = ((Settings.Utils.getScreens())[Settings.presentation_monitor]).bounds;
 
-
             slideModel.set("text", preparedText);
             slideModel.set("background", slideBackground);
             slideModel.set("width", screen_bounds.width);
             slideModel.set("height", screen_bounds.height);
+            slideModel.set("font", Settings.font_family.toLowerCase());
             d.resolve(slideModel);
 
             return d.promise;

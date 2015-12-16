@@ -41,8 +41,6 @@
                 collection: App.Model.SearchVerseListCollection,
             }));
 
-
-
         },
         onDestroy: function () {
 
@@ -75,9 +73,7 @@
 
             /* Select verse */
 
-            console.log("select verse request: " + verse_number);
             var verse_list = $('#bible_verselist ul');
-            console.log(verse_list.length);
             var currentVerse = verse_list.find('li div[verse=' + verse_number + ']');
             currentVerse.parent().trigger('click');
             currentVerse.parent().addClass('active');

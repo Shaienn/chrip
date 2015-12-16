@@ -22,6 +22,7 @@
         },
         showSlide: function (e) {
 
+            console.log("showslide");
             var elem = $(this.el);
 
             if (e.pageX !== sl_prevX || e.pageY !== sl_prevY) {
@@ -89,7 +90,6 @@
 
             var controlPanel = $('#controlPanel ul');
             var currentSlide = controlPanel.find('li.active');
-            currentSlide.find('.slide-container').addClass("test");
             currentSlide.find('.slide-container').trigger('click');
 
         },
@@ -104,7 +104,7 @@
             win.log("show control");
             this.redrawSlides();
             App.vent.trigger("songservice:control:showslide", this.collection.at(0));
-
+            
         },
     });
 

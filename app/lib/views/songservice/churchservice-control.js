@@ -77,7 +77,6 @@
                     number: slide.get("number"),
                 }));
                 var newSlide = content.find('div.slide-container').not(".garbage");
-                console.log(newSlide);
                 newSlide.find("div.slide_text span").bigText();
                 newSlide.css("opacity", 0);
 
@@ -91,8 +90,12 @@
                             }
                         }
                 );
-
             }
+
+            $('.control-panel-list .slide-item.active').removeClass('active');
+            $('.control-panel-list .slide-item div[number=' + slide.get('number') + ']')
+                    .parent().addClass("active");
+
         },
         /* Modal window */
 
@@ -133,7 +136,7 @@
         keyHandler: function (event) {
 
             event.preventDefault();
-            event.stopPropagation();
+
             var key = event.which;
 
             if ((key >= 97) && (key <= 105)) {
