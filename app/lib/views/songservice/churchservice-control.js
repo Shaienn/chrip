@@ -75,6 +75,7 @@
                     height: slide.get("height"),
                     width: slide.get("width"),
                     number: slide.get("number"),
+                    font: slide.get("font"),
                 }));
                 var newSlide = content.find('div.slide-container').not(".garbage");
                 newSlide.find("div.slide_text span").bigText();
@@ -91,6 +92,8 @@
                         }
                 );
             }
+
+
 
             $('.control-panel-list .slide-item.active').removeClass('active');
             $('.control-panel-list .slide-item div[number=' + slide.get('number') + ']')

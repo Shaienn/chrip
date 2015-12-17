@@ -18,12 +18,56 @@ h2, .h2{
     width: 70% !important;
 }
 
+.width-60-percent {
+    width: 60% !important;
+}
+
 .width-50-percent {
     width: 50% !important;
 }
 
 .width-30-percent {
     width: 30% !important;
+}
+
+.width-20-percent {
+    width: 20% !important;
+}
+
+.ia-left, .ia-center, .ia-right{
+    display:flex; 
+}
+
+.ia-left{
+    justify-content: flex-start;
+}
+
+.ia-center{
+    justify-content: center;
+}
+
+.ia-right{
+    justify-content: flex-end;
+}
+
+#freeze-mode-btn-container li:nth-child(even){
+    display:none;
+}
+
+#freeze-mode-btn-container li:nth-child(odd){
+    display:block;
+}
+
+#freeze-mode-btn-container.active li:nth-child(even){
+    display:block;
+}
+
+#freeze-mode-btn-container.active li:nth-child(odd){
+    display:none;
+}
+
+#freeze-mode-btn-container i:before{
+    margin-right: 0.3em;
 }
 
 #main-window #content {

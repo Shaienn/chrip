@@ -77,7 +77,7 @@
                 if (key == 32) {
                     App.freeze_mode = App.freeze_mode == true ? false : true;
                     console.log("Freeze is " + App.freeze_mode);
-                    /* TODO call event to change indocation */
+                    App.vent.trigger("main_toolbar:set_freeze_mode_indication", App.freeze_mode);
                 }
 
             }
