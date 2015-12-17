@@ -58,12 +58,6 @@
         },
         showVerseSlide: function (verse) {
 
-//            var itemCollection = new App.Model.ControlPanelCollection(verse.slides);
-//            var itemCollectionView = new App.View.BibleControlPanelCollection({
-//                collection: itemCollection,
-//            });
-//            this.SlidesControl_r.show(itemCollectionView);
-
             this.SlideControl_r.show(new App.View.Bible.VerseSlide({
                 model: verse.slide
             }));

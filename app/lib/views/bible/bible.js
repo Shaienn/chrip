@@ -25,9 +25,7 @@
         },
 
         onShow: function(){
-
             this.showControl();
-
         },
 
 

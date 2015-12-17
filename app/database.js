@@ -69,10 +69,13 @@ var Q = require('q');
 
                     Database.db.run("CREATE TABLE IF NOT EXISTS [Authors] ([memid] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,[author_id] INTEGER NOT NULL,[global_author_id] INTEGER,[name] TEXT NOT NULL,[db] TEXT NOT NULL)");
                     Database.db.run("CREATE TABLE IF NOT EXISTS [Songs] ([memid] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,[song_id] INTEGER NOT NULL,[author_id] INTEGER NOT NULL,[global_song_id] INTEGER,[global_author_id] INTEGER,[name] TEXT,[db] TEXT NOT NULL, [text] TEXT)");
+                    Database.db.run("CREATE TABLE IF NOT EXISTS [Books] ([id] INTEGER NOT NULL PRIMARY KEY, [full_name] TEXT NOT NULL, [short_name] TEXT NOT NULL)");
+                    Database.db.run("CREATE TABLE IF NOT EXISTS [Chapters] ([verses] NUMERIC, [bid] INTEGER, [cid] INTEGER, [content] TEXT)");
+
 
                     /* Global db */
 
-                    Database.db.exec("ATTACH'" + App.Config.db_global + "'AS webdb", function (err) {
+                    Database.db.exec("ATTACH'" + App.Config.execDir + App.Config.db_global + "'AS webdb", function (err) {
                         if (err != null) {
                             win.error("Attach global database failed. Got error: " + err);
                         }
@@ -84,7 +87,7 @@ var Q = require('q');
 
                     /* User db */
 
-                    Database.db.exec("ATTACH'" + App.Config.db_user + "'AS userdb", function (err) {
+                    Database.db.exec("ATTACH'" + App.Config.execDir + App.Config.db_user + "'AS userdb", function (err) {
                         if (err != null) {
                             win.error("Attach local database failed. Got error: " + err);
                         }
@@ -97,10 +100,28 @@ var Q = require('q');
                     Database.db.run("INSERT INTO main.Songs (song_id, author_id, name, db, global_song_id, global_author_id, text) SELECT song_id, global_author_id, name, '2', global_song_id, global_author_id, text FROM userdb.Songs WHERE global_author_id IS NOT 0 AND global_song_id IS NOT 0");
                     Database.db.exec("DETACH userdb");
 
+                    /* Bible db */
+
+                    Database.db.exec("ATTACH'" + App.Config.execDir + App.Config.db_bible + "'AS bibledb", function (err) {
+                        if (err != null) {
+                            win.error("Attach local database failed. Got error: " + err);
+                        }
+                    });
+
+                    Database.db.run("INSERT INTO main.Books (id, full_name, short_name) SELECT id, full_name, short_name FROM bibledb.Books");
+                    Database.db.run("INSERT INTO main.Chapters (verses, bid, cid, content) SELECT verses, bid, cid, content FROM bibledb.Chapters");
+                    Database.db.exec("DETACH bibledb");
+
                     Database.db.exec("CREATE VIRTUAL TABLE Songslist USING fts4(song_id, name, db, text)");
                     Database.db.run("INSERT INTO Songslist (song_id, name, db, text) SELECT song_id,  LOWER(name), db, LOWER(text) FROM Songs", function () {
                         d.resolve(true);
                         console.log("database init");
+                    });
+
+                    Database.db.exec("CREATE VIRTUAL TABLE Biblecontent USING fts4(bid, cid, verses, content)");
+                    Database.db.run("INSERT INTO Biblecontent (bid, cid, verses, content) SELECT bid, cid, verses, LOWER(content) FROM Chapters", function () {
+                        d.resolve(true);
+                        console.log("bible database init");
                     });
                 });
 
@@ -210,7 +231,7 @@ var Q = require('q');
 
             var d = Q.defer();
 
-            Database.bible_db.all("SELECT Books.*, COUNT(Chapters.cid) as count FROM Books INNER JOIN Chapters ON Books.id=Chapters.bid GROUP BY Books.id", function (err, rows) {
+            Database.db.all("SELECT Books.*, COUNT(Chapters.cid) as count FROM Books INNER JOIN Chapters ON Books.id=Chapters.bid GROUP BY Books.id", function (err, rows) {
 
                 if (err != null) {
                     win.error("Load Books failed. Got error: " + err);
@@ -238,7 +259,7 @@ var Q = require('q');
         },
         loadBibleChapter: function (book_id, chapter_id) {
             var d = Q.defer();
-            var stmt = Database.bible_db.prepare("SELECT * FROM Chapters WHERE bid=? AND cid=?");
+            var stmt = Database.db.prepare("SELECT * FROM Chapters WHERE bid=? AND cid=?");
             stmt.all(book_id, chapter_id, function (err, rows) {
 
                 if (err != null) {
@@ -259,6 +280,34 @@ var Q = require('q');
 
             return d.promise;
 
+        },
+        searchBibleVerse: function (search_string) {
+            var d = Q.defer();
+            var stmt = Database.db.prepare("SELECT DISTINCT c.* FROM Chapters c, Biblecontent bc WHERE bc.content MATCH ? AND c.cid = bc.cid AND c.bid = bc.bid ORDER BY c.bid");
+            stmt.all(search_string.toString().toLowerCase(), function (err, rows) {
+                console.log(rows);
+
+                if (err != null) {
+                    win.error("Search verses failed. Got error: " + err);
+                    d.reject(err);
+                    return;
+                }
+
+                var loadedChapters = [];
+
+                rows.forEach(function (item, i, arr) {
+                    loadedChapters.push({
+                        verses: item.verses,
+                        bid: item.bid,
+                        cid: item.cid,
+                        content: item.content
+                    });
+                });
+
+                d.resolve(loadedChapters);
+            })
+
+            return d.promise;
         },
         search: function (search_string) {
 

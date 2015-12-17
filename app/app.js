@@ -117,7 +117,8 @@ var initApp = function () {
 
     win.info("Start init app");
 
-    App.Config.execDir = path.dirname(process.execPath);
+//        App.Config.execDir = path.dirname(process.execPath);
+    App.Config.execDir = "";
 
     App.ControlWindow = win;
     App.vlc = wcjs.createPlayer();

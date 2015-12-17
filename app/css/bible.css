@@ -7,11 +7,30 @@
 }
 
 
-#bible_verselist, #bible_versequeue{
+#bible_verselist_container, #bible_versequeue_container{
     height: 100%;
     width: 50%;
     float: left;
 }
+
+#bible_verselist, #bible_versequeue{
+    height: 90%;
+}
+
+.wrapper{
+    width: 98%;
+    margin: 1%;
+    border: 3px solid #17181b;
+    height: calc(98% - 6px);
+}
+
+#bible_verselist_container h2, #bible_versequeue_container h2{
+    color: white;
+    text-align: center;
+    height: 10%;
+}
+
+
 
 #bible_low_half, #bible_high_half{
     width: 100%;
@@ -38,6 +57,7 @@
 
 #bible_search{
     float:left;
+    height: 100%;
     width: 50%;
     display: flex;
     align-items: center;

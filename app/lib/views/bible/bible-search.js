@@ -78,10 +78,50 @@
 
         prepareVerses: function (e) {
             e.preventDefault();
+            var pattern = /([0-9]+)(.+)/i
+            var that = this;
+            App.Model.SearchVerseListCollection.reset([]);
 
             if (this.Bible.Valid == false) {
 
                 /* Here we just search input text in bible */
+
+                var value = this.ui.searchInput.val();
+                var check_value = value.replace(/[*^+?]/g, "").toLowerCase();
+                console.log(value);
+
+                App.Database.searchBibleVerse(value).then(function (loadedChapters) {
+
+                    for (var i = 0; i < loadedChapters.length; i++) {
+
+                        var current_lines = loadedChapters[i].content.split('\n');
+
+                        /* Find exact verse that contain searching string */
+
+                        for (var j = 0; j < current_lines.length; j++) {
+                            if (current_lines[j].toString().toLowerCase().indexOf(check_value) > -1) {
+
+                                var found = current_lines[j].match(pattern);
+                                if (found) {
+                                    var text = found[2].trim();
+                                    console.log(that.Bible.Shorts);
+                                    console.log(loadedChapters[i].bid);
+                                    var bottom_text = that.Bible.Shorts[loadedChapters[i].bid] + " " + loadedChapters[i].cid + ":" + found[1].trim();
+
+                                    var verse = new App.Model.Verse();
+
+                                    verse.set('text', text);
+                                    verse.set('bottom_text', bottom_text);
+                                    verse.set('cid', loadedChapters[i].cid);
+                                    verse.set('verse', found[1].trim());
+
+                                    App.Model.SearchVerseListCollection.add(verse);
+                                }
+                            }
+
+                        }
+                    }
+                });
 
                 return;
 
@@ -89,10 +129,9 @@
 
                 /* Create Verse models from strings */
 
-                var pattern = /([0-9]+)(.+)/i
                 var verses_lines = this.Bible.Chapter.content.split('\n');
 
-                App.Model.SearchVerseListCollection.reset([]);
+
                 for (var s in verses_lines) {
                     var found = verses_lines[s].match(pattern);
                     if (found) {
@@ -137,7 +176,6 @@
                     /* If ordered only one verse */
 
                     if (found[3]) {
-
                         var verse = parseInt(found[3], 10);
                         if (verse > that.Bible.Chapter.verses) {
                             console.log("There is no " + verse + " verse");
@@ -148,7 +186,6 @@
                         that.Bible.Selected = verse;
                         that.Bible.Valid = true;
                         return;
-
                     }
 
                     console.log("Verses validation failed");

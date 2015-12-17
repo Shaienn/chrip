@@ -31,6 +31,7 @@ app.nw
 
 # vim swap files
 *.swp
+*.*~
 
 src/app/css/app.css
 *.sublime-*
