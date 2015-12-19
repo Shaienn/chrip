@@ -5,7 +5,6 @@
 var sqlite3 = require('sqlite3').verbose();
 var Q = require('q');
 
-
 (function (App) {
     'use strict';
 
@@ -15,7 +14,6 @@ var Q = require('q');
 
         user_db: new sqlite3.Database(App.Config.execDir + App.Config.db_user),
         global_db: new sqlite3.Database(App.Config.execDir + App.Config.db_global),
-        bible_db: new sqlite3.Database(App.Config.execDir + App.Config.db_bible),
         user_db_check: function () {
 
             /* Check user.db, create tables if not exists */
@@ -100,28 +98,10 @@ var Q = require('q');
                     Database.db.run("INSERT INTO main.Songs (song_id, author_id, name, db, global_song_id, global_author_id, text) SELECT song_id, global_author_id, name, '2', global_song_id, global_author_id, text FROM userdb.Songs WHERE global_author_id IS NOT 0 AND global_song_id IS NOT 0");
                     Database.db.exec("DETACH userdb");
 
-                    /* Bible db */
-
-                    Database.db.exec("ATTACH'" + App.Config.execDir + App.Config.db_bible + "'AS bibledb", function (err) {
-                        if (err != null) {
-                            win.error("Attach local database failed. Got error: " + err);
-                        }
-                    });
-
-                    Database.db.run("INSERT INTO main.Books (id, full_name, short_name) SELECT id, full_name, short_name FROM bibledb.Books");
-                    Database.db.run("INSERT INTO main.Chapters (verses, bid, cid, content) SELECT verses, bid, cid, content FROM bibledb.Chapters");
-                    Database.db.exec("DETACH bibledb");
-
                     Database.db.exec("CREATE VIRTUAL TABLE Songslist USING fts4(song_id, name, db, text)");
                     Database.db.run("INSERT INTO Songslist (song_id, name, db, text) SELECT song_id,  LOWER(name), db, LOWER(text) FROM Songs", function () {
                         d.resolve(true);
                         console.log("database init");
-                    });
-
-                    Database.db.exec("CREATE VIRTUAL TABLE Biblecontent USING fts4(bid, cid, verses, content)");
-                    Database.db.run("INSERT INTO Biblecontent (bid, cid, verses, content) SELECT bid, cid, verses, LOWER(content) FROM Chapters", function () {
-                        d.resolve(true);
-                        console.log("bible database init");
                     });
                 });
 
@@ -129,21 +109,6 @@ var Q = require('q');
             });
 
             return d.promise;
-        },
-        bibleconvert: function () {
-
-            Database.bible_db.all("SELECT bid, cid, content from Chapters", function (err, rows) {
-                var loadedBooks = [];
-
-                rows.forEach(function (item, i, arr) {
-
-                    var length = item.content.split(/\r\n|\r|\n/).length
-                    var stmt = Database.bible_db.prepare("UPDATE Chapters SET verses = ? WHERE bid = ? AND cid = ?");
-                    stmt.run(length - 1, item.bid, item.cid);
-
-                });
-            });
-
         },
         convert: function () {
 
@@ -224,88 +189,6 @@ var Q = require('q');
                 console.log("Settings ready");
                 d.resolve(true);
             });
-
-            return d.promise;
-        },
-        loadBibleBooks: function () {
-
-            var d = Q.defer();
-
-            Database.db.all("SELECT Books.*, COUNT(Chapters.cid) as count FROM Books INNER JOIN Chapters ON Books.id=Chapters.bid GROUP BY Books.id", function (err, rows) {
-
-                if (err != null) {
-                    win.error("Load Books failed. Got error: " + err);
-                    d.reject(err);
-                }
-
-                var loadedBooks = [];
-
-                rows.forEach(function (item, i, arr) {
-
-                    loadedBooks.push({
-                        id: item.id,
-                        full_name: item.full_name,
-                        short_name: item.short_name,
-                        chapters: item.count,
-                    });
-
-                });
-
-                d.resolve(loadedBooks);
-
-            });
-
-            return d.promise;
-        },
-        loadBibleChapter: function (book_id, chapter_id) {
-            var d = Q.defer();
-            var stmt = Database.db.prepare("SELECT * FROM Chapters WHERE bid=? AND cid=?");
-            stmt.all(book_id, chapter_id, function (err, rows) {
-
-                if (err != null) {
-                    win.error("Load chapter failed. Got error: " + err);
-                    d.reject(err);
-                }
-
-                var loadedChapter = {};
-
-                rows.forEach(function (item, i, arr) {
-                    loadedChapter.cid = item.cid;
-                    loadedChapter.verses = item.verses;
-                    loadedChapter.content = item.content;
-                });
-
-                d.resolve(loadedChapter);
-            });
-
-            return d.promise;
-
-        },
-        searchBibleVerse: function (search_string) {
-            var d = Q.defer();
-            var stmt = Database.db.prepare("SELECT DISTINCT c.* FROM Chapters c, Biblecontent bc WHERE bc.content MATCH ? AND c.cid = bc.cid AND c.bid = bc.bid ORDER BY c.bid");
-            stmt.all(search_string.toString().toLowerCase(), function (err, rows) {
-                console.log(rows);
-
-                if (err != null) {
-                    win.error("Search verses failed. Got error: " + err);
-                    d.reject(err);
-                    return;
-                }
-
-                var loadedChapters = [];
-
-                rows.forEach(function (item, i, arr) {
-                    loadedChapters.push({
-                        verses: item.verses,
-                        bid: item.bid,
-                        cid: item.cid,
-                        content: item.content
-                    });
-                });
-
-                d.resolve(loadedChapters);
-            })
 
             return d.promise;
         },

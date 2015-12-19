@@ -1,7 +1,8 @@
-./app/nbproject/private/
-./dist/
-./cache/
-/app/chrip/nbproject/private/
-/nbproject/private/
-/nbproject
+app/nbproject/private
+dist
+build
+cache
+app/chrip/nbproject/private
+nbproject/private
+nbproject
 node_modules

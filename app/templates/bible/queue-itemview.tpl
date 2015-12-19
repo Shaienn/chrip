@@ -6,7 +6,7 @@
 
     <div class="verse_link">
         <div>
-            <%= bottom_text %>
+            <%= short_link %>
         </div>
     </div>
 

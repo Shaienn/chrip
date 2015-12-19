@@ -7,6 +7,8 @@
         template: '#bible-search-tpl',
         id: 'bible-search-contain',
         Bible: {
+            versions: [],
+            active_bible_index: null,
             /* Came from database */
 
             Books: [],
@@ -15,9 +17,9 @@
             Verses: [],
             /* Parsed numbers */
 
-            Book: 0,
-            Chapter: {},
-            Selected: [],
+            Book: null,
+            Chapter: null,
+            Verse: null,
             Valid: false,
         },
         ui: {
@@ -33,169 +35,132 @@
 
             App.vent.on("bible:control:onEvent", _.bind(this.onEvent, this));
 
+            /* Load all bibles version */
+            this.Bible.versions = new App.Model.XMLBibleCollection();
+            this.Bible.versions.add(new App.Model.XMLBible({
+                xmlpath: "./xml/sinoid_utf.xml"
+            }));
+
+            this.Bible.active_bible_index = 0;
         },
         onShow: function () {
-
-            this.loadBooks();
-
+            var that = this;
+            var active_bible = this.Bible.versions.at(this.Bible.active_bible_index);
+            active_bible.activate().then(function (res, err) {
+                var books = active_bible.books;
+                for (var o in books) {
+                    that.Bible.Shorts.push(books[o].short_name);
+                }
+                that.ui.searchInput.suggest(that.Bible.Shorts, {});
+            });
         },
         onDestroy: function () {
-
             App.vent.off("bible:control:onEvent");
         },
         /******************/
-
         onEvent: function () {
             this.ui.searchInput.focus();
         },
-        loadBooks: function () {
-            var that = this;
-            App.Database.loadBibleBooks().then(function (loadedBooks) {
-                that.Bible.Books = loadedBooks;
-                for (var o in loadedBooks) {
-                    that.Bible.Shorts.push(loadedBooks[o].short_name)
-                }
-
-                that.ui.searchInput.suggest(that.Bible.Shorts, {});
-
-            });
+        getChapter: function (bid, cid) {
+            return this.Bible.versions.at(this.Bible.active_bible_index).getChapter(bid, cid);
         },
-        loadChapter: function (bid, cid) {
-            var that = this;
-
-            var d = Q.defer();
-            App.Database.loadBibleChapter(bid, cid).then(function (loadedChapter) {
-
-                /* Parse chapter for verses */
-
-                that.Bible.Verses = loadedChapter.split('\n');
-                d.resolve(true);
-            });
-
-            return d.promise;
+        getChapterWithVerses: function (bid, cid) {
+            return this.Bible.versions.at(this.Bible.active_bible_index).getChapterWithVerses(bid, cid);
         },
-        /******************/
+        getBook: function (bid) {
+            return this.Bible.versions.at(this.Bible.active_bible_index).getBook(bid);
+        },
+        search: function (string) {
+            return this.Bible.versions.at(this.Bible.active_bible_index).search(string);
+        },
+        /********ч**********/
 
         prepareVerses: function (e) {
             e.preventDefault();
-            var pattern = /([0-9]+)(.+)/i
-            var that = this;
             App.Model.SearchVerseListCollection.reset([]);
 
             if (this.Bible.Valid == false) {
 
-                /* Here we just search input text in bible */
-
                 var value = this.ui.searchInput.val();
-                var check_value = value.replace(/[*^+?]/g, "").toLowerCase();
-                console.log(value);
+                var result = this.search(value);
 
-                App.Database.searchBibleVerse(value).then(function (loadedChapters) {
+                for (var v = 0; v < result.length; v++) {
 
-                    for (var i = 0; i < loadedChapters.length; i++) {
+                    var verse = result[v];
+                    console.log(verse);
+                    var verse_book = this.getBook(verse.bid);
+                    var verse_chapter = this.getChapter(verse.bid, verse.cid);
 
-                        var current_lines = loadedChapters[i].content.split('\n');
+                    var bottom_text = verse_book.full_name + " " + verse_chapter.number + ":" + verse.number;
+                    var short_link = verse_book.short_name + " " + verse_chapter.number + ":" + verse.number;
+                    var verse_model = new App.Model.Verse();
 
-                        /* Find exact verse that contain searching string */
+                    verse_model.set('text', verse.text);
+                    verse_model.set('bottom_text', bottom_text);
+                    verse_model.set('short_link', short_link);
+                    verse_model.set('cid', verse_chapter.number);
+                    verse_model.set('verse', verse.number);
 
-                        for (var j = 0; j < current_lines.length; j++) {
-                            if (current_lines[j].toString().toLowerCase().indexOf(check_value) > -1) {
-
-                                var found = current_lines[j].match(pattern);
-                                if (found) {
-                                    var text = found[2].trim();
-                                    console.log(that.Bible.Shorts);
-                                    console.log(loadedChapters[i].bid);
-                                    var bottom_text = that.Bible.Shorts[loadedChapters[i].bid] + " " + loadedChapters[i].cid + ":" + found[1].trim();
-
-                                    var verse = new App.Model.Verse();
-
-                                    verse.set('text', text);
-                                    verse.set('bottom_text', bottom_text);
-                                    verse.set('cid', loadedChapters[i].cid);
-                                    verse.set('verse', found[1].trim());
-
-                                    App.Model.SearchVerseListCollection.add(verse);
-                                }
-                            }
-
-                        }
-                    }
-                });
-
-                return;
-
+                    App.Model.SearchVerseListCollection.add(verse_model);
+                }
+                
             } else {
 
                 /* Create Verse models from strings */
 
-                var verses_lines = this.Bible.Chapter.content.split('\n');
+                var chapter = this.getChapterWithVerses(this.Bible.Book, this.Bible.Chapter);
+                for (var v in chapter.verses) {
 
+                    console.log(this.getBook(this.Bible.Book));
+                    var bottom_text = this.getBook(this.Bible.Book).full_name + " " + chapter.number + ":" + chapter.verses[v].$.number;
+                    var short_link = this.getBook(this.Bible.Book).short_name + " " + chapter.number + ":" + chapter.verses[v].$.number;
+                    var verse = new App.Model.Verse();
 
-                for (var s in verses_lines) {
-                    var found = verses_lines[s].match(pattern);
-                    if (found) {
-                        var text = found[2].trim();
-                        var bottom_text = this.Bible.Shorts[this.Bible.Book] + " " + this.Bible.Chapter.cid + ":" + found[1].trim();
+                    verse.set('text', chapter.verses[v]._);
+                    verse.set('bottom_text', bottom_text);
+                    verse.set('short_link', short_link);
+                    verse.set('cid', chapter.number);
+                    verse.set('verse', chapter.verses[v].$.number);
 
-                        var verse = new App.Model.Verse();
-
-                        verse.set('text', text);
-                        verse.set('bottom_text', bottom_text);
-                        verse.set('cid', this.Bible.Chapter.cid);
-                        verse.set('verse', found[1].trim());
-
-                        App.Model.SearchVerseListCollection.add(verse);
-                    }
+                    App.Model.SearchVerseListCollection.add(verse);
                 }
             }
         },
         input: function (e) {
-
-            var that = this;
             var full_pattern = /([0-9]?[А-Яа-яЁё]+) ([0-9]+) ([0-9]+)/i
             var first_pattern = /([0-9]?[А-Яа-яЁё]+)/i
             var value = this.ui.searchInput.val();
-
             var found = value.match(full_pattern);
+            console.log(found);
             if (found) {
 
                 if (this.book_validate(found[1]) == false) {
+                    console.log("Book validation failed");
                     this.Bible.Valid = false;
                     return;
                 }
 
-                var chapter = parseInt(found[2], 10);
+                var chapter_number = parseInt(found[2], 10) - 1;
+                var chapter = this.getChapterWithVerses(this.Bible.Book, chapter_number);
 
-                App.Database.loadBibleChapter(this.Bible.Books[this.Bible.Book].id, chapter).then(function (loadedChapter) {
+                /* If ordered only one verse */
 
-                    /* Parse chapter for verses */
-
-                    that.Bible.Chapter = loadedChapter;
-
-                    /* If ordered only one verse */
-
-                    if (found[3]) {
-                        var verse = parseInt(found[3], 10);
-                        if (verse > that.Bible.Chapter.verses) {
-                            console.log("There is no " + verse + " verse");
-                            that.Bible.Valid = false;
-                            return;
-                        }
-
-                        that.Bible.Selected = verse;
-                        that.Bible.Valid = true;
+                if (found[3]) {
+                    var verse_number = parseInt(found[3], 10) - 1;
+                    if (verse_number > chapter.verses.length) {
+                        console.log("There is no " + verse_number + " verse");
+                        this.Bible.Valid = false;
                         return;
                     }
 
-                    console.log("Verses validation failed");
-                    that.Bible.Valid = false;
+                    this.Bible.Chapter = chapter_number;
+                    this.Bible.Verse = verse_number;
+                    this.Bible.Valid = true;
                     return;
+                }
 
-                }, function (err) {
-                    console.log("got error");
-                });
-
+                console.log("Verses validation failed");
+                this.Bible.Valid = false;
                 return;
             }
             found = value.match(first_pattern);
@@ -219,8 +184,7 @@
                 if (lowercase_input == lowercase_short) {
                     short_valid = true;
                     that.Bible.Book = i;
-                    that.Bible.Chapters = that.Bible.Books[i].chapters;
-                    return;
+                    return short_valid;
                 }
             });
 
