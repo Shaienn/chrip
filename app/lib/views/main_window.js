@@ -114,37 +114,42 @@
 
             App.Database.init().then(function () {
                 App.Database.loadSettings().then(function () {
+                    App.Database.getVersion().then(function () {
 
-                    /* Menu */
+                        App.Update.runCheckUpdade();
 
-                    that.Menu.show(new App.View.AppModeMenu());
+                        /* Menu */
 
-                    /* Top toolbar */
+                        that.Menu.show(new App.View.AppModeMenu());
 
-                    that.TopToolbar_r.show(new App.View.MainWindow.TopToolbar);
+                        /* Top toolbar */
 
-                    for (var i in that.tabs) {
-                        var tab = that.tabs[i];
-                        that.getRegion(tab.region).show(new App.View[tab.startPoint].Root());
-                        var tabContainer = $(that.getRegion(tab.region).el);
+                        that.TopToolbar_r.show(new App.View.MainWindow.TopToolbar);
 
-                        if (Settings.appMode == tab.setting) {
-                            tabContainer.show();
-                            $(tab.button).addClass('active');
-                        } else {
-                            tabContainer.hide();
-                            $(tab.button).removeClass('active');
+                        for (var i in that.tabs) {
+                            var tab = that.tabs[i];
+                            that.getRegion(tab.region).show(new App.View[tab.startPoint].Root());
+                            var tabContainer = $(that.getRegion(tab.region).el);
+
+                            if (Settings.appMode == tab.setting) {
+                                tabContainer.show();
+                                $(tab.button).addClass('active');
+                            } else {
+                                tabContainer.hide();
+                                $(tab.button).removeClass('active');
+                            }
                         }
-                    }
 
-                    that.switchTabTo(Settins.appMode);
+                        that.switchTabTo(Settins.appMode);
 
-                    /* Application is ready to work */
+                        /* Application is ready to work */
 
-                    App.vent.trigger('main:ready');
+                        App.vent.trigger('main:ready');
 
-                    console.log("Ready");
 
+                        console.log("Ready");
+
+                    });
                 });
             });
         },

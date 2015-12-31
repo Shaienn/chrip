@@ -2,12 +2,10 @@
  * Created by shaienn on 02.09.15.
  */
 
-var sqlite3 = require('sqlite3').verbose();
-var Q = require('q');
-
 (function (App) {
     'use strict';
-
+    var sqlite3 = require('sqlite3').verbose();
+    var Q = require('q');
     var Database = {
         db: {},
         //db: new sqlite3.Database('test.db'),
@@ -171,6 +169,20 @@ var Q = require('q');
             });
 
 
+        },
+        getVersion: function () {
+            var d = Q.defer();
+            Database.global_db.each("SELECT version FROM Version WHERE version_id = 1", function (err, row) {
+
+                if (err != null) {
+                    win.error("Load version failed. Got error: " + err);
+                    Settings.Config.version = 0;
+                }
+
+                Settings.Config.version = row.version;
+                d.resolve(true);
+            });
+            return d.promise;
         },
         loadSettings: function () {
 

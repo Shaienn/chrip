@@ -20,6 +20,7 @@ var path = require("path");
 
     Settings.user_db = "/db/user.db";
     Settings.global_db = "/db/global.db";
+    
 
     /* App settings */
 
@@ -32,6 +33,10 @@ var path = require("path");
     Settings.font_family = "Arial";
     Settings.backgrounds_path = "./src/app/backgrounds/";
 
+    Settings.Config = {
+        version : 0,
+        tmpPath: "./tmp",
+    },
     Settings.Utils = {
 
         backgroundRandom: [],

@@ -122,7 +122,7 @@ var initApp = function () {
 
     App.ControlWindow = win;
     App.vlc = wcjs.createPlayer();
-
+    
     win.maximize();
     win.show();
     win.on("close", closeApp);

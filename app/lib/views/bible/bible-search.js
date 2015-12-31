@@ -7,16 +7,9 @@
         template: '#bible-search-tpl',
         id: 'bible-search-contain',
         Bible: {
-            versions: [],
-            active_bible_index: null,
-            /* Came from database */
-
-            Books: [],
+            Versions: [],
+            Active_bible_index: null,
             Shorts: [],
-            Chapters: 0,
-            Verses: [],
-            /* Parsed numbers */
-
             Book: null,
             Chapter: null,
             Verse: null,
@@ -36,16 +29,16 @@
             App.vent.on("bible:control:onEvent", _.bind(this.onEvent, this));
 
             /* Load all bibles version */
-            this.Bible.versions = new App.Model.XMLBibleCollection();
-            this.Bible.versions.add(new App.Model.XMLBible({
+            this.Bible.Versions = new App.Model.XMLBibleCollection();
+            this.Bible.Versions.add(new App.Model.XMLBible({
                 xmlpath: "./xml/sinoid_utf.xml"
             }));
 
-            this.Bible.active_bible_index = 0;
+            this.Bible.Active_bible_index = 0;
         },
         onShow: function () {
             var that = this;
-            var active_bible = this.Bible.versions.at(this.Bible.active_bible_index);
+            var active_bible = this.Bible.Versions.at(this.Bible.Active_bible_index);
             active_bible.activate().then(function (res, err) {
                 var books = active_bible.books;
                 for (var o in books) {
@@ -62,18 +55,18 @@
             this.ui.searchInput.focus();
         },
         getChapter: function (bid, cid) {
-            return this.Bible.versions.at(this.Bible.active_bible_index).getChapter(bid, cid);
+            return this.Bible.Versions.at(this.Bible.Active_bible_index).getChapter(bid, cid);
         },
         getChapterWithVerses: function (bid, cid) {
-            return this.Bible.versions.at(this.Bible.active_bible_index).getChapterWithVerses(bid, cid);
+            return this.Bible.Versions.at(this.Bible.Active_bible_index).getChapterWithVerses(bid, cid);
         },
         getBook: function (bid) {
-            return this.Bible.versions.at(this.Bible.active_bible_index).getBook(bid);
+            return this.Bible.Versions.at(this.Bible.Active_bible_index).getBook(bid);
         },
         search: function (string) {
-            return this.Bible.versions.at(this.Bible.active_bible_index).search(string);
+            return this.Bible.Versions.at(this.Bible.Active_bible_index).search(string);
         },
-        /********ч**********/
+        /******************/
 
         prepareVerses: function (e) {
             e.preventDefault();
@@ -103,7 +96,7 @@
 
                     App.Model.SearchVerseListCollection.add(verse_model);
                 }
-                
+
             } else {
 
                 /* Create Verse models from strings */

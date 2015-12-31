@@ -59,6 +59,7 @@
   "snapshot": "",
   "node-main": "",
   "devDependencies": {
+    "restify": "^4.0.3",
     "wcjs-multiscreen-renderer": "^0.1.10",
     "wcjs-prebuilt": "latest"
   }
