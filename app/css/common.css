@@ -66,8 +66,12 @@ h2, .h2{
     display:none;
 }
 
-#freeze-mode-btn-container i:before{
+i:before{
     margin-right: 0.3em;
+}
+
+#update-btn{
+    display: none;
 }
 
 #main-window #content {
@@ -186,4 +190,25 @@ h2, .h2{
 
 .search form input:focus::-webkit-input-placeholder {
     color: rgba(195, 197, 199, 0.7);
+}
+
+
+@-webkit-keyframes blinker {  
+    0% { opacity: 1.0; }
+    50% { opacity: 0.0; }
+    100% { opacity: 1.0; } 
+} 
+
+.blink_element{
+
+    -webkit-animation-name: blinker;
+    -webkit-animation-duration: 1s;
+    -webkit-animation-timing-function: linear;
+    -webkit-animation-iteration-count: infinite;
+
+}
+
+.nav > li {
+  position: relative;
+  display: flex;
 }

@@ -68,6 +68,7 @@ _.extend(App, {
     PresentationWindows: [],
     Settings: {},
     Localization: {},
+    Database:{},
     presentation_state: false,
     vlc: null,
     video_contexts: [],
@@ -75,6 +76,23 @@ _.extend(App, {
 });
 
 App.ViewStack = [];
+//App.restart = function () {
+//    var child, child_process = require("child_process");
+//    if (process.platform == "darwin") {
+//        child = child_process.spawn("open", ["-n", "-a", process.execPath.match(/^([^\0]+?\.app)\//)[1]], {detached: true});
+//    } else {
+//        child = child_process.spawn(
+//                App.Config.execDir + "/nw",
+//                [],
+//                {detached: true}
+//        );
+//    }
+//    child.unref();
+//    win.hide();
+//    gui.App.quit();
+//}
+
+
 
 var initTemplates = function () {
 
@@ -113,16 +131,45 @@ var closeApp = function () {
     process.exit(0);
 };
 
+
+var getMac = function () {
+
+    var d = Q.defer();
+
+    require('getmac').getMac(
+            function (err, macAddress) {
+                if (err)
+                    throw err
+
+                console.log(macAddress);
+                Settings.Config.mac = macAddress;
+                d.resolve(macAddress);
+            }
+    );
+
+    return d.promise;
+
+};
+
 var initApp = function () {
 
     win.info("Start init app");
 
+    var nwPath = process.execPath;
+    var nwDir = path.dirname(nwPath);
+    var nwCwd = process.env.PWD;
+
+    console.log(nwPath);
+    console.log(nwDir);
+    console.log(nwCwd);
+
 //        App.Config.execDir = path.dirname(process.execPath);
-    App.Config.execDir = "";
+    App.Config.execDir = nwCwd;
+    App.Config.runDir = nwCwd;
 
     App.ControlWindow = win;
     App.vlc = wcjs.createPlayer();
-    
+
     win.maximize();
     win.show();
     win.on("close", closeApp);
@@ -134,6 +181,9 @@ var initApp = function () {
     }
 };
 
+
+
+
 App.addRegions({
     Window: '.main-window-region'
 });
@@ -143,5 +193,6 @@ App.addInitializer(function (options) {
 
     win.info("Start init");
     initTemplates()
+            .then(getMac)
             .then(initApp);
 });

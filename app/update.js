@@ -2,209 +2,127 @@
 (function (App) {
     var Q = require('q');
     var net = require('net');
-    var fs = require('fs');
-    var request = require('request');
+    var fs = require('fs-extra');
+    var http = require('http');
     var assert = require('assert');
     var restify = require('restify');
 
-
-
     App.Update = {
-        socket: null,
-        connect: function (task) {
-            var that = this;
+        client: null,
+        init: function () {
+            App.vent.on("update:run_update", _.bind(this.runUpdate, this));
+            
+            this.client = restify.createJsonClient({
+                url: Settings.Config.updateServer
+            });
 
-            if (that.socket == null) {
-                that.socket = new net.Socket();
-            }
-
-            if (that.socket.destroyed == false) {
-                that.socket.destroy();
-            }
-
-            that.socket.connect(8888, '127.0.0.1', _.bind(that.clientScheduler, that, task));
-
-//            this.checkUpdateRoutine().then(function () {
-//                that.socket.destroy();
-//            });
+            this.sendSongsForApprove();
+            this.runPeriodicalCheck();
         },
-        runCheckUpdade: function () {
+        runPeriodicalCheck: function () {
             var that = this;
             (function p() {
-                _.bind(that.connect, that)();
-                setTimeout(p, 5000);
+                _.bind(that.runCheckUpdate, that)().done(function (res) {
+
+                    if (res == true) {
+
+                        /* Do not call server again, because we already got info
+                         * that we need to update base
+                         * */
+                        
+                        App.vent.trigger("main_toolbar:set_update_mode_indication", true);
+
+                    } else {
+                        setTimeout(p, Settings.update_period);
+                    }
+
+                }, function (err) {
+                    console.log(err);
+                    setTimeout(p, Settings.update_period);
+                });
             })();
         },
-        clientScheduler: function (task) {
+        runCheckUpdate: function () {
+            var d = Q.defer();
+            this.client.get('/songbase', function (err, req, res, obj) {
 
-            console.log(task);
+                if (err)
+                    d.reject(err);
 
-            switch (task) {
-                case "getSongBaseUrl":
-                    break;
-                default:
-                    this.checkUpdateRoutine();
-            }
-
-        },
-        /* 
-         * Get songBase version from server, compare it with local 
-         * and set or not set update available flag
-         */
-
-        checkUpdateRoutine: function () {
-            console.log("check request");
-            this.getLastVersionNumber().then(function (result) {
-                if (result != Settings.Config.version) {
-                    console.log("UPDATE");
-
-                    /* TODO set update available flag */
-
+                if ((typeof obj != "undefined") && (typeof obj.version != "undefined")) {
+                    if (obj.version != Settings.Config.version) {
+                        d.resolve(true);
+                    } else {
+                        d.resolve(false);
+                    }
+                } else {
+                    d.reject("Wrong server answer");
                 }
             });
-        },
-        
-        
-        
-        
-        
-        
-//        getSongBaseFileLink: function () {
-//            var d = Q.defer();
-//            var that = this;
-//            var request_obj = {
-//                type: "get",
-//                object: "songbase",
-//                request: "file"
-//            };
-//
-//            this.getRequest(request_obj, 5000).then(
-//                    function (result) {
-//                        that.downloadSongBaseFile(result.toString());
-//                        console.log("Path: " + result.toString());
-//                    },
-//                    function (err) {
-//
-//                    });
-//
-//            return d.promise;
-//        },
-//        downloadSongBaseFile: function (uri) {
-//            var d = Q.defer();
-//
-//            var basePath = Settings.Config.tmpPath;
-//
-////            if (fs.existsSync(basePath)) {
-////                fs.rmdirSync(basePath);
-////            }
-//
-//            console.log("create: " + basePath);
-//            fs.mkdirSync(basePath);
-//
-//            request.head(uri, function (err, res, body) {
-//
-//                console.log('content-type:', res.headers['content-type']);
-//                console.log('content-length:', res.headers['content-length']);
-//
-//                var r = request(uri).pipe(fs.createWriteStream(basePath + "global.db"));
-//
-//                r.on('close', function () {
-//                    console.log("closed");
-//                    d.resolve(basePath + "global.db");
-//                });
-//
-//                r.on('error', function () {
-//                    console.log("error");
-//                    d.reject(false);
-//                });
-//            });
-//
-//            return d.promise;
-//        },
-        getLastVersionNumber: function () {
-
-            var d = Q.defer();
-
-            var request_obj = {
-                type: "get",
-                object: "songbase",
-                request: "version"
-            };
-
-            this.getRequest(request_obj).then(
-                    function (result) {
-                        d.resolve(result);
-                    },
-                    function (err) {
-
-                        console.log("got error");
-                        console.log(err);
-                        d.reject(false);
-                    });
-
             return d.promise;
-
         },
-        
-        /* General send request and get answer routine */
-
-        getRequest: function (request_obj, timeout) {
-
-            console.log("getRequest");
-
-            if (typeof (timeout) == "undefined") {
-                timeout = 5000;
-            }
-
+        runUpdate: function () {
             var d = Q.defer();
             var that = this;
-            var data = JSON.stringify(request_obj);
+            this.client.get('/songbase/link', function (err, req, res, obj) {
 
-            var result = this.socket.write(data, 'utf8', function () {
+                if (err)
+                    throw error(err);
 
-                console.log("write complete");
+                if (typeof obj.link != "undefined") {
 
-                var timeoutCounter = setTimeout(function () {
-                    console.log("timeout");
-                    that.socket.destroy();
-                    d.reject("timeout error");
-                }, timeout);
+                    /* Download file */
 
-                that.socket.on('data', function (data) {
-                    console.log("got data");
-                    that.socket.removeAllListeners('data');
-                    clearTimeout(timeoutCounter);
+                    var basePath = Settings.Config.tmpPath;
+                    fs.emptyDirSync(basePath);
+                    var dest = basePath + obj.link;
+                    var file = fs.createOutputStream(dest);
 
-                    var result_obj = JSON.parse(data.toString());
-                    console.log(result_obj);
+                    http.get(Settings.Config.updateServer + obj.link, function (response) {
+                        response.pipe(file);
+                        file.on('finish', function () {
+                            file.close(function () {
 
-                    if (result_obj.type != request_obj.type) {
-                        d.reject("wrong packet");
-                    }
+                                console.log("Download finished. Copy to source location");
 
-                    if (result_obj.object != request_obj.object) {
-                        d.reject("wrong packet");
-                    }
+                                App.Database.close().then(
+                                        function () {
+                                            fs.copySync(dest, App.Config.execDir + Settings.global_db, {clobber: true});
+                                            App.Database.init().then(function () {
+                                                App.vent.trigger("main_toolbar:set_update_mode_indication", false);
+                                                that.runPeriodicalCheck();
+                                            });
+                                        });
+                            });
+                        });
 
-                    if (result_obj.request != request_obj.request) {
-                        d.reject("wrong packet");
-                    }
-
-                    if (result_obj.result == "undefined") {
-                        d.reject("wrong packet");
-                    }
-
-                    d.resolve(result_obj.result);
-                });
+                    }).on('error', function (err) { // Handle errors
+                        fs.unlink(dest);
+                        throw error(err);
+                    });
+                }
             });
-
-            if (result == false) {
-                d.reject("send error");
-            }
-
             return d.promise;
         },
-    }
+        sendSongsForApprove: function () {
+            var that = this;
+            App.Database.getSongsForApprove().then(
+                    function (res) {
+                        for (var i = 0; i < res.length; i++) {
 
+                            var song = res[i];
+                            song.mac = Settings.Config.mac;
+                            that.client.post('/approve', song, function (err, req, res, obj) {
+                                if (err)
+                                    throw new Error(err);
+
+                                if (typeof obj.approve != "undefined")
+                                    App.Database.removeSongForApprove(obj.approve);
+                            });
+                        }
+                    }
+            );
+        }
+    }
 })(window.App);
 

@@ -15,6 +15,7 @@ src/app/vendor
 src/app/themes
 build/
 nbproject/
+tmp/
 
 pids
 logs

@@ -108,6 +108,7 @@
     App.View.SongEditForm = Backbone.Modal.extend({
         id: 'song-modal',
         template: '#song-edit-modal-tpl',
+        lock: false,
         collection_view: null,
         ui: {
             songMeta: "#song-meta",
@@ -133,6 +134,8 @@
             if (options.authors != "undefined") {
                 this.authors = options.authors;
             }
+
+            console.log(this.song);
 
             App.vent.on("modal:show_songpart", _.bind(this.showSongpartDetails, this));
             App.vent.on("modal:remove_songpart", _.bind(this.removeSongpart, this));
@@ -241,7 +244,8 @@
                     background: Settings.background,
                     height: screen_bounds.height,
                     width: screen_bounds.width,
-                    text: preparedText
+                    text: preparedText,
+                    font: Settings.font_family
                 }));
 
                 var text_span = preview.find('.slide_text span');
@@ -305,6 +309,11 @@
 
             win.log("save");
 
+            if (this.lock == true)
+                return;
+
+            this.lock = true;
+
             /* Collect all slides contents */
 
             var song_text = "";
@@ -325,7 +334,7 @@
 
 
             var author_key = $(this.ui.songMeta).find(".song-author-selector select").val();
-            var author = this.authors.models[author_key];
+            this.author = this.authors.models[author_key];
 
             var song_name = $(this.ui.songMeta).find(".song-name-input input").val();
 
@@ -335,35 +344,29 @@
 
             this.song.set('text', song_text);
             this.song.set('name', song_name);
-            this.song.set('aid', author.attributes.aid);
-            this.song.set('gaid', author.attributes.gaid);
-
-
-            App.Database.saveSong(this.song);
+            this.song.set('aid', this.author.attributes.aid);
+            this.song.set('gaid', this.author.attributes.gaid);
 
             this.songbase.loadSongsLoader();
-
-            var that = this;
-
-            App.Database.close()
-                    .then(function () {
-                        App.Database.init().then(function () {
-
-                            that.songbase.selectAuthor(author);
-
-                        });
-                    });
-
+            App.Database.saveSong(this.song).then(_.bind(this.closeDatabase, this));
             this.cancel();
         },
         cancelBtnHandler: function () {
             this.cancel();
         },
         cancel: function () {
-            win.log("cancel");
             this.destroy();
+        },
+        closeDatabase: function () {
+            App.Database.close().then(_.bind(this.openDatabase, this));
+        },
+        openDatabase: function () {
+            App.Database.init().then(_.bind(this.selectSinger, this));
+        },
+        selectSinger: function () {
+            this.songbase.selectAuthor(this.author);
+            this.songbase.hideSongsLoader();
         }
-
     });
 
 

@@ -152,6 +152,7 @@
                 return;
             }
 
+
             var form = new App.View.AuthorEditForm({
                 author: this.selectedAuthor,
                 songbase: this
@@ -212,6 +213,9 @@
         loadSongsLoader: function () {
             this.ui.S_Loader.show();
         },
+        hideSongsLoader: function () {
+            this.ui.S_Loader.hide();
+        },
         loadSongs: function (author) {
 
             this.loadSongsLoader();
@@ -259,7 +263,7 @@
                 });
 
                 that.SongList_r.show(songCollectionView);
-                that.ui.S_Loader.hide();
+                that.hideSongsLoader();
             });
 
         },
@@ -276,17 +280,21 @@
         loadAuthorsLoader: function () {
             this.ui.A_Loader.show();
         },
+        hideAuthorsLoader: function () {
+            this.ui.A_Loader.hide();
+        },
         selectAuthor: function (author) {
 
             var aid = author.get('aid');
+            var gaid = author.get('gaid');
 
-            if (aid == "undefined") {
+            if (aid == "undefined" || gaid == "undefined") {
                 return;
             }
 
             var authors_list = $('.authors ul');
             authors_list.find('li').removeClass('active');
-            var item = authors_list.find('.authorItem[aid=' + aid + ']');
+            var item = authors_list.find('.authorItem[aid=' + aid + '][gaid=' + gaid + ']');
             item.trigger('click');
             item.parents('.item').addClass('active');
             authors_list.scrollTop(0).scrollTop(item.position().top);
@@ -304,7 +312,7 @@
 
                 that.loadedAuthors = authorCollection;
                 that.AuthorsList_r.show(authorCollectionView);
-                that.ui.A_Loader.hide();
+                that.hideAuthorsLoader();
             });
         },
         onShow: function () {

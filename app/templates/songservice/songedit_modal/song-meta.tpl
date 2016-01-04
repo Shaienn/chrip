@@ -2,7 +2,7 @@
 
 var authors_selector = "";
 for (var key=0; key< authors.length; key++){
-authors_selector += "<option "+(song.attributes.aid == authors.at(key).attributes.aid ? "selected='selected'":"")+" value='" + key + "'>" + authors.at(key).attributes.name + "</option>";
+authors_selector += "<option "+( (song.attributes.aid == authors.at(key).attributes.aid && song.attributes.gaid == authors.at(key).attributes.gaid) ? "selected='selected'":"")+" value='" + key + "'>" + authors.at(key).attributes.name + "</option>";
 }
 
 %>

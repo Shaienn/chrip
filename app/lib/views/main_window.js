@@ -52,7 +52,6 @@
 
             App.vent.on('appmode:switch_tab_to', this.switchTabTo);
             App.vent.on('main-window:toggle_presentation_state', _.bind(this.togglePresentationState, this));
-
             $(App.ControlWindow.window.document).on('keydown', this.keyHandler);
 
         },
@@ -115,8 +114,8 @@
             App.Database.init().then(function () {
                 App.Database.loadSettings().then(function () {
                     App.Database.getVersion().then(function () {
-
-                        App.Update.runCheckUpdade();
+                        
+                        App.Update.init();
 
                         /* Menu */
 
@@ -153,6 +152,7 @@
                 });
             });
         },
+        
         togglePresentationState: function () {
 
             /* Toggle presentation window */

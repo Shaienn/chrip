@@ -12,17 +12,23 @@
         events: {
             'click #settings-btn': 'settingsBtnHandler',
             'click #presentation-btn': 'presentationBtnHandler',
+            'click #update-btn': 'updateBtnHandler'
         },
         initialize: function () {
             $("#presentation-btn").css("color", "gray");
             App.vent.on("presentation:changed", _.bind(this.set_start_button_state, this));
             App.vent.on("main_toolbar:set_freeze_mode_indication", _.bind(this.set_freeze_mode_indication, this));
+            App.vent.on("main_toolbar:set_update_mode_indication", _.bind(this.set_update_mode_indication, this));
+
         },
         onDestroy: function () {
 
             App.vent.off("presentation:changed");
             App.vent.off("main_toolbar:set_freeze_mode_indication");
 
+        },
+        updateBtnHandler: function () {
+            App.vent.trigger("update:run_update");
         },
         settingsBtnHandler: function () {
 
@@ -37,6 +43,13 @@
 
             App.vent.trigger("main-window:toggle_presentation_state");
 
+        },
+        set_update_mode_indication: function (state) {
+            if (state) {
+                $("#update-btn").show();
+            } else {
+                $("#update-btn").hide();
+            }
         },
         set_freeze_mode_indication: function (state) {
             console.log("set freeze mode: ", state);

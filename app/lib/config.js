@@ -9,10 +9,6 @@
         platform: process.platform,
         /* */
         execDir: './',
-        /* Db */
-        db_user: './db/user.db',
-        db_global: './db/global.db',
-        db_bible: './db/bible.db',
         /* Song part wrappers */
 
         chord_pattern: /\[[\w\W\s\S]+?\]/g,

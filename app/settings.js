@@ -15,27 +15,26 @@ var path = require("path");
     'use strict';
     gui.Screen.Init();
 
-
     /* User interface */
 
     Settings.user_db = "/db/user.db";
     Settings.global_db = "/db/global.db";
     
-
     /* App settings */
 
     Settings.appMode = 'songservice';
-
-    //TODO
-
+    
     Settings.presentation_monitor = 1;
     Settings.slide_string_mode = 'one_font_size_per_slide';
     Settings.font_family = "Arial";
     Settings.backgrounds_path = "./src/app/backgrounds/";
+    Settings.update_period = 300000;
+
 
     Settings.Config = {
         version : 0,
         tmpPath: "./tmp",
+        updateServer: "http://127.0.0.1:8080"
     },
     Settings.Utils = {
 
