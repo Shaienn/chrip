@@ -8,14 +8,13 @@
     var Q = require('q');
     App.Database = {
         db: {},
-        //db: new sqlite3.Database('test.db'),
-
-        user_db: new sqlite3.Database(App.Config.execDir + Settings.user_db),
-        global_db: null,
+        user_db: {},
+        global_db: {},
         user_db_check: function () {
 
             /* Check user.db, create tables if not exists */
 
+            App.Database.user_db = new sqlite3.Database(App.Config.runDir + Settings.user_db);
             App.Database.user_db.serialize(function () {
 
                 App.Database.user_db.run("CREATE TABLE IF NOT EXISTS [Authors] ([author_id] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,[name] TEXT NOT NULL,[global_author_id] INTEGER)");
@@ -25,43 +24,39 @@
                 App.Database.user_db.run("CREATE TABLE IF NOT EXISTS [LogoDirs] ([bd_id] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, [bd_path] TEXT NOT NULL)");
                 App.Database.user_db.run("CREATE TABLE IF NOT EXISTS [ForApprove] ([id] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, [gaid] INTEGER, [uaid] INTEGER, [gsid] INTEGER, [usid] INTEGER, [singer_name] VARCHAR(255), [song_name] VARCHAR(255), [song_text] TEXT)");
 
-
                 /* If we have no settings inside database files, just add its defaults */
 
                 var stmt = App.Database.user_db.prepare("INSERT OR IGNORE INTO Settings (key, value) VALUES (?, ?)");
-
                 for (var key in Settings) {
                     stmt.run(key, Settings[key]);
                 }
                 stmt.finalize();
-
             });
-
         },
         close: function () {
 
             var d = Q.defer();
-
             App.Database.db.close(function () {
                 App.Database.global_db.close(function () {
-                    d.resolve();
+                    App.Database.user_db.close(function () {
+                        d.resolve();
+                    });
                 });
             });
-
             return d.promise;
         },
         init: function () {
 
             var d = Q.defer();
-            App.Database.global_db = new sqlite3.Database(App.Config.execDir + Settings.global_db, function (err) {
-
+            console.log(App.Config.runDir + Settings.global_db);
+            App.Database.global_db = new sqlite3.Database(App.Config.runDir + Settings.global_db, function (err) {
                 if (err)
-                    throw error(err);
+                    throw new Error(err);
 
                 App.Database.db = new sqlite3.Database(':memory:', function (err) {
 
                     if (err)
-                        throw error(err);
+                        throw new Error(err);
 
                     App.Database.user_db_check();
                     App.Database.getVersion().then(function () {
@@ -77,7 +72,7 @@
 
                             /* Global db */
 
-                            App.Database.db.exec("ATTACH'" + App.Config.execDir + Settings.global_db + "'AS webdb", function (err) {
+                            App.Database.db.exec("ATTACH'" + App.Config.runDir + Settings.global_db + "'AS webdb", function (err) {
                                 if (err != null) {
                                     win.error("Attach global database failed. Got error: " + err);
                                     throw error(err);
@@ -90,7 +85,7 @@
 
                             /* User db */
 
-                            App.Database.db.exec("ATTACH'" + App.Config.execDir + Settings.user_db + "'AS userdb", function (err) {
+                            App.Database.db.exec("ATTACH'" + App.Config.runDir + Settings.user_db + "'AS userdb", function (err) {
                                 if (err != null) {
                                     win.error("Attach local database failed. Got error: " + err);
                                     throw error(err);
@@ -195,17 +190,14 @@
             var d = Q.defer();
             App.Database.user_db.all("SELECT key, value FROM Settings", function (err, rows) {
                 if (err != null)
-                    throw error("Load settings failed. Got error: " + err);
-
+                    throw new Error("Load settings failed. Got error: " + err);
 
                 rows.forEach(function (item, i, arr) {
                     win.info("Set: " + item.key + " - " + item.value);
                     Settings[item.key] = item.value;
                 });
-
                 d.resolve(true);
             });
-
             return d.promise;
         },
         search: function (search_string) {
@@ -214,15 +206,11 @@
 
             var d = Q.defer();
             var stmt = App.Database.db.prepare("SELECT s.* FROM Songs s, Songslist sl, Authors a WHERE sl.name MATCH LOWER(?) AND s.song_id = sl.song_id AND CASE s.global_author_id WHEN 0 THEN a.author_id = s.author_id ELSE a.author_id = s.global_author_id END AND sl.db = s.db UNION ALL SELECT s.* FROM Songs s, Songslist sl, Authors a WHERE sl.text MATCH LOWER(?) AND s.song_id = sl.song_id AND CASE s.global_author_id WHEN 0 THEN a.author_id = s.author_id ELSE a.author_id = s.global_author_id END AND sl.db = s.db ");
-
             stmt.all(search_string, search_string, function (err, rows) {
-
                 if (err != null)
-                    throw error("Search songs failed. Got error: " + err);
-
+                    throw new Error("Search songs failed. Got error: " + err);
 
                 var loadedSongs = [];
-
                 rows.forEach(function (item, i, arr) {
 
                     loadedSongs.push({
@@ -234,50 +222,40 @@
                         gsid: item.global_song_id,
                         text: item.text,
                     });
-
                 });
-
                 d.resolve(loadedSongs);
             });
-
             stmt.finalize();
             return d.promise;
-
         },
         saveSetting: function (name, value) {
             var d = Q.defer();
-
             var stmt = App.Database.user_db.prepare("INSERT OR REPLACE INTO Settings VALUES (?,?)");
             stmt.run(name, value, function (err) {
                 if (err)
-                    throw error(err);
+                    throw new Error(err);
 
                 d.resolve();
             });
             stmt.finalize();
-
             return d.promise;
-
         },
         loadSongs: function (author) {
-
             var d = Q.defer();
 
             if (typeof author.get('aid') == 'undefined' || isNaN(author.get('aid')))
-                throw error();
+                throw new Error();
 
             if (typeof author.get('gaid') == 'undefined' || isNaN(author.get('gaid')))
-                throw error();
+                throw new Error();
 
             var stmt = App.Database.db.prepare("SELECT Songs.* FROM Songs WHERE Songs.author_id LIKE ? AND Songs.global_author_id LIKE ? ORDER BY Songs.name");
             stmt.all(author.get('aid'), author.get('gaid'), function (err, rows) {
-
                 if (err != null)
-                    throw error("Load songs failed. Got error: " + err);
+                    throw new Error("Load songs failed. Got error: " + err);
 
                 var loadedSongs = [];
                 rows.forEach(function (item, i, arr) {
-
                     loadedSongs.push({
                         name: item.name,
                         db: item.db,
@@ -287,16 +265,13 @@
                         gsid: item.global_song_id,
                         text: item.text,
                     });
-
                 });
                 d.resolve(loadedSongs);
             });
-
             stmt.finalize();
             return d.promise;
         },
         deleteSong: function (song) {
-
             var d = Q.defer();
 
             if (typeof song.get('sid') == 'undefined' || isNaN(song.get('sid')))
@@ -308,7 +283,6 @@
 
                 var stmt = App.Database.user_db.prepare("DELETE FROM Songs WHERE song_id = ?");
                 stmt.run(song.get('sid'), function (err) {
-
                     if (err)
                         throw error(err);
 
@@ -318,7 +292,6 @@
             } else {
                 d.resolve();
             }
-
             return d.promise;
         },
         saveSong: function (song) {

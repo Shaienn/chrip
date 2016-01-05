@@ -18,7 +18,7 @@ module.exports = {
         '<%= settings.app %>/css/**/*',
         '<%= settings.app %>/dist/**/*',
         '<%= settings.app %>/sqlite/**/*',
-        '<%= settings.app %>/db/**/*',
-        '<%= settings.app %>/backgrounds/**/*',
+//        '<%= settings.app %>/db/**/*',
+//        '<%= settings.app %>/backgrounds/**/*',
     ]
 };

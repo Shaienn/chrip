@@ -68,7 +68,7 @@ _.extend(App, {
     PresentationWindows: [],
     Settings: {},
     Localization: {},
-    Database:{},
+    Database: {},
     presentation_state: false,
     vlc: null,
     video_contexts: [],
@@ -76,23 +76,6 @@ _.extend(App, {
 });
 
 App.ViewStack = [];
-//App.restart = function () {
-//    var child, child_process = require("child_process");
-//    if (process.platform == "darwin") {
-//        child = child_process.spawn("open", ["-n", "-a", process.execPath.match(/^([^\0]+?\.app)\//)[1]], {detached: true});
-//    } else {
-//        child = child_process.spawn(
-//                App.Config.execDir + "/nw",
-//                [],
-//                {detached: true}
-//        );
-//    }
-//    child.unref();
-//    win.hide();
-//    gui.App.quit();
-//}
-
-
 
 var initTemplates = function () {
 
@@ -163,10 +146,8 @@ var initApp = function () {
     console.log(nwDir);
     console.log(nwCwd);
 
-//        App.Config.execDir = path.dirname(process.execPath);
-    App.Config.execDir = nwCwd;
+    App.Config.execDir = process.cwd();
     App.Config.runDir = nwCwd;
-
     App.ControlWindow = win;
     App.vlc = wcjs.createPlayer();
 
