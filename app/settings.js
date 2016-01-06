@@ -19,6 +19,7 @@ var path = require("path");
 
     Settings.user_db = "/db/user.db";
     Settings.global_db = "/db/global.db";
+    Settings.bible_xml = "/bible/sinoid_utf.xml";
     
     /* App settings */
 

@@ -31,7 +31,7 @@
             /* Load all bibles version */
             this.Bible.Versions = new App.Model.XMLBibleCollection();
             this.Bible.Versions.add(new App.Model.XMLBible({
-                xmlpath: "./xml/sinoid_utf.xml"
+                xmlpath: App.Config.runDir + Settings.bible_xml
             }));
 
             this.Bible.Active_bible_index = 0;

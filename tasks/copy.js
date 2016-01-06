@@ -9,9 +9,9 @@ module.exports = {
             },
             {
                 expand: true,
-                cwd: '<%= settings.app %>/xml',
+                cwd: '<%= settings.app %>/bible',
                 src: ['**'],
-                dest: '<%= settings.dist %>/chrip-nw/<%= settings.build_platform %>/xml'
+                dest: '<%= settings.dist %>/chrip-nw/<%= settings.build_platform %>/bible'
             },
             {
                 expand: true,
