@@ -216,7 +216,7 @@
             App.Database.user_db.all("SELECT key, value FROM Settings", function (err, rows) {
                 if (err)
                     d.reject(new Error(err));
-                
+
                 rows.forEach(function (item) {
                     win.info("Set: " + item.key + " - " + item.value);
                     Settings[item.key] = item.value;
@@ -478,7 +478,7 @@
 
                         if (err)
                             d.reject(new Error(err));
-                        d.resolve();
+                        d.resolve(true);
                     });
                     update_stmt.finalize();
 
@@ -531,20 +531,16 @@
             var d = Q.defer();
 
             if (typeof gaid == 'undefined' || isNaN(gaid))
-                throw error("gaid " + gaid);
+                d.reject(new Error("gaid " + gaid));
 
             if (typeof uaid == 'undefined' || isNaN(uaid))
-                throw error("uaid " + uaid);
-
-            console.log("get_singer: " + gaid + " " + uaid);
+                d.reject(new Error("uaid " + uaid));
 
             var stmt = App.Database.db.prepare("SELECT * FROM Authors WHERE global_author_id = ? AND author_id = ?");
             stmt.get(gaid, uaid, function (err, row) {
-
                 if (err)
                     d.reject(new Error(err));
-
-                console.log(row.name);
+                
                 d.resolve(row.name);
             });
             stmt.finalize();
