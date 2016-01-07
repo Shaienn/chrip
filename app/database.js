@@ -62,8 +62,6 @@
                     App.Database.getVersion().then(function () {
                         App.Database.db.serialize(function () {
 
-                            App.Database.db.loadExtension('sqlite/libSqliteIcu.so');
-
                             App.Database.db.run("CREATE TABLE IF NOT EXISTS [Authors] ([memid] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,[author_id] INTEGER NOT NULL,[global_author_id] INTEGER,[name] TEXT NOT NULL,[db] TEXT NOT NULL)");
                             App.Database.db.run("CREATE TABLE IF NOT EXISTS [Songs] ([memid] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,[song_id] INTEGER NOT NULL,[author_id] INTEGER NOT NULL,[global_song_id] INTEGER,[global_author_id] INTEGER,[name] TEXT,[db] TEXT NOT NULL, [text] TEXT)");
                             App.Database.db.run("CREATE TABLE IF NOT EXISTS [Books] ([id] INTEGER NOT NULL PRIMARY KEY, [full_name] TEXT NOT NULL, [short_name] TEXT NOT NULL)");
@@ -88,7 +86,7 @@
                             App.Database.db.exec("ATTACH'" + App.Config.runDir + Settings.user_db + "'AS userdb", function (err) {
                                 if (err != null) {
                                     win.error("Attach local database failed. Got error: " + err);
-                                    throw error(err);
+                                    throw new Error(err);
                                 }
                             });
 
@@ -98,11 +96,45 @@
                             App.Database.db.run("INSERT INTO main.Songs (song_id, author_id, name, db, global_song_id, global_author_id, text) SELECT song_id, author_id, name, '2', global_song_id, global_author_id, text FROM userdb.Songs");
                             App.Database.db.exec("DETACH userdb");
 
-                            App.Database.db.exec("CREATE VIRTUAL TABLE Songslist USING fts4(song_id, name, db, text)");
-                            App.Database.db.run("INSERT INTO Songslist (global_song_id, song_id, name, db, text) SELECT global_song_id, song_id,  LOWER(name), db, LOWER(text) FROM Songs", function () {
+                            App.Database.db.exec("CREATE VIRTUAL TABLE Songslist USING fts4(global_song_id, song_id, name, db, text)");
+                            App.Database.db.all("SELECT * FROM Songs", function (err, rows) {
+                                if (err != null) {
+                                    win.error("Attach local database failed. Got error: " + err);
+                                    throw new Error(err);
+                                }
+
+
+
+                                var stmt = App.Database.db.prepare("INSERT INTO Songslist (global_song_id, song_id, name, db, text) VALUES (?, ?, ?, ?, ?)");
+                                for (var i = 0; i < rows.length; i++) {
+
+                                    var row = rows[i];
+
+                                    if (row.text == null)
+                                        continue;
+
+                                    stmt.run(
+                                            row.global_song_id,
+                                            row.song_id,
+                                            row.name.toLowerCase(),
+                                            row.db,
+                                            row.text.toLowerCase(),
+                                            function (err) {
+                                                if (err)
+                                                    throw new Error(err);
+
+                                            });
+                                }
+
+                                stmt.finalize();
                                 d.resolve(true);
                                 console.log("database init");
                             });
+
+//                            App.Database.db.run("INSERT INTO Songslist (global_song_id, song_id, name, db, text) SELECT global_song_id, song_id,  LOWER(name), db, LOWER(text) FROM Songs", function () {
+//                                d.resolve(true);
+//                                console.log("database init");
+//                            });
                         });
                     });
                 });
@@ -201,11 +233,10 @@
             return d.promise;
         },
         search: function (search_string) {
-
             win.log("Search songs: " + search_string);
-
+            search_string = search_string.toLowerCase();
             var d = Q.defer();
-            var stmt = App.Database.db.prepare("SELECT s.* FROM Songs s, Songslist sl, Authors a WHERE sl.name MATCH LOWER(?) AND s.song_id = sl.song_id AND CASE s.global_author_id WHEN 0 THEN a.author_id = s.author_id ELSE a.author_id = s.global_author_id END AND sl.db = s.db UNION ALL SELECT s.* FROM Songs s, Songslist sl, Authors a WHERE sl.text MATCH LOWER(?) AND s.song_id = sl.song_id AND CASE s.global_author_id WHEN 0 THEN a.author_id = s.author_id ELSE a.author_id = s.global_author_id END AND sl.db = s.db ");
+            var stmt = App.Database.db.prepare("SELECT s.* FROM Songs s, Songslist sl WHERE sl.name MATCH ? AND s.song_id = sl.song_id AND s.global_song_id = sl.global_song_id UNION SELECT s.* FROM Songs s, Songslist sl WHERE sl.text MATCH ? AND s.song_id = sl.song_id AND s.global_song_id = sl.global_song_id");
             stmt.all(search_string, search_string, function (err, rows) {
                 if (err != null)
                     throw new Error("Search songs failed. Got error: " + err);
