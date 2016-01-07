@@ -50,13 +50,14 @@
             var d = Q.defer();
             console.log(App.Config.runDir + Settings.global_db);
             App.Database.global_db = new sqlite3.Database(App.Config.runDir + Settings.global_db, function (err) {
+
                 if (err)
-                    throw new Error(err);
+                    d.reject(new Error(err));
 
                 App.Database.db = new sqlite3.Database(':memory:', function (err) {
 
                     if (err)
-                        throw new Error(err);
+                        d.reject(new Error(err));
 
                     App.Database.user_db_check();
                     App.Database.getVersion().then(function () {
@@ -71,10 +72,8 @@
                             /* Global db */
 
                             App.Database.db.exec("ATTACH'" + App.Config.runDir + Settings.global_db + "'AS webdb", function (err) {
-                                if (err != null) {
-                                    win.error("Attach global database failed. Got error: " + err);
-                                    throw error(err);
-                                }
+                                if (err)
+                                    d.reject(new Error(err));
                             });
 
                             App.Database.db.run("INSERT INTO main.Authors (author_id, name, db, global_author_id) SELECT '0', name, '1', author_id FROM webdb.Authors");
@@ -84,10 +83,8 @@
                             /* User db */
 
                             App.Database.db.exec("ATTACH'" + App.Config.runDir + Settings.user_db + "'AS userdb", function (err) {
-                                if (err != null) {
-                                    win.error("Attach local database failed. Got error: " + err);
-                                    throw new Error(err);
-                                }
+                                if (err)
+                                    d.reject(new Error(err));
                             });
 
                             App.Database.db.run("INSERT INTO main.Authors (author_id, name, db, global_author_id) SELECT author_id, name, '2', global_author_id FROM userdb.Authors WHERE global_author_id LIKE 0");
@@ -96,45 +93,41 @@
                             App.Database.db.run("INSERT INTO main.Songs (song_id, author_id, name, db, global_song_id, global_author_id, text) SELECT song_id, author_id, name, '2', global_song_id, global_author_id, text FROM userdb.Songs");
                             App.Database.db.exec("DETACH userdb");
 
-                            App.Database.db.exec("CREATE VIRTUAL TABLE Songslist USING fts4(global_song_id, song_id, name, db, text)");
+                            App.Database.db.exec("CREATE VIRTUAL TABLE Songslist USING fts4(memid, name, text)");
                             App.Database.db.all("SELECT * FROM Songs", function (err, rows) {
-                                if (err != null) {
-                                    win.error("Attach local database failed. Got error: " + err);
-                                    throw new Error(err);
-                                }
+                                if (err)
+                                    d.reject(new Error(err));
 
+                                var stmt = App.Database.db.prepare("INSERT INTO Songslist (memid, name, text) VALUES (?, ?, ?)");
+                                var rows_ts = [];
 
-
-                                var stmt = App.Database.db.prepare("INSERT INTO Songslist (global_song_id, song_id, name, db, text) VALUES (?, ?, ?, ?, ?)");
-                                for (var i = 0; i < rows.length; i++) {
-
-                                    var row = rows[i];
+                                rows.forEach(function (row) {
 
                                     if (row.text == null)
-                                        continue;
+                                        return;
 
+                                    var row_d = Q.defer();
                                     stmt.run(
-                                            row.global_song_id,
-                                            row.song_id,
+                                            row.memid,
                                             row.name.toLowerCase(),
-                                            row.db,
                                             row.text.toLowerCase(),
                                             function (err) {
-                                                if (err)
-                                                    throw new Error(err);
 
+                                                if (err)
+                                                    row_d.reject(new Error(err));
+
+                                                row_d.resolve(true);
                                             });
-                                }
+
+                                    rows_ts.push(row_d.promise);
+                                });
 
                                 stmt.finalize();
-                                d.resolve(true);
-                                console.log("database init");
+                                Q.all(rows_ts).then(function (res) {
+                                    console.log("database init");
+                                    d.resolve(true);
+                                });
                             });
-
-//                            App.Database.db.run("INSERT INTO Songslist (global_song_id, song_id, name, db, text) SELECT global_song_id, song_id,  LOWER(name), db, LOWER(text) FROM Songs", function () {
-//                                d.resolve(true);
-//                                console.log("database init");
-//                            });
                         });
                     });
                 });
@@ -221,10 +214,10 @@
 
             var d = Q.defer();
             App.Database.user_db.all("SELECT key, value FROM Settings", function (err, rows) {
-                if (err != null)
-                    throw new Error("Load settings failed. Got error: " + err);
-
-                rows.forEach(function (item, i, arr) {
+                if (err)
+                    d.reject(new Error(err));
+                
+                rows.forEach(function (item) {
                     win.info("Set: " + item.key + " - " + item.value);
                     Settings[item.key] = item.value;
                 });
@@ -233,13 +226,12 @@
             return d.promise;
         },
         search: function (search_string) {
-            win.log("Search songs: " + search_string);
             search_string = search_string.toLowerCase();
             var d = Q.defer();
-            var stmt = App.Database.db.prepare("SELECT s.* FROM Songs s, Songslist sl WHERE sl.name MATCH ? AND s.song_id = sl.song_id AND s.global_song_id = sl.global_song_id UNION SELECT s.* FROM Songs s, Songslist sl WHERE sl.text MATCH ? AND s.song_id = sl.song_id AND s.global_song_id = sl.global_song_id");
+            var stmt = App.Database.db.prepare("SELECT s.* FROM Songs s, Songslist sl WHERE sl.name MATCH ? AND s.memid = sl.memid UNION SELECT s.* FROM Songs s, Songslist sl WHERE sl.text MATCH ? AND s.memid = sl.memid");
             stmt.all(search_string, search_string, function (err, rows) {
-                if (err != null)
-                    throw new Error("Search songs failed. Got error: " + err);
+                if (err)
+                    d.reject(new Error(err));
 
                 var loadedSongs = [];
                 rows.forEach(function (item, i, arr) {
@@ -264,7 +256,7 @@
             var stmt = App.Database.user_db.prepare("INSERT OR REPLACE INTO Settings VALUES (?,?)");
             stmt.run(name, value, function (err) {
                 if (err)
-                    throw new Error(err);
+                    d.reject(new Error(err));
 
                 d.resolve();
             });
@@ -275,15 +267,15 @@
             var d = Q.defer();
 
             if (typeof author.get('aid') == 'undefined' || isNaN(author.get('aid')))
-                throw new Error();
+                d.reject(new Error());
 
             if (typeof author.get('gaid') == 'undefined' || isNaN(author.get('gaid')))
-                throw new Error();
+                d.reject(new Error());
 
             var stmt = App.Database.db.prepare("SELECT Songs.* FROM Songs WHERE Songs.author_id LIKE ? AND Songs.global_author_id LIKE ? ORDER BY Songs.name");
             stmt.all(author.get('aid'), author.get('gaid'), function (err, rows) {
-                if (err != null)
-                    throw new Error("Load songs failed. Got error: " + err);
+                if (err)
+                    d.reject(new Error(err));
 
                 var loadedSongs = [];
                 rows.forEach(function (item, i, arr) {
@@ -306,7 +298,7 @@
             var d = Q.defer();
 
             if (typeof song.get('sid') == 'undefined' || isNaN(song.get('sid')))
-                throw error("Sid is wrong");
+                d.reject(new Error("Sid is wrong"));
 
             if (song.get('db') == '2') {
 
@@ -315,13 +307,12 @@
                 var stmt = App.Database.user_db.prepare("DELETE FROM Songs WHERE song_id = ?");
                 stmt.run(song.get('sid'), function (err) {
                     if (err)
-                        throw error(err);
-
-                    d.resolve();
+                        d.reject(new Error(err));
+                    d.resolve(true);
                 });
                 stmt.finalize();
             } else {
-                d.resolve();
+                d.resolve(false);
             }
             return d.promise;
         },
@@ -330,7 +321,7 @@
             var d = Q.defer();
 
             if (!(song instanceof App.Model.Song))
-                throw error("Object is not song type: " + song);
+                d.reject(new Error("Object is not song type: " + song));
 
             var that = this;
             switch (song.get('db')) {
@@ -343,7 +334,7 @@
                     stmt.run(song.get('aid'), song.get('name'), song.get('gaid'), song.get('gsid'), song.get('text'), function (err) {
 
                         if (err)
-                            throw error(err);
+                            d.reject(new Error(err));
 
                         var song_id = this.lastID;
                         that.getSinger(
@@ -376,7 +367,7 @@
                     stmt.run(song.get('aid'), song.get('name'), song.get('gaid'), song.get('gsid'), song.get('text'), song.get('sid'), function (err) {
 
                         if (err)
-                            throw error(err);
+                            d.reject(new Error(err));
 
                         that.getSinger(
                                 song.get('gaid'),
@@ -392,7 +383,7 @@
                                     song.get('text')
                                     ).then(
                                     function () {
-                                        d.resolve();
+                                        d.resolve(true);
                                     }
                             );
                         });
@@ -407,7 +398,7 @@
                     stmt.run(song.get('aid'), song.get('name'), song.get('gaid'), "0", song.get('text'), function (err) {
 
                         if (err)
-                            throw error(err);
+                            d.reject(new Error(err));
 
                         var song_id = this.lastID;
                         that.getSinger(
@@ -425,14 +416,14 @@
                                             song.get('text')
                                             ).then(
                                             function () {
-                                                d.resolve();
+                                                d.resolve(true);
                                             }
                                     );
                                 });
                     });
                     break;
                 default:
-                    throw error('Unknown song`s DB');
+                    d.reject(new Error('Unknown song`s DB'));
 
             }
 
@@ -446,16 +437,16 @@
             console.log("addSongForApprove");
 
             if (typeof gaid == 'undefined' || isNaN(gaid))
-                throw error("Gaid is wrong: " + typeof gaid + " " + isNaN(gaid));
+                d.reject(new Error("Gaid is wrong: " + typeof gaid + " " + isNaN(gaid)))
 
             if (typeof uaid == 'undefined' || isNaN(uaid))
-                throw error("Uaid is wrong: " + typeof uaid + " " + isNaN(uaid));
+                d.reject(new Error("Uaid is wrong: " + typeof uaid + " " + isNaN(uaid)))
 
             if (typeof gsid == 'undefined' || isNaN(gsid))
-                throw error("Gsid is wrong: " + typeof gsid + " " + isNaN(gsid));
+                d.reject(new Error("Gsid is wrong: " + typeof gsid + " " + isNaN(gsid)))
 
             if (typeof usid == 'undefined' || isNaN(usid))
-                throw error("Usid is wrong: " + typeof usid + " " + isNaN(usid));
+                d.reject(new Error("Usid is wrong: " + typeof usid + " " + isNaN(usid)))
 
             /* Check is it already exist record with corresponding gaid, uaid, gsid and guid values */
 
@@ -463,7 +454,7 @@
             stmt.get(gaid, uaid, gsid, usid, function (err, row) {
 
                 if (err)
-                    throw error(err);
+                    d.reject(new Error(err));
 
                 if (typeof row == "undefined") {
 
@@ -473,9 +464,8 @@
                     insert_stmt.run(gaid, uaid, gsid, usid, singer_name, song_name, song_text, function (err) {
 
                         if (err)
-                            throw error(err);
-                        console.log("insert");
-                        d.resolve();
+                            d.reject(new Error(err));
+                        d.resolve(true);
                     });
                     insert_stmt.finalize();
 
@@ -487,14 +477,13 @@
                     update_stmt.run(singer_name, song_name, song_text, row.id, function (err) {
 
                         if (err)
-                            throw error(err);
-                        console.log("update");
+                            d.reject(new Error(err));
                         d.resolve();
                     });
                     update_stmt.finalize();
 
                 } else {
-                    throw error("Wrong row.id value: " + row.id);
+                    d.reject(new Error("Wrong row.id value: " + row.id));
                 }
             });
             stmt.finalize();
@@ -507,7 +496,7 @@
             App.Database.user_db.all("SELECT * FROM ForApprove", function (err, rows) {
 
                 if (err)
-                    throw error("Load author failed. Got error: " + err);
+                    d.reject(new Error("Load author failed. Got error: " + err));
 
                 var loadedSongs = [];
                 rows.forEach(function (item, i, arr) {
@@ -553,7 +542,7 @@
             stmt.get(gaid, uaid, function (err, row) {
 
                 if (err)
-                    throw error(err);
+                    d.reject(new Error(err));
 
                 console.log(row.name);
                 d.resolve(row.name);
@@ -568,8 +557,8 @@
 
             App.Database.db.all("SELECT * FROM Authors", function (err, rows) {
 
-                if (err != null)
-                    throw error("Load authors failed. Got error: " + err);
+                if (err)
+                    d.reject(new Error(err));
 
                 var loadedAuthors = [];
 
