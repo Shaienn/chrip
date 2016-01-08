@@ -1,8 +1,5 @@
 build:
-    - 'clean:build'
-    - 'sass:production'
+    - 'clean:dist'
     - 'nwjs'
     - 'copy:main'
-
-dev:
-    - 'sass:dev'
+    

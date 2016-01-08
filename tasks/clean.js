@@ -1,4 +1,4 @@
 module.exports = {
     force: true,
-    build: ['dist']
+    dist: ['dist']
 };

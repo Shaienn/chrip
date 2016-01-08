@@ -44,14 +44,12 @@
         },
         redrawPreview: function () {
 
-            App.SlideGenerator.makeSlideFromText("Строка\r\nДлинная строка\r\nСтрока\r\nОчень очень длинная строка")
+            App.SlideGenerator
+                    .makeSlideFromText("Строка\r\nДлинная строка\r\nСтрока\r\nОчень очень длинная строка")
                     .then(this.drawSlide);
 
         },
         drawSlide: function (slide) {
-
-            console.log(slide);
-
             var slide_template = _.template($('#slide-tpl').html());
             that.ui.slidePreviewArea.html(slide_template({
                 background: slide.get("background"),
@@ -138,8 +136,6 @@
             }
             win.info('Setting changed: ' + field.attr('name') + ' - ' + value);
             Settings[field.attr('name')] = value;
-
-            console.log(Settings.background);
 
             /* Database save */
 

@@ -99,8 +99,8 @@
             slideModel.set("width", screen_bounds.width);
             slideModel.set("height", screen_bounds.height);
             slideModel.set("font", Settings.font_family.toLowerCase());
+                        
             d.resolve(slideModel);
-
             return d.promise;
         },
 //        

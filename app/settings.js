@@ -24,11 +24,11 @@ var path = require("path");
     /* App settings */
 
     Settings.appMode = 'songservice';
-    
-    Settings.presentation_monitor = 1;
+    Settings.background_mode = 'all_slides_has_random_back';
+    Settings.presentation_monitor = 0;
     Settings.slide_string_mode = 'one_font_size_per_slide';
     Settings.font_family = "Arial";
-    Settings.backgrounds_path = "./src/app/backgrounds/";
+    Settings.backgrounds_path = process.env.PWD + "/backgrounds";
     Settings.update_period = 300000;
 
 
