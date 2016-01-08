@@ -20,7 +20,7 @@
 
                 App.Database.user_db.run("CREATE TABLE IF NOT EXISTS [Authors] ([uaid] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,[name] TEXT NOT NULL,[gaid] INTEGER)");
                 App.Database.user_db.run("CREATE TABLE IF NOT EXISTS [Settings] ([key] TEXT NOT NULL PRIMARY KEY, [value] TEXT NOT NULL)");
-                App.Database.user_db.run("CREATE TABLE IF NOT EXISTS [Songs] ([song_id] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,[author_id] INTEGER NOT NULL, [name] TEXT NOT NULL, [global_author_id] INTEGER, [global_song_id] INTEGER, [text] TEXT)");
+                App.Database.user_db.run("CREATE TABLE IF NOT EXISTS [Songs] ([usid] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,[uaid] INTEGER NOT NULL, [name] TEXT NOT NULL, [gaid] INTEGER, [gsid] INTEGER, [text] TEXT)");
                 App.Database.user_db.run("CREATE TABLE IF NOT EXISTS [BackDirs] ([bd_id] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, [bd_path] TEXT NOT NULL)");
                 App.Database.user_db.run("CREATE TABLE IF NOT EXISTS [LogoDirs] ([bd_id] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, [bd_path] TEXT NOT NULL)");
                 App.Database.user_db.run("CREATE TABLE IF NOT EXISTS [ForApprove] ([id] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, [gaid] INTEGER, [uaid] INTEGER, [gsid] INTEGER, [usid] INTEGER, [singer_name] VARCHAR(255), [song_name] VARCHAR(255), [song_text] TEXT)");
@@ -70,8 +70,8 @@
                         App.Database.getVersion().then(function () {
                             App.Database.db.serialize(function () {
 
-                                App.Database.db.run("CREATE TABLE IF NOT EXISTS [Authors] ([memid] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,[author_id] INTEGER NOT NULL,[global_author_id] INTEGER,[name] TEXT NOT NULL,[db] TEXT NOT NULL)");
-                                App.Database.db.run("CREATE TABLE IF NOT EXISTS [Songs] ([memid] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,[song_id] INTEGER NOT NULL,[author_id] INTEGER NOT NULL,[global_song_id] INTEGER,[global_author_id] INTEGER,[name] TEXT,[db] TEXT NOT NULL, [text] TEXT)");
+                                App.Database.db.run("CREATE TABLE IF NOT EXISTS [Authors] ([memid] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,[uaid] INTEGER NOT NULL,[gaid] INTEGER,[name] TEXT NOT NULL,[db] TEXT NOT NULL)");
+                                App.Database.db.run("CREATE TABLE IF NOT EXISTS [Songs] ([memid] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,[usid] INTEGER NOT NULL,[uaid] INTEGER NOT NULL,[gsid] INTEGER,[gaid] INTEGER,[name] TEXT,[db] TEXT NOT NULL, [text] TEXT)");
                                 App.Database.db.run("CREATE TABLE IF NOT EXISTS [Books] ([id] INTEGER NOT NULL PRIMARY KEY, [full_name] TEXT NOT NULL, [short_name] TEXT NOT NULL)");
                                 App.Database.db.run("CREATE TABLE IF NOT EXISTS [Chapters] ([verses] NUMERIC, [bid] INTEGER, [cid] INTEGER, [content] TEXT)");
 
@@ -83,8 +83,8 @@
                                         d.reject(new Error(err));
                                 });
 
-                                App.Database.db.run("INSERT INTO main.Authors (author_id, name, db, global_author_id) SELECT '0', name, '1', author_id FROM webdb.Authors");
-                                App.Database.db.run("INSERT INTO main.Songs (song_id, author_id, name, db, global_song_id, global_author_id, text) SELECT '0', '0', name, '1', song_id, author_id, text FROM webdb.Songs");
+                                App.Database.db.run("INSERT INTO main.Authors (uaid, name, db, gaid) SELECT '0', name, '1', author_id FROM webdb.Authors");
+                                App.Database.db.run("INSERT INTO main.Songs (usid, uaid, name, db, gsid, gaid, text) SELECT '0', '0', name, '1', song_id, author_id, text FROM webdb.Songs");
                                 App.Database.db.exec("DETACH webdb");
 
                                 /* User db */
@@ -94,10 +94,10 @@
                                         d.reject(new Error(err));
                                 });
 
-                                App.Database.db.run("INSERT INTO main.Authors (author_id, name, db, global_author_id) SELECT uaid, name, '2', gaid FROM userdb.Authors WHERE gaid LIKE 0");
+                                App.Database.db.run("INSERT INTO main.Authors (uaid, name, db, gaid) SELECT uaid, name, '2', gaid FROM userdb.Authors WHERE gaid LIKE 0");
 
-                                App.Database.db.run("DELETE FROM main.Songs WHERE global_song_id IN (SELECT m.global_song_id FROM main.Songs m LEFT JOIN userdb.Songs u WHERE m.global_song_id = u.global_song_id)");
-                                App.Database.db.run("INSERT INTO main.Songs (song_id, author_id, name, db, global_song_id, global_author_id, text) SELECT song_id, author_id, name, '2', global_song_id, global_author_id, text FROM userdb.Songs");
+                                App.Database.db.run("DELETE FROM main.Songs WHERE gsid IN (SELECT m.gsid FROM main.Songs m LEFT JOIN userdb.Songs u WHERE m.gsid = u.gsid)");
+                                App.Database.db.run("INSERT INTO main.Songs (usid, uaid, name, db, gsid, gaid, text) SELECT usid, uaid, name, '2', gsid, gaid, text FROM userdb.Songs");
                                 App.Database.db.exec("DETACH userdb");
 
                                 App.Database.db.exec("CREATE VIRTUAL TABLE Songslist USING fts4(memid, name, text)");
@@ -247,10 +247,10 @@
                     loadedSongs.push({
                         name: item.name,
                         db: item.db,
-                        aid: item.author_id,
-                        gaid: item.global_author_id,
-                        sid: item.song_id,
-                        gsid: item.global_song_id,
+                        aid: item.uaid,
+                        gaid: item.gaid,
+                        sid: item.usid,
+                        gsid: item.gsid,
                         text: item.text,
                     });
                 });
@@ -280,7 +280,7 @@
             if (typeof author.get('gaid') == 'undefined' || isNaN(author.get('gaid')))
                 d.reject(new Error());
 
-            var stmt = App.Database.db.prepare("SELECT Songs.* FROM Songs WHERE Songs.author_id LIKE ? AND Songs.global_author_id LIKE ? ORDER BY Songs.name");
+            var stmt = App.Database.db.prepare("SELECT Songs.* FROM Songs WHERE Songs.uaid LIKE ? AND Songs.gaid LIKE ? ORDER BY Songs.name");
             stmt.all(author.get('aid'), author.get('gaid'), function (err, rows) {
                 if (err)
                     d.reject(new Error(err));
@@ -290,10 +290,10 @@
                     loadedSongs.push({
                         name: item.name,
                         db: item.db,
-                        aid: item.author_id,
-                        gaid: item.global_author_id,
-                        sid: item.song_id,
-                        gsid: item.global_song_id,
+                        aid: item.uaid,
+                        gaid: item.gaid,
+                        sid: item.usid,
+                        gsid: item.gsid,
                         text: item.text,
                     });
                 });
@@ -312,7 +312,7 @@
 
                 /* We only delete local authors */
 
-                var stmt = App.Database.user_db.prepare("DELETE FROM Songs WHERE song_id = ?");
+                var stmt = App.Database.user_db.prepare("DELETE FROM Songs WHERE usid = ?");
                 stmt.run(song.get('sid'), function (err) {
                     if (err)
                         d.reject(new Error(err));
@@ -338,7 +338,7 @@
 
                     /* It is a global song, so create a new song in local db */
 
-                    var stmt = App.Database.user_db.prepare("INSERT INTO Songs (author_id, name, global_author_id, global_song_id, text) VALUES (?,?,?,?,?)");
+                    var stmt = App.Database.user_db.prepare("INSERT INTO Songs (uaid, name, gaid, gsid, text) VALUES (?,?,?,?,?)");
                     stmt.run(song.get('aid'), song.get('name'), song.get('gaid'), song.get('gsid'), song.get('text'), function (err) {
 
                         if (err)
@@ -371,7 +371,7 @@
 
                     /* It is a local song, update  */
 
-                    var stmt = App.Database.user_db.prepare("UPDATE Songs SET author_id = ?, name = ?, global_author_id = ?, global_song_id = ?, text = ? WHERE song_id = ?");
+                    var stmt = App.Database.user_db.prepare("UPDATE Songs SET uaid = ?, name = ?, gaid = ?, gsid = ?, text = ? WHERE usid = ?");
                     stmt.run(song.get('aid'), song.get('name'), song.get('gaid'), song.get('gsid'), song.get('text'), song.get('sid'), function (err) {
 
                         if (err)
@@ -402,7 +402,7 @@
 
                     /* New song, create */
 
-                    var stmt = App.Database.user_db.prepare("INSERT INTO Songs (author_id, name, global_author_id, global_song_id, text) VALUES (?,?,?,?,?)");
+                    var stmt = App.Database.user_db.prepare("INSERT INTO Songs (uaid, name, gaid, gsid, text) VALUES (?,?,?,?,?)");
                     stmt.run(song.get('aid'), song.get('name'), song.get('gaid'), "0", song.get('text'), function (err) {
 
                         if (err)
@@ -471,7 +471,7 @@
 
                 var loadedSongs = [];
                 var load_promises = [];
-                var stmt = App.Database.db.prepare("SELECT Songs.* FROM Songs WHERE Songs.global_song_id LIKE ? AND Songs.song_id LIKE ? LIMIT 1");
+                var stmt = App.Database.db.prepare("SELECT Songs.* FROM Songs WHERE Songs.gsid LIKE ? AND Songs.usid LIKE ? LIMIT 1");
                 rows.forEach(function (last_song_item) {
                     var load_promise = Q.defer();
 
@@ -482,10 +482,10 @@
                         var song = new App.Model.Song();
                         song.set('name', item.name);
                         song.set('db', item.db);
-                        song.set('aid', item.author_id);
-                        song.set('gaid', item.global_author_id);
-                        song.set('sid', item.song_id);
-                        song.set('gsid', item.global_song_id);
+                        song.set('aid', item.uaid);
+                        song.set('gaid', item.gaid);
+                        song.set('sid', item.usid);
+                        song.set('gsid', item.gsid);
                         song.set('text', item.text);
 
                         loadedSongs.push(song);
@@ -634,7 +634,7 @@
             if (typeof uaid == 'undefined' || isNaN(uaid))
                 d.reject(new Error("uaid " + uaid));
 
-            var stmt = App.Database.db.prepare("SELECT * FROM Authors WHERE global_author_id = ? AND author_id = ?");
+            var stmt = App.Database.db.prepare("SELECT * FROM Authors WHERE gaid = ? AND uaid = ?");
             stmt.get(gaid, uaid, function (err, row) {
                 if (err)
                     d.reject(new Error(err));
@@ -660,8 +660,8 @@
                     loadedAuthors.push({
                         name: item.name,
                         db: item.db,
-                        aid: item.author_id,
-                        gaid: item.global_author_id,
+                        aid: item.uaid,
+                        gaid: item.gaid,
                     });
 
                 });

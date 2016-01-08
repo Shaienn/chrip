@@ -42,6 +42,7 @@
             App.Database.getLastSongs().then(function (lastSongs) {
 
                 for (var i = 0; i < lastSongs.length; i++) {
+                    lastSongs[i].rebuild_slides();
                     App.Model.PlayListCollection.add(lastSongs[i], {silent: true});
                 }
 

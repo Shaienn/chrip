@@ -27,8 +27,8 @@
             });
         },
         addToPlaylist: function (song) {
-            App.SlideGenerator.makeSlidesFromSong(model).then(function (slides) {
-                model.slides = slides;
+            App.SlideGenerator.makeSlidesFromSong(song).then(function (slides) {
+                song.slides = slides;
             });
             
             App.Database.addSongToLastSongs(song);

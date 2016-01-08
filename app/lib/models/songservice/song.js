@@ -9,9 +9,7 @@
 
 
     var Song = Backbone.Model.extend({
-
         defaults: {
-
             name: "",
             db: "0",
             aid: "",
@@ -19,8 +17,13 @@
             sid: "",
             gsid: "",
             text: "",
-
         },
+        rebuild_slides: function () {
+            var that = this;
+            App.SlideGenerator.makeSlidesFromSong(this).then(function (slides) {
+                that.slides = slides;
+            });
+        }
 
     });
     App.Model.Song = Song;
