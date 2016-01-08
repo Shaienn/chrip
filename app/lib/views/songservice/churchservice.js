@@ -9,7 +9,7 @@
     'use strict';
 
     var _this;
-    App.View.ChurchService.Root = Backbone.Marionette.LayoutView.extend({
+    App.View.SongService.Root = Backbone.Marionette.LayoutView.extend({
         template: '#churchservice-tpl',
         id: 'churchservice-main-window',
         regions: {
@@ -114,12 +114,12 @@
         showControl: function () {
 
             win.log("show control request");
-            this.Control_r.show(new App.View.ChurchService.Control);
+            this.Control_r.show(new App.View.SongService.Control);
         },
         showSettings: function (settingsModel) {
 
             win.log("show settings request");
-            this.Settings_r.show(new App.View.ChurchService.Settings({
+            this.Settings_r.show(new App.View.SongService.Settings({
                 model: settingsModel
             }));
 
@@ -128,7 +128,7 @@
 
             win.log("show songbase request");
             this.Control_r.currentView.doOnHide();
-            this.Songbase_r.show(new App.View.ChurchService.SongBase);
+            this.Songbase_r.show(new App.View.SongService.SongBase);
 
         },
         closeSongbase: function () {

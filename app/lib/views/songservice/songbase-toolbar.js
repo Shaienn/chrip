@@ -77,7 +77,7 @@
 
     });
 
-    App.View.ChurchService.SongBaseToolbar = SongBaseToolbar;
+    App.View.SongService.SongBaseToolbar = SongBaseToolbar;
 
 
 })(window.App);

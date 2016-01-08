@@ -6,7 +6,7 @@
 (function (App) {
     'use strict'
 
-    var TopToolbarItemView = Backbone.Marionette.ItemView.extend({
+    App.View.SongService.Control.TopToolbar = Backbone.Marionette.ItemView.extend({
 
         template: '#churchservice-control-toptoolbar-tpl',
         id: 'churchservice-control-toptoolbar',
@@ -22,7 +22,6 @@
 
             win.log("settings button click");
             App.vent.trigger("churchservice:settings:show");
-
         },
 
         presentationBtnHandler: function () {
@@ -38,13 +37,7 @@
                 App.vent.trigger("churchservice:presentation:close");
                 App.Settings.presentation_window = false;
             }
-
         }
-
-
     });
-
-    App.View.ChurchService.Control.TopToolbar = TopToolbarItemView;
-
 
 })(window.App);

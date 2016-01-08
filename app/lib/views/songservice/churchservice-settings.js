@@ -7,9 +7,8 @@
 
     var fontManager = require('font-manager-nw');
     var that, waitComplete;
-
-
-    var ChurchServiceSettings = Backbone.Marionette.ItemView.extend({
+    
+    App.View.SongService.Settings = Backbone.Marionette.ItemView.extend({
         template: '#churchservice-settings-tpl',
         className: 'settings-container-contain',
         background_loaded: false,
@@ -152,6 +151,5 @@
         },
     });
 
-    App.View.ChurchService.Settings = ChurchServiceSettings;
-
+    
 }(window.App));

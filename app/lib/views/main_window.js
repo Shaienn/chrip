@@ -20,7 +20,7 @@
         tabs: [
             {
                 region: "Song_Tab_r",
-                startPoint: "ChurchService",
+                startPoint: "SongService",
                 button: "#appmode-menu-churchservice-btn",
                 setting: "songservice",
                 onEvent: "songservice:control:do_on_show",
@@ -64,6 +64,7 @@
             var key = event.which;
 
             if (event.ctrlKey) {
+                
                 if ((key >= 112) && (key < 112 + that.tabs.length)) {
                     var target = that.tabs[key - 112].setting;
                     if (target != "undefined") {

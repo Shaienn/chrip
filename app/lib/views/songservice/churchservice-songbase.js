@@ -5,7 +5,7 @@
 (function (App) {
     'use strict';
 
-    var ChurchServiceSongbase = Backbone.Marionette.LayoutView.extend({
+    App.View.SongService.SongBase = Backbone.Marionette.LayoutView.extend({
         template: '#churchservice-songbase-tpl',
         className: 'churchservice-songbase-contain',
         ui: {
@@ -121,7 +121,7 @@
 
                 var songCollectionView = new App.View.SongCollection({
                     collection: songCollection,
-                    childView: App.View.ChurchService.Song,
+                    childView: App.View.SongService.Song,
                 });
 
                 that.SongList_r.show(songCollectionView);
@@ -259,7 +259,7 @@
 
                 var songCollectionView = new App.View.SongCollection({
                     collection: songCollection,
-                    childView: App.View.ChurchService.Song,
+                    childView: App.View.SongService.Song,
                 });
 
                 that.SongList_r.show(songCollectionView);
@@ -329,13 +329,13 @@
                 collection: App.Model.PlayListCollection,
             }));
 
-            this.TopToolbar_r.show(new App.View.ChurchService.SongBaseToolbar());
+            this.TopToolbar_r.show(new App.View.SongService.SongBaseToolbar());
         },
         closeSongbase: function () {
             App.vent.trigger('churchservice:songbase:close');
         },
     });
 
-    App.View.ChurchService.SongBase = ChurchServiceSongbase;
+    
 
 }(window.App));

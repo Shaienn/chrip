@@ -8,7 +8,7 @@
 (function (App) {
     'use strict';
 
-    App.View.ChurchService.Control = Backbone.Marionette.LayoutView.extend({
+    App.View.SongService.Control = Backbone.Marionette.LayoutView.extend({
         template: '#churchservice-control-tpl',
         id: 'churchservice-control-contain',
         collection: null,
@@ -35,7 +35,7 @@
         onShow: function () {
 
             var that = this;
-            this.BottomToolbar_r.show(new App.View.ChurchService.Control.BottomToolBar);
+            this.BottomToolbar_r.show(new App.View.SongService.Control.BottomToolBar);
 
             /* Add last songs */
 
@@ -66,6 +66,9 @@
         showSlide: function (slide) {
 
             if (App.freeze_mode == true)
+                return;
+
+            if (App.black_mode == true)
                 return;
 
             /* TODO some logic to separate to few presentation screens */

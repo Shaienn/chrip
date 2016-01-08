@@ -53,13 +53,12 @@ _.extend(App, {
     Controller: {},
     View: {
         MainWindow: {},
-        ChurchService: {},
-        SongEditor: {},
+        SongService: {},
         Bible: {},
         Videoplayer: {},
     },
     Model: {
-        ChurchService: {},
+        SongService: {},
         SongEditor: {},
         Bible: {},
         Videoplayer: {},

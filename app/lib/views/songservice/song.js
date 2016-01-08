@@ -34,7 +34,7 @@
 
     });
 
-    App.View.ChurchService.Song = SongItemView.extend({
+    App.View.SongService.Song = SongItemView.extend({
 
         events: {
             'click .songItem': 'previewSong',

@@ -360,7 +360,7 @@
                                             song.get('text')
                                             ).then(
                                             function () {
-                                                d.resolve();
+                                                d.resolve(true);
                                             }
                                     );
                                 });
@@ -466,8 +466,10 @@
 
             App.Database.user_db.all("SELECT * FROM LastSongs", function (err, rows) {
 
-                if (err)
+                if (err){
                     d.reject(new Error("Load author failed. Got error: " + err));
+                    return;
+                }
 
                 var loadedSongs = [];
                 var load_promises = [];
@@ -476,8 +478,10 @@
                     var load_promise = Q.defer();
 
                     stmt.get(last_song_item.gsid, last_song_item.usid, function (err, item) {
-                        if (err)
+                        if (err){
                             load_promise.reject(new Error(err));
+                            return;
+                        }
 
                         var song = new App.Model.Song();
                         song.set('name', item.name);

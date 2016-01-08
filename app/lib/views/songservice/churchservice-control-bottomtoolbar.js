@@ -7,7 +7,7 @@
 
     'use strict'
 
-    App.View.ChurchService.Control.BottomToolBar = Backbone.Marionette.ItemView.extend({
+    App.View.SongService.Control.BottomToolBar = Backbone.Marionette.ItemView.extend({
 
         template: '#churchservice-playlist-bottomtoolbar-tpl',
         className: 'churchservice-playlist-bottomtoolbar',

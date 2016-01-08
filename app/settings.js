@@ -30,7 +30,7 @@ var path = require("path");
     Settings.font_family = "Arial";
     Settings.backgrounds_path = process.env.PWD + "/backgrounds";
     Settings.update_period = 300000;
-
+    Settings.background = Settings.backgrounds_path + "/1.jpg";
 
     Settings.Config = {
         version : 0,
