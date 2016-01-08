@@ -16,6 +16,7 @@ src/app/themes
 build/
 nbproject/
 tmp/
+db/user.db
 
 pids
 logs
