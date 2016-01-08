@@ -79,6 +79,12 @@
                     App.vent.trigger("main_toolbar:set_freeze_mode_indication", App.freeze_mode);
                 }
 
+                if (key == 66) {
+                    App.black_mode = App.black_mode == true ? false : true;
+                    console.log("Black is " + App.black_mode);
+                    App.vent.trigger("main_toolbar:set_black_mode_indication", App.black_mode);
+                }
+
             }
 
         },
@@ -114,7 +120,7 @@
             App.Database.init().then(function () {
                 App.Database.loadSettings().then(function () {
                     App.Database.getVersion().then(function () {
-                        
+
                         App.Update.init();
 
                         /* Menu */
@@ -124,6 +130,9 @@
                         /* Top toolbar */
 
                         that.TopToolbar_r.show(new App.View.MainWindow.TopToolbar);
+
+                        App.vent.trigger("main_toolbar:set_freeze_mode_indication", App.freeze_mode);
+                        App.vent.trigger("main_toolbar:set_black_mode_indication", App.black_mode);
 
                         for (var i in that.tabs) {
                             var tab = that.tabs[i];
@@ -141,10 +150,11 @@
 
                         that.switchTabTo(Settins.appMode);
 
+
+
                         /* Application is ready to work */
 
-                        App.vent.trigger('main:ready');
-
+//                        App.vent.trigger('main:ready');
 
                         console.log("Ready");
 
@@ -152,7 +162,6 @@
                 });
             });
         },
-        
         togglePresentationState: function () {
 
             /* Toggle presentation window */

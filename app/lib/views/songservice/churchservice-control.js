@@ -34,15 +34,25 @@
         },
         onShow: function () {
 
+            var that = this;
             this.BottomToolbar_r.show(new App.View.ChurchService.Control.BottomToolBar);
 
-            this.collection = new App.View.PlayListCollection({
-                childView: App.View.PlayListControl,
-                collection: App.Model.PlayListCollection,
+            /* Add last songs */
+
+            App.Database.getLastSongs().then(function (lastSongs) {
+
+                for (var i = 0; i < lastSongs.length; i++) {
+                    App.Model.PlayListCollection.add(lastSongs[i], {silent: true});
+                }
+
+                that.collection = new App.View.PlayListCollection({
+                    childView: App.View.PlayListControl,
+                    collection: App.Model.PlayListCollection,
+                });
+
+                that.List_r.show(that.collection);
+                that.doOnShow();
             });
-
-            this.List_r.show(this.collection);
-
         },
         onDestroy: function () {
 
@@ -52,7 +62,6 @@
             App.vent.off("songservice:control:showslide");
         },
         /**************************************/
-
         showSlide: function (slide) {
 
             if (App.freeze_mode == true)
@@ -93,8 +102,6 @@
                 );
             }
 
-
-
             $('.control-panel-list .slide-item.active').removeClass('active');
             $('.control-panel-list .slide-item div[number=' + slide.get('number') + ']')
                     .parent().addClass("active");
@@ -106,9 +113,11 @@
 
         },
         showPlaylistItemControl: function (item) {
-            win.log("Show playlist item request");
 
+            win.log("Show playlist item request");
             if (item instanceof App.Model.Song) {
+
+                win.debug("item is song");
 
                 /* Collection of itemviews */
 

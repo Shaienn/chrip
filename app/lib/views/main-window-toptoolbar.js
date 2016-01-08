@@ -19,13 +19,14 @@
             App.vent.on("presentation:changed", _.bind(this.set_start_button_state, this));
             App.vent.on("main_toolbar:set_freeze_mode_indication", _.bind(this.set_freeze_mode_indication, this));
             App.vent.on("main_toolbar:set_update_mode_indication", _.bind(this.set_update_mode_indication, this));
+            App.vent.on("main_toolbar:set_black_mode_indication", _.bind(this.set_black_screen_mode_indication, this));
 
         },
         onDestroy: function () {
-
             App.vent.off("presentation:changed");
             App.vent.off("main_toolbar:set_freeze_mode_indication");
-
+            App.vent.off("main_toolbar:set_update_mode_indication");
+            App.vent.off("main_toolbar:set_black_mode_indication");
         },
         updateBtnHandler: function () {
             App.vent.trigger("update:run_update");
@@ -52,11 +53,21 @@
             }
         },
         set_freeze_mode_indication: function (state) {
-            console.log("set freeze mode: ", state);
+            var container = $("#app-mode-btn-container");
             if (state) {
-                $("#freeze-mode-btn-container").addClass("active");
+                container.find("#passive_mode").hide();
+                container.find("#active_mode").show();
             } else {
-                $("#freeze-mode-btn-container").removeClass("active");
+                container.find("#active_mode").hide();
+                container.find("#passive_mode").show();
+            }
+        },
+        set_black_screen_mode_indication: function (state) {
+            var container = $("#app-mode-btn-container");
+            if (state) {
+                container.find("#black_mode").show();
+            } else {
+                container.find("#black_mode").hide();
             }
         },
         set_start_button_state: function (state) {

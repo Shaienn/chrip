@@ -45,9 +45,10 @@
 
         addToPlaylist: function () {
 
-            win.log("Add to play list request: ");
+            win.log("Add to play list request");
             App.Model.PlayListCollection.add(this.model);
-
+//            App.Database.addSongToLastSongs(this.model);
+            
         },
 
         previewSong: function (e) {

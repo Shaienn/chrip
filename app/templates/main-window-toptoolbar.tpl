@@ -9,12 +9,15 @@
 
 </ul>
 
-<ul id="freeze-mode-btn-container" class="nav nav-hor left width-60-percent ia-center">
-    <li>
+<ul id="app-mode-btn-container" class="nav nav-hor left width-60-percent ia-center">
+    <li id="passive_mode">
         <i class="fa fa-circle-o">Пассивный режим</i>
     </li>
-    <li>
+    <li id="active_mode">
         <i class="fa fa-circle">Активный режим</i>
+    </li>
+    <li id="black_mode">
+        <i class="fa fa-square">Черный экран</i>
     </li>
 </ul>
 

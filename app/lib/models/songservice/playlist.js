@@ -10,15 +10,31 @@
 
     var PlayListCollection = Backbone.Collection.extend({
         initialize: function () {
-            this.on("add", _.bind(this.prepareObject, this));
+            this.on("add", _.bind(this.addToPlaylist, this));
+            this.on("change", _.bind(this.changePlaylist, this));
+            this.on("remove", _.bind(this.removeFromPlaylist, this));
         },
         onDestroy: function () {
             this.off("add");
+            this.off("change");
+            this.off("remove");
         },
-        prepareObject: function (model) {
+        changePlaylist: function () {
+            App.Database.removeAllFromLastSongs().then(function () {
+                App.Model.PlayListCollection.each(function (model) {
+                    App.Database.addSongToLastSongs(model);
+                });
+            });
+        },
+        addToPlaylist: function (song) {
             App.SlideGenerator.makeSlidesFromSong(model).then(function (slides) {
                 model.slides = slides;
             });
+            
+            App.Database.addSongToLastSongs(song);
+        },
+        removeFromPlaylist: function (song) {
+            App.Database.removeSongFromLastSongs(song);
         },
     });
 

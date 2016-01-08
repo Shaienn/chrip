@@ -21,7 +21,7 @@
         events: {
             'click .close-icon': 'closeSettings',
             'change select,input': 'saveSetting',
-            'click #fakebackgroundsdir': 'showBackgroundsDirectoryDialog',
+            'click #change_background_dir': 'showBackgroundsDirectoryDialog',
         },
         showBackgroundsDirectoryDialog: function () {
 

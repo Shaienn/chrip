@@ -12,17 +12,20 @@
         global_db: {},
         user_db_check: function () {
 
+            var d = Q.defer();
             /* Check user.db, create tables if not exists */
 
             App.Database.user_db = new sqlite3.Database(App.Config.runDir + Settings.user_db);
             App.Database.user_db.serialize(function () {
 
-                App.Database.user_db.run("CREATE TABLE IF NOT EXISTS [Authors] ([author_id] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,[name] TEXT NOT NULL,[global_author_id] INTEGER)");
+                App.Database.user_db.run("CREATE TABLE IF NOT EXISTS [Authors] ([uaid] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,[name] TEXT NOT NULL,[gaid] INTEGER)");
                 App.Database.user_db.run("CREATE TABLE IF NOT EXISTS [Settings] ([key] TEXT NOT NULL PRIMARY KEY, [value] TEXT NOT NULL)");
                 App.Database.user_db.run("CREATE TABLE IF NOT EXISTS [Songs] ([song_id] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,[author_id] INTEGER NOT NULL, [name] TEXT NOT NULL, [global_author_id] INTEGER, [global_song_id] INTEGER, [text] TEXT)");
                 App.Database.user_db.run("CREATE TABLE IF NOT EXISTS [BackDirs] ([bd_id] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, [bd_path] TEXT NOT NULL)");
                 App.Database.user_db.run("CREATE TABLE IF NOT EXISTS [LogoDirs] ([bd_id] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, [bd_path] TEXT NOT NULL)");
                 App.Database.user_db.run("CREATE TABLE IF NOT EXISTS [ForApprove] ([id] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, [gaid] INTEGER, [uaid] INTEGER, [gsid] INTEGER, [usid] INTEGER, [singer_name] VARCHAR(255), [song_name] VARCHAR(255), [song_text] TEXT)");
+
+                App.Database.user_db.run("CREATE TABLE IF NOT EXISTS [LastSongs] ([gsid] INTEGER, [usid] INTEGER)");
 
                 /* If we have no settings inside database files, just add its defaults */
 
@@ -31,7 +34,11 @@
                     stmt.run(key, Settings[key]);
                 }
                 stmt.finalize();
+
+                d.resolve(true);
             });
+
+            return d.promise;
         },
         close: function () {
 
@@ -59,73 +66,74 @@
                     if (err)
                         d.reject(new Error(err));
 
-                    App.Database.user_db_check();
-                    App.Database.getVersion().then(function () {
-                        App.Database.db.serialize(function () {
+                    App.Database.user_db_check().then(function () {
+                        App.Database.getVersion().then(function () {
+                            App.Database.db.serialize(function () {
 
-                            App.Database.db.run("CREATE TABLE IF NOT EXISTS [Authors] ([memid] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,[author_id] INTEGER NOT NULL,[global_author_id] INTEGER,[name] TEXT NOT NULL,[db] TEXT NOT NULL)");
-                            App.Database.db.run("CREATE TABLE IF NOT EXISTS [Songs] ([memid] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,[song_id] INTEGER NOT NULL,[author_id] INTEGER NOT NULL,[global_song_id] INTEGER,[global_author_id] INTEGER,[name] TEXT,[db] TEXT NOT NULL, [text] TEXT)");
-                            App.Database.db.run("CREATE TABLE IF NOT EXISTS [Books] ([id] INTEGER NOT NULL PRIMARY KEY, [full_name] TEXT NOT NULL, [short_name] TEXT NOT NULL)");
-                            App.Database.db.run("CREATE TABLE IF NOT EXISTS [Chapters] ([verses] NUMERIC, [bid] INTEGER, [cid] INTEGER, [content] TEXT)");
+                                App.Database.db.run("CREATE TABLE IF NOT EXISTS [Authors] ([memid] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,[author_id] INTEGER NOT NULL,[global_author_id] INTEGER,[name] TEXT NOT NULL,[db] TEXT NOT NULL)");
+                                App.Database.db.run("CREATE TABLE IF NOT EXISTS [Songs] ([memid] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,[song_id] INTEGER NOT NULL,[author_id] INTEGER NOT NULL,[global_song_id] INTEGER,[global_author_id] INTEGER,[name] TEXT,[db] TEXT NOT NULL, [text] TEXT)");
+                                App.Database.db.run("CREATE TABLE IF NOT EXISTS [Books] ([id] INTEGER NOT NULL PRIMARY KEY, [full_name] TEXT NOT NULL, [short_name] TEXT NOT NULL)");
+                                App.Database.db.run("CREATE TABLE IF NOT EXISTS [Chapters] ([verses] NUMERIC, [bid] INTEGER, [cid] INTEGER, [content] TEXT)");
 
 
-                            /* Global db */
+                                /* Global db */
 
-                            App.Database.db.exec("ATTACH'" + App.Config.runDir + Settings.global_db + "'AS webdb", function (err) {
-                                if (err)
-                                    d.reject(new Error(err));
-                            });
-
-                            App.Database.db.run("INSERT INTO main.Authors (author_id, name, db, global_author_id) SELECT '0', name, '1', author_id FROM webdb.Authors");
-                            App.Database.db.run("INSERT INTO main.Songs (song_id, author_id, name, db, global_song_id, global_author_id, text) SELECT '0', '0', name, '1', song_id, author_id, text FROM webdb.Songs");
-                            App.Database.db.exec("DETACH webdb");
-
-                            /* User db */
-
-                            App.Database.db.exec("ATTACH'" + App.Config.runDir + Settings.user_db + "'AS userdb", function (err) {
-                                if (err)
-                                    d.reject(new Error(err));
-                            });
-
-                            App.Database.db.run("INSERT INTO main.Authors (author_id, name, db, global_author_id) SELECT author_id, name, '2', global_author_id FROM userdb.Authors WHERE global_author_id LIKE 0");
-
-                            App.Database.db.run("DELETE FROM main.Songs WHERE global_song_id IN (SELECT m.global_song_id FROM main.Songs m LEFT JOIN userdb.Songs u WHERE m.global_song_id = u.global_song_id)");
-                            App.Database.db.run("INSERT INTO main.Songs (song_id, author_id, name, db, global_song_id, global_author_id, text) SELECT song_id, author_id, name, '2', global_song_id, global_author_id, text FROM userdb.Songs");
-                            App.Database.db.exec("DETACH userdb");
-
-                            App.Database.db.exec("CREATE VIRTUAL TABLE Songslist USING fts4(memid, name, text)");
-                            App.Database.db.all("SELECT * FROM Songs", function (err, rows) {
-                                if (err)
-                                    d.reject(new Error(err));
-
-                                var stmt = App.Database.db.prepare("INSERT INTO Songslist (memid, name, text) VALUES (?, ?, ?)");
-                                var rows_ts = [];
-
-                                rows.forEach(function (row) {
-
-                                    if (row.text == null)
-                                        return;
-
-                                    var row_d = Q.defer();
-                                    stmt.run(
-                                            row.memid,
-                                            row.name.toLowerCase(),
-                                            row.text.toLowerCase(),
-                                            function (err) {
-
-                                                if (err)
-                                                    row_d.reject(new Error(err));
-
-                                                row_d.resolve(true);
-                                            });
-
-                                    rows_ts.push(row_d.promise);
+                                App.Database.db.exec("ATTACH'" + App.Config.runDir + Settings.global_db + "'AS webdb", function (err) {
+                                    if (err)
+                                        d.reject(new Error(err));
                                 });
 
-                                stmt.finalize();
-                                Q.all(rows_ts).then(function (res) {
-                                    console.log("database init");
-                                    d.resolve(true);
+                                App.Database.db.run("INSERT INTO main.Authors (author_id, name, db, global_author_id) SELECT '0', name, '1', author_id FROM webdb.Authors");
+                                App.Database.db.run("INSERT INTO main.Songs (song_id, author_id, name, db, global_song_id, global_author_id, text) SELECT '0', '0', name, '1', song_id, author_id, text FROM webdb.Songs");
+                                App.Database.db.exec("DETACH webdb");
+
+                                /* User db */
+
+                                App.Database.db.exec("ATTACH'" + App.Config.runDir + Settings.user_db + "'AS userdb", function (err) {
+                                    if (err)
+                                        d.reject(new Error(err));
+                                });
+
+                                App.Database.db.run("INSERT INTO main.Authors (author_id, name, db, global_author_id) SELECT uaid, name, '2', gaid FROM userdb.Authors WHERE gaid LIKE 0");
+
+                                App.Database.db.run("DELETE FROM main.Songs WHERE global_song_id IN (SELECT m.global_song_id FROM main.Songs m LEFT JOIN userdb.Songs u WHERE m.global_song_id = u.global_song_id)");
+                                App.Database.db.run("INSERT INTO main.Songs (song_id, author_id, name, db, global_song_id, global_author_id, text) SELECT song_id, author_id, name, '2', global_song_id, global_author_id, text FROM userdb.Songs");
+                                App.Database.db.exec("DETACH userdb");
+
+                                App.Database.db.exec("CREATE VIRTUAL TABLE Songslist USING fts4(memid, name, text)");
+                                App.Database.db.all("SELECT * FROM Songs", function (err, rows) {
+                                    if (err)
+                                        d.reject(new Error(err));
+
+                                    var stmt = App.Database.db.prepare("INSERT INTO Songslist (memid, name, text) VALUES (?, ?, ?)");
+                                    var rows_ts = [];
+
+                                    rows.forEach(function (row) {
+
+                                        if (row.text == null)
+                                            return;
+
+                                        var row_d = Q.defer();
+                                        stmt.run(
+                                                row.memid,
+                                                row.name.toLowerCase(),
+                                                row.text.toLowerCase(),
+                                                function (err) {
+
+                                                    if (err)
+                                                        row_d.reject(new Error(err));
+
+                                                    row_d.resolve(true);
+                                                });
+
+                                        rows_ts.push(row_d.promise);
+                                    });
+
+                                    stmt.finalize();
+                                    Q.all(rows_ts).then(function (res) {
+                                        console.log("database init");
+                                        d.resolve(true);
+                                    });
                                 });
                             });
                         });
@@ -430,6 +438,96 @@
             return d.promise;
 
         },
+        addSongToLastSongs: function (song) {
+
+            var d = Q.defer();
+
+            if (!(song instanceof App.Model.Song)) {
+                d.reject(new Error("Object is not song type: " + song));
+                return d.promise;
+            }
+
+            var stmt = App.Database.user_db.prepare("INSERT INTO LastSongs (gsid, usid) VALUES (?,?)");
+            stmt.run(song.get('gsid'), song.get('sid'), function (err) {
+
+                if (err) {
+                    d.reject(new Error(err));
+                    return;
+                }
+
+                d.resolve(true);
+            });
+            stmt.finalize();
+
+            return d.promise;
+        },
+        getLastSongs: function () {
+            var d = Q.defer();
+
+            App.Database.user_db.all("SELECT * FROM LastSongs", function (err, rows) {
+
+                if (err)
+                    d.reject(new Error("Load author failed. Got error: " + err));
+
+                var loadedSongs = [];
+                var load_promises = [];
+                var stmt = App.Database.db.prepare("SELECT Songs.* FROM Songs WHERE Songs.global_song_id LIKE ? AND Songs.song_id LIKE ? LIMIT 1");
+                rows.forEach(function (last_song_item) {
+                    var load_promise = Q.defer();
+
+                    stmt.get(last_song_item.gsid, last_song_item.usid, function (err, item) {
+                        if (err)
+                            load_promise.reject(new Error(err));
+
+                        var song = new App.Model.Song();
+                        song.set('name', item.name);
+                        song.set('db', item.db);
+                        song.set('aid', item.author_id);
+                        song.set('gaid', item.global_author_id);
+                        song.set('sid', item.song_id);
+                        song.set('gsid', item.global_song_id);
+                        song.set('text', item.text);
+
+                        loadedSongs.push(song);
+                        load_promise.resolve(true);
+                    });
+
+                    load_promises.push(load_promise.promise);
+                });
+                stmt.finalize();
+
+                Q.all(load_promises).then(function () {
+                    d.resolve(loadedSongs);
+                });
+            });
+
+            return d.promise;
+        },
+        removeSongFromLastSongs: function (song) {
+            var d = Q.defer();
+
+            if (!(song instanceof App.Model.Song))
+                d.reject(new Error("Object is not song type: " + song));
+
+            var stmt = App.Database.user_db.prepare("DELETE FROM LastSongs WHERE gsid = ? AND usid = ?");
+            stmt.run(song.get('gsid'), song.get('sid'), function (err) {
+                if (err)
+                    d.reject(new Error(err));
+                d.resolve(true);
+            });
+            stmt.finalize();
+            return d.promise;
+        },
+        removeAllFromLastSongs: function () {
+            var d = Q.defer();
+            App.Database.user_db.run("DELETE FROM LastSongs", [], function (err) {
+                if (err)
+                    d.reject(new Error(err));
+                
+                d.resolve(true);
+            });
+            return d.promise;
+        },
         addSongForApprove: function (gaid, uaid, gsid, usid, singer_name, song_name, song_text) {
 
             var d = Q.defer();
@@ -540,7 +638,7 @@
             stmt.get(gaid, uaid, function (err, row) {
                 if (err)
                     d.reject(new Error(err));
-                
+
                 d.resolve(row.name);
             });
             stmt.finalize();
@@ -589,7 +687,7 @@
 
                 /* We only delete local authors */
 
-                var stmt = App.Database.user_db.prepare("DELETE FROM Authors WHERE author_id = ?");
+                var stmt = App.Database.user_db.prepare("DELETE FROM Authors WHERE uaid = ?");
                 stmt.run(author.get('aid'));
                 stmt.finalize();
             }
@@ -616,7 +714,7 @@
 
                     /* It is a global author, so create a new author in local db */
 
-                    var stmt = App.Database.user_db.prepare("INSERT INTO Authors (name, global_author_id) VALUES (?,?)");
+                    var stmt = App.Database.user_db.prepare("INSERT INTO Authors (name, gaid) VALUES (?,?)");
                     stmt.run(author.get('name'), author.get('gaid'));
                     stmt.finalize();
 
@@ -625,7 +723,7 @@
 
                     /* It is a local author, update  */
 
-                    var stmt = App.Database.user_db.prepare("UPDATE Authors SET name = ? WHERE author_id = ?");
+                    var stmt = App.Database.user_db.prepare("UPDATE Authors SET name = ? WHERE uaid = ?");
                     stmt.run(author.get('name'), author.get('aid'));
                     stmt.finalize();
 
@@ -634,7 +732,7 @@
 
                     /* New author, create */
 
-                    var stmt = App.Database.user_db.prepare("INSERT INTO Authors (name, global_author_id) VALUES (?,?)");
+                    var stmt = App.Database.user_db.prepare("INSERT INTO Authors (name, gaid) VALUES (?,?)");
                     stmt.run(author.get('name'), '0');
                     stmt.finalize();
 

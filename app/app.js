@@ -73,6 +73,7 @@ _.extend(App, {
     vlc: null,
     video_contexts: [],
     freeze_mode: false,
+    black_mode: false
 });
 
 App.ViewStack = [];

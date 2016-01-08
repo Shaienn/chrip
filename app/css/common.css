@@ -50,7 +50,7 @@ h2, .h2{
     justify-content: flex-end;
 }
 
-#freeze-mode-btn-container li:nth-child(even){
+/*#freeze-mode-btn-container li:nth-child(even){
     display:none;
 }
 
@@ -64,7 +64,7 @@ h2, .h2{
 
 #freeze-mode-btn-container.active li:nth-child(odd){
     display:none;
-}
+}*/
 
 i:before{
     margin-right: 0.3em;

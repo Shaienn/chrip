@@ -4,8 +4,6 @@ Marionette.Behaviors.behaviorsLookup = function () {
 
 var Sortable = Marionette.Behavior.extend({
     onRender: function () {
-
-
         var collection = this.view.collection; // Замыкаем коллекцию
         var items = this.view.children._views; // Получаем список дочерних элементов
         var view;
@@ -28,9 +26,9 @@ var Sortable = Marionette.Behavior.extend({
                 // По-тихому удаляем её из коллекции
                 collection.add(model, {at: ui.item.index(), silent: true});
                 //И также втихаря добавляем её по нужному индексу
+                collection.trigger('change');
             }
         });
-
     }
 });
 

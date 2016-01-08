@@ -51,18 +51,15 @@
             'mouseout .playlistItem': 'outHandler',
         },
         previewSong: function (e) {
-
             var elem = $(this.el);
-
             $('.playlistItem').parents('.item.active').removeClass('active');
             elem.addClass('active');
             App.vent.trigger("churchservice:songbase:loadtext", this.model);
             App.vent.trigger("songbase:selectAuthor", this.model);
         },
         removeFromPlaylist: function () {
-
             App.Model.PlayListCollection.remove(this.model);
-
+//            App.Database.removeSongFromLastSongs(this.model);
         },
     });
 
@@ -113,6 +110,10 @@
         },
     });
 
+    
+    
+    
+    
     App.View.PlayListCollection = PlayListCollection;
 
 })(window.App);
