@@ -1,9 +1,5 @@
 <ul class="nav nav-hor left width-20-percent ia-left">
     <li>
-        <i id="settings-btn" class="fa fa-cogs" title="Settings"></i>
-    </li>
-
-    <li>
         <i id="update-btn" class="fa fa-circle blink_element">Доступно обновление</i>
     </li>
 

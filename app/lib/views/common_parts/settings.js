@@ -1,16 +1,15 @@
 /**
  * Created by shaienn on 02.09.15.
  */
+'use strict';
 
 (function (App) {
-    'use strict';
 
     var fontManager = require('font-manager-nw');
-    var that, waitComplete;
-    
-    App.View.Bible.Settings = Backbone.Marionette.ItemView.extend({
-        template: '#bible-settings-tpl',
-        className: 'settings-container-contain',
+    var that;
+    App.View.Settings.Root = Backbone.Marionette.ItemView.extend({
+        template: '#settings-tpl',
+        id: 'settings-main-window',
         background_loaded: false,
         ui: {
             fakeBackgroundsDir: '#fakebackgroundsdir',
@@ -18,37 +17,31 @@
             slidePreviewArea: '.preview-container',
         },
         events: {
-            'click .close-icon': 'closeSettings',
             'change select,input': 'saveSetting',
             'click #change_background_dir': 'showBackgroundsDirectoryDialog',
         },
         showBackgroundsDirectoryDialog: function () {
-
             this.ui.backgrounds_path.click();
         },
         initialize: function () {
 
         },
         onShow: function () {
-            that = this;
+            console.log("onShow");
             this.render();
-            $('#header').addClass('header-shadow');
-            $('#appmode-menu').hide();
-            $('#main-window-toptoolbar').hide();
-            $('#churchservice-control').hide();
-
-            this.redrawPreview();
             this.refreshBackgroundFiles();
-
+            this.redrawPreview();
         },
         redrawPreview: function () {
-
+            console.log("redrawPreview");
+            that = this;
             App.SlideGenerator
                     .makeSlideFromText("Строка\r\nДлинная строка\r\nСтрока\r\nОчень очень длинная строка")
                     .then(this.drawSlide);
 
         },
         drawSlide: function (slide) {
+            console.log("drawSlide");
             var slide_template = _.template($('#slide-tpl').html());
             that.ui.slidePreviewArea.html(slide_template({
                 background: slide.get("background"),
@@ -68,28 +61,16 @@
 
         },
         onDestroy: function () {
-
             win.log("settings destroy request");
-            $('#bible-control').show();
-            $('#appmode-menu').show();
-            $('#main-window-toptoolbar').show();
-            $('#header').removeClass('header-shadow');
-            clearInterval(waitComplete);
-        },
-        closeSettings: function () {
-
-            win.log("settings close button click");
-            App.vent.trigger('settings:close');
-
         },
         refreshBackgroundFiles: function () {
 
-            var images = Settings.Utils.getBackgrounds();
+            var images = Settings.Utils.getBackgrounds(Settings.SongserviceSettings.backgrounds_path);
 
             var images_select = "";
 
             for (var i = 0; i < images.length; i++) {
-                images_select += "<option " + (Settings.background == images[i].path ? "selected='selected'" : "") + " value='" + images[i].path + "'>" + images[i].name + "</option>";
+                images_select += "<option " + (Settings.SongserviceSettings.background == images[i].path ? "selected='selected'" : "") + " value='" + images[i].path + "'>" + images[i].name + "</option>";
             }
 
             $("#backgroundImageSelector").html(images_select);
@@ -100,6 +81,7 @@
             var value = false;
             var field = $(e.currentTarget);
             var background_path_changed = false;
+            var section = field.closest("section").attr('id');
 
             switch (field.attr('name')) {
 
@@ -133,15 +115,17 @@
 
                     break;
             }
-            win.info('Setting changed: ' + field.attr('name') + ' - ' + value);
-            Settings[field.attr('name')] = value;
+
+            win.info(section + ' changed: ' + field.attr('name') + ' - ' + value);
+
+            Settings[section][field.attr('name')] = value;
 
             /* Database save */
 
-            App.Database.saveSetting(field.attr('name'), value);
+            App.Database.saveSetting(section, field.attr('name'), value);
 
             if (background_path_changed == true) {
-                this.refreshBackgroundFiles(true);
+                this.refreshBackgroundFiles();
             }
 
             /* Redraw slide */
@@ -151,5 +135,5 @@
         },
     });
 
-    
+
 }(window.App));

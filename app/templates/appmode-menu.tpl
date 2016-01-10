@@ -13,4 +13,10 @@
 </ul>
 
 
+<ul class="nav nav-hor right">
+    <li>
+        <i id="appmode-menu-settings-btn" class="fa fa-cogs" title="Settings">Настройки</i>
+    </li>
+</ul>
+
 

@@ -13,13 +13,13 @@
             slideModel.set('number', 1);
             var slideBackground;
 
-            switch (Settings.background_mode) {
+            switch (Settings.BibleSettings.background_mode) {
 
                 case ('all_slides_has_same_back'):
-                    slideBackground = Settings.background;
+                    slideBackground = Settings.BibleSettings.background;
                     break;
                 case ('all_slides_has_random_back'):
-                    slideBackground = Settings.Utils.getRandomBackground(false);
+                    slideBackground = Settings.BibleSettings.Utils.getRandomBackground(false);
                     break;
             }
 
@@ -30,7 +30,7 @@
             /* Find _strings_ and make it italic */
 
             var preparedText = sourceText.trim().replace(/_(.*?)_/g, "<span class='italic'>$1</span>");
-            var screen_bounds = ((Settings.Utils.getScreens())[Settings.presentation_monitor]).bounds;
+            var screen_bounds = ((Settings.Utils.getScreens())[Settings.GeneralSettings.presentation_monitor]).bounds;
 
 
             slideModel.set("text", preparedText);
@@ -77,28 +77,26 @@
             }
 
             var slideBackground;
-
-            switch (Settings.background_mode) {
+            switch (Settings.SongserviceSettings.background_mode) {
 
                 case ('all_slides_has_same_back'):
-                    slideBackground = Settings.background;
+                    slideBackground = Settings.SongserviceSettings.background;
                     break;
                 case ('all_slides_has_random_back'):
-                    slideBackground = Settings.Utils.getRandomBackground(false);
+                    slideBackground = Settings.SongserviceSettings.Utils.getRandomBackground(false);
                     break;
             }
 
             /* Change newline characters for <br> tag. Needs for bigtext script */
 
             var preparedText = text.trim().replace(/\r\n|\n/g, "<br>");
-
-            var screen_bounds = ((Settings.Utils.getScreens())[Settings.presentation_monitor]).bounds;
+            var screen_bounds = ((Settings.Utils.getScreens())[Settings.GeneralSettings.presentation_monitor]).bounds;
 
             slideModel.set("text", preparedText);
             slideModel.set("background", slideBackground);
             slideModel.set("width", screen_bounds.width);
             slideModel.set("height", screen_bounds.height);
-            slideModel.set("font", Settings.font_family.toLowerCase());
+            slideModel.set("font", Settings.SongserviceSettings.font_family.toLowerCase());
 
             d.resolve(slideModel);
             return d.promise;
@@ -130,7 +128,7 @@
     };
 
     App.SlideGenerator = SlideGenerator;
-    win.log("Slidegenerator added\n");
+    win.log("Slidegenerator added");
 
 
 })(window.App);

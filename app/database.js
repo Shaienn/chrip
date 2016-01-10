@@ -17,11 +17,15 @@
             var d = Q.defer();
             /* Check user.db, create tables if not exists */
 
-            App.Database.user_db = new sqlite3.Database(App.Config.runDir + Settings.user_db);
+            App.Database.user_db = new sqlite3.Database(App.Config.runDir + Settings.GeneralSettings.user_db);
             App.Database.user_db.serialize(function () {
 
                 App.Database.user_db.run("CREATE TABLE IF NOT EXISTS [Authors] ([uaid] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,[name] TEXT NOT NULL,[gaid] INTEGER)");
-                App.Database.user_db.run("CREATE TABLE IF NOT EXISTS [Settings] ([key] TEXT NOT NULL PRIMARY KEY, [value] TEXT NOT NULL)");
+
+                App.Database.user_db.run("CREATE TABLE IF NOT EXISTS [GeneralSettings] ([key] TEXT NOT NULL PRIMARY KEY, [value] TEXT NOT NULL)");
+                App.Database.user_db.run("CREATE TABLE IF NOT EXISTS [SongserviceSettings] ([key] TEXT NOT NULL PRIMARY KEY, [value] TEXT NOT NULL)");
+                App.Database.user_db.run("CREATE TABLE IF NOT EXISTS [BibleSettings] ([key] TEXT NOT NULL PRIMARY KEY, [value] TEXT NOT NULL)");
+
                 App.Database.user_db.run("CREATE TABLE IF NOT EXISTS [Songs] ([usid] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,[uaid] INTEGER NOT NULL, [name] TEXT NOT NULL, [gaid] INTEGER, [gsid] INTEGER, [text] TEXT)");
                 App.Database.user_db.run("CREATE TABLE IF NOT EXISTS [BackDirs] ([bd_id] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, [bd_path] TEXT NOT NULL)");
                 App.Database.user_db.run("CREATE TABLE IF NOT EXISTS [LogoDirs] ([bd_id] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, [bd_path] TEXT NOT NULL)");
@@ -31,13 +35,39 @@
 
                 /* If we have no settings inside database files, just add its defaults */
 
-                var stmt = App.Database.user_db.prepare("INSERT OR IGNORE INTO Settings (key, value) VALUES (?, ?)");
-                for (var key in Settings) {
-                    stmt.run(key, Settings[key]);
-                }
-                stmt.finalize();
 
-                d.resolve(true);
+                var settings_table = [
+                    "GeneralSettings",
+                    "SongserviceSettings",
+                    "BibleSettings"
+                ];
+
+                var settings_promises = [];
+
+                settings_table.forEach(function (settings_item) {
+
+                    var sql = "INSERT OR IGNORE INTO " + settings_item + " (key, value) VALUES (?, ?)";
+                    var stmt = App.Database.user_db.prepare(sql);
+
+                    Object.keys(Settings[settings_item]).forEach(function (key) {
+                        var s_d = Q.defer();
+                        stmt.run(key, Settings[settings_item][key], function (err) {
+
+                            if (err)
+                                s_d.reject(new Error(err));
+
+                            s_d.resolve(true);
+                        });
+
+                        settings_promises.push(s_d.promise);
+                    });
+
+                    stmt.finalize();
+                });
+
+                Q.all(settings_promises).then(function () {
+                    d.resolve(true);
+                });
             });
 
             return d.promise;
@@ -57,8 +87,8 @@
         init: function () {
 
             var d = Q.defer();
-            console.log(App.Config.runDir + Settings.global_db);
-            App.Database.global_db = new sqlite3.Database(App.Config.runDir + Settings.global_db, function (err) {
+            console.log(App.Config.runDir + Settings.GeneralSettings.global_db);
+            App.Database.global_db = new sqlite3.Database(App.Config.runDir + Settings.GeneralSettings.global_db, function (err) {
 
                 if (err)
                     d.reject(new Error(err));
@@ -80,7 +110,7 @@
 
                                 /* Global db */
 
-                                App.Database.db.exec("ATTACH'" + App.Config.runDir + Settings.global_db + "'AS webdb", function (err) {
+                                App.Database.db.exec("ATTACH'" + App.Config.runDir + Settings.GeneralSettings.global_db + "'AS webdb", function (err) {
                                     if (err)
                                         d.reject(new Error(err));
                                 });
@@ -91,7 +121,7 @@
 
                                 /* User db */
 
-                                App.Database.db.exec("ATTACH'" + App.Config.runDir + Settings.user_db + "'AS userdb", function (err) {
+                                App.Database.db.exec("ATTACH'" + App.Config.runDir + Settings.GeneralSettings.user_db + "'AS userdb", function (err) {
                                     if (err)
                                         d.reject(new Error(err));
                                 });
@@ -222,18 +252,35 @@
         },
         loadSettings: function () {
 
-            var d = Q.defer();
-            App.Database.user_db.all("SELECT key, value FROM Settings", function (err, rows) {
-                if (err)
-                    d.reject(new Error(err));
+            var settings_table = [
+                "GeneralSettings",
+                "SongserviceSettings",
+                "BibleSettings"
+            ];
 
-                rows.forEach(function (item) {
-                    win.info("Set: " + item.key + " - " + item.value);
-                    Settings[item.key] = item.value;
+            var settings_promises = [];
+
+            settings_table.forEach(function (settings_item) {
+                var d = Q.defer();
+                var sql = "SELECT key, value FROM " + settings_item;
+                var stmt = App.Database.user_db.prepare(sql);
+
+                stmt.all(function (err, rows) {
+
+                    if (err)
+                        d.reject(new Error(err));
+
+                    rows.forEach(function (item) {
+                        win.info("Set: " + item.key + " - " + item.value);
+                        Settings[settings_item][item.key] = item.value;
+                    });
+
+                    d.resolve(true);
                 });
-                d.resolve(true);
+                stmt.finalize();
+                settings_promises.push(d.promise);
             });
-            return d.promise;
+            return Q.all(settings_promises);
         },
         search: function (search_string) {
             search_string = search_string.toLowerCase();
@@ -261,10 +308,12 @@
             stmt.finalize();
             return d.promise;
         },
-        saveSetting: function (name, value) {
+        saveSetting: function (section, name, value) {
             var d = Q.defer();
-            
-            var stmt = App.Database.user_db.prepare("INSERT OR REPLACE INTO Settings VALUES (?,?)");
+
+            var sql = "INSERT OR REPLACE INTO " + section + " VALUES (?,?)"
+
+            var stmt = App.Database.user_db.prepare(sql);
             stmt.run(name, value, function (err) {
                 if (err)
                     d.reject(new Error(err));

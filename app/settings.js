@@ -15,73 +15,93 @@ var path = require("path");
     'use strict';
     gui.Screen.Init();
 
+    var common_background_path = process.env.PWD + "/backgrounds";
+
     /* User interface */
 
-    Settings.user_db = "/db/user.db";
-    Settings.global_db = "/db/global.db";
-    Settings.bible_xml = "/bible/sinoid_utf.xml";
-    
-    /* App settings */
+    Settings.GeneralSettings = {
+        user_db: "/db/user.db",
+        global_db: "/db/global.db",
+        updateServer: "http://127.0.0.1:8080",
+        update_period: 300000,
+        appMode: 'songservice',
+        presentation_monitor: 0,
+    };
 
-    Settings.appMode = 'songservice';
-    Settings.background_mode = 'all_slides_has_random_back';
-    Settings.presentation_monitor = 0;
-    Settings.slide_string_mode = 'one_font_size_per_slide';
-    Settings.font_family = "Arial";
-    Settings.backgrounds_path = process.env.PWD + "/backgrounds";
-    Settings.update_period = 300000;
-    Settings.background = Settings.backgrounds_path + "/1.jpg";
+    Settings.BibleSettings = {
+        background_mode: 'all_slides_has_random_back',
+        font_family: "Arial",
+        backgrounds_path: common_background_path,
+        background: common_background_path + "/1.jpg",
+        bible_xml: "/bible/sinoid_utf.xml",
+        Utils: {
+            backgroundRandom: [],
+            getRandomBackground: function (reset) {
+                return Settings.Utils.getRandomBackground(
+                        Settings.BibleSettings.backgrounds_path,
+                        Settings.BibleSettings.Utils.backgroundRandom, reset);
+            }
+        }
+    };
+
+    Settings.SongserviceSettings = {
+        background_mode: 'all_slides_has_random_back',
+        font_family: "Arial",
+        backgrounds_path: common_background_path,
+        background: common_background_path + "/1.jpg",
+        Utils: {
+            backgroundRandom: [],
+            getRandomBackground: function (reset) {
+                return Settings.Utils.getRandomBackground(
+                        Settings.SongserviceSettings.backgrounds_path,
+                        Settings.SongserviceSettings.Utils.backgroundRandom, reset);
+            }
+        }
+    };
 
     Settings.Config = {
-        version : 0,
+        version: 0,
         tmpPath: "./tmp",
-        updateServer: "http://127.0.0.1:8080"
-    },
+    };
+
     Settings.Utils = {
-
-        backgroundRandom: [],
-
         getScreens: function () {
 
             return gui.Screen.screens;
 
         },
-
-        getRandomBackground: function (reset) {
+        getRandomBackground: function (path, array, reset) {
 
             if (reset == true) {
-                Settings.Utils.backgroundRandom = [];
+                array = [];
             }
 
-            if (Settings.Utils.backgroundRandom.length == 0) {
+            if (array.length == 0) {
 
                 /* Reload background files */
 
-                Settings.Utils.backgroundRandom = Settings.Utils.getBackgrounds();
+                array = Settings.Utils.getBackgrounds(path);
             }
 
-            var background = Settings.Utils.backgroundRandom[Math.floor(Math.random() * Settings.Utils.backgroundRandom.length)];
-            var background_index = Settings.Utils.backgroundRandom.indexOf(background);
-            Settings.Utils.backgroundRandom.splice(background_index, 1);
+            var background = array[Math.floor(Math.random() * array.length)];
+            var background_index = array.indexOf(background);
+            array.splice(background_index, 1);
             return background.path;
         },
-
-        getBackgrounds: function () {
+        getBackgrounds: function (background_path) {
 
             var extensions = [".png", ".jpg"];
             var imagesList = [];
 
-            var files = fs.readdirSync(Settings.backgrounds_path);
+            var files = fs.readdirSync(background_path);
 
             files.forEach(function (file) {
 
                 if (extensions.indexOf(path.extname(file)) >= 0) {
 
                     var imgObj = {
-
                         name: file,
-                        path: Settings.backgrounds_path + "/" + file,
-
+                        path: background_path + "/" + file,
                     };
 
                     imagesList.push(imgObj);
@@ -92,7 +112,6 @@ var path = require("path");
             return imagesList;
 
         },
-
     }
 
 

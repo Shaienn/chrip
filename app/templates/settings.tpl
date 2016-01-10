@@ -1,35 +1,38 @@
 <div class="settings-container">
-    <div class="width-100-percent fleft">
-        <div class="fa fa-times close-icon"></div>
-    </div>
 
-    <section id="presentation">
+    <section id="GeneralSettings">
+        <div class="title">Общие настройки</div>
+        <div class="content">
+            <span>
 
-        <div class="title">Презентация</div>
+                <div class="dropdown presentation-monitor">
+                    <p>Монитор для презентации</p>
+                    <%
+                    var screens = "";
+                    var screens_arr = Settings.Utils.getScreens();
+                    for (var key in screens_arr){
+                    screens += "<option "+(Settings.GeneralSettings.presentation_monitor == key? "selected='selected'":"")+" value='" + key + "'>Monitor " + key +"</option>";
+                    }
+                    %>
+                    <select name="presentation_monitor"><%=screens%></select>
+                    <div class="dropdown-arrow"></div>
+                </div>
+
+            </span>
+        </div>
+    </section>
+
+    <section id="SongserviceSettings">
+
+        <div class="title">Презентация песен</div>
         <div class="content">
             <div class="slide-settings-container">
 
                 <span>
 
-                    <div class="dropdown presentation-monitor">
-                        <p>Монитор для презентации</p>
-                        <%
-                        var screens = "";
-                        var screens_arr = Settings.Utils.getScreens();
-                        for (var key in screens_arr){
-                        screens += "<option "+(Settings.presentation_monitor == key? "selected='selected'":"")+" value='" + key + "'>Monitor " + key +"</option>";
-                        }
-                        %>
-                        <select name="presentation_monitor"><%=screens%></select>
-                        <div class="dropdown-arrow"></div>
-                    </div>
-
-                </span>
-
-                <span>
-
                     <div class="dropdown font">
                         <p>Шрифт</p>
+
                         <%
 
                         var fonts = fontManager.getAvailableFontsSync();
@@ -37,16 +40,15 @@
                         for(var key in fonts) {
 
                         var font = fontManager.substituteFontSync(fonts[key].postscriptName, 'АБВ');
-                        if (font.postscriptName == fonts[key].postscriptName){
-                        cyr_fonts.push(font);
+                            if (font.postscriptName == fonts[key].postscriptName){
+                                cyr_fonts.push(font);
+                            }
                         }
-                        }
-
 
                         var select_font = "";
-
+                        
                         for(var key in cyr_fonts) {
-                        select_font += "<option "+(Settings.font_family == cyr_fonts[key].postscriptName? "selected='selected'":"")+" value='"+cyr_fonts[key].postscriptName+"'>"+(cyr_fonts[key].postscriptName)+"</option>";
+                        select_font += "<option "+(Settings.SongserviceSettings.font_family == cyr_fonts[key].postscriptName? "selected='selected'":"")+" value='"+cyr_fonts[key].postscriptName+"'>"+(cyr_fonts[key].postscriptName)+"</option>";
                         }
 
 
@@ -73,7 +75,7 @@
 
                         var backgrounds = "";
                         for(var key in background_modes) {
-                        backgrounds += "<option " + (Settings.background_mode == key ? "selected='selected'":"") + " value='" + key + "'>" + background_modes[key] + "</option>";
+                        backgrounds += "<option " + (Settings.SongserviceSettings.background_mode == key ? "selected='selected'":"") + " value='" + key + "'>" + background_modes[key] + "</option>";
                         }
                         %>
 
@@ -86,9 +88,9 @@
 
                 <span>
                     <p>Каталог фоновых изображений</p>
-                    <input type="text" placeholder="Каталог фоновых изображений" id="fakebackgroundsdir" value="<%= Settings.backgrounds_path %>" readonly="readonly" size="65" />
+                    <input type="text" placeholder="Каталог фоновых изображений" id="fakebackgroundsdir" value="<%= Settings.SongserviceSettings.backgrounds_path %>" readonly="readonly" size="65" />
                     <i id="change_background_dir" class="open-tmp-folder fa fa-folder-open-o tooltipped" data-toggle="tooltip" data-placement="auto" title="Открыть каталог фоновых изображений"></i>
-                    <input type="file" name="backgrounds_path" id="backgrounds_path" nwdirectory style="display: none;" nwworkingdir="<%= Settings.backgrounds_path %>" />
+                    <input type="file" name="backgrounds_path" id="backgrounds_path" nwdirectory style="display: none;" nwworkingdir="<%= Settings.SongserviceSettings.backgrounds_path %>" />
                 </span>
 
                 <span>

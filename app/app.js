@@ -56,6 +56,7 @@ _.extend(App, {
         SongService: {},
         Bible: {},
         Videoplayer: {},
+        Settings: {},
     },
     Model: {
         SongService: {},
@@ -87,13 +88,20 @@ var initTemplates = function () {
 
     _.each(document.querySelectorAll('[type="text/x-template"]'), function (el) {
         var d = Q.defer();
-        $.get(el.src, function (res) {
-            el.innerHTML = res;
-            d.resolve(true);
-        });
+
+        $.get(el.src)
+                .done(
+                        function (res) {
+                            el.innerHTML = res;
+                            d.resolve(true);
+                        })
+                .fail(
+                        function () {
+                            d.reject(false);
+                        });
+
         ts.push(d.promise);
     });
-
 
     return Q.all(ts);
 };
@@ -122,9 +130,8 @@ var getMac = function () {
     require('getmac').getMac(
             function (err, macAddress) {
                 if (err)
-                    throw err
+                    throw new Error(err);
 
-                console.log(macAddress);
                 Settings.Config.mac = macAddress;
                 d.resolve(macAddress);
             }
@@ -158,11 +165,9 @@ var initApp = function () {
     try {
         App.Window.show(new App.View.MainWindow.Root());
     } catch (e) {
-        console.error('Couldn\'t start app: ', e, e.stack);
+        win.error('Couldn\'t start app: ', e, e.stack);
     }
 };
-
-
 
 
 App.addRegions({

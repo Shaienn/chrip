@@ -155,6 +155,16 @@
 
             var key = event.which;
 
+            if (event.ctrlKey) {
+                
+                /* CTRL + O opens songbase */
+                
+                if (key == 79) {
+                    win.log("Open songbase request");
+                    App.vent.trigger("churchservice:songbase:show");
+                }
+            }
+
             if ((key >= 97) && (key <= 105)) {
 
                 this.keys.forEach(function (item) {

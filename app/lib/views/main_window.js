@@ -13,6 +13,7 @@
             Song_Tab_r: '#song_tab',
             Bible_Tab_r: '#bible_tab',
             Media_Tab_r: '#media_tab',
+            Settings_Tab_r: '#settings_tab',
             Content: '#content',
             TopToolbar_r: '#main-window-toptoolbar',
             InitModal: '#initializing',
@@ -41,7 +42,15 @@
                 setting: "mediaplayer",
                 onEvent: "mediaplayer:control:assignKeys",
                 offEvent: "mediaplayer:control:freeKeys",
-            }
+            },
+            {
+                region: "Settings_Tab_r",
+                startPoint: "Settings",
+                button: "#appmode-menu-settings-btn",
+                setting: "settings",
+                onEvent: "settings:control:onEvent",
+                offEvent: "settings:control:offEvent",
+            },
         ],
         initialize: function () {
 
@@ -64,7 +73,7 @@
             var key = event.which;
 
             if (event.ctrlKey) {
-                
+
                 if ((key >= 112) && (key < 112 + that.tabs.length)) {
                     var target = that.tabs[key - 112].setting;
                     if (target != "undefined") {
@@ -79,6 +88,8 @@
                     console.log("Freeze is " + App.freeze_mode);
                     App.vent.trigger("main_toolbar:set_freeze_mode_indication", App.freeze_mode);
                 }
+
+                /* CTRL + B => switch black screen mode */
 
                 if (key == 66) {
                     App.black_mode = App.black_mode == true ? false : true;
@@ -99,7 +110,6 @@
                     tabContainer.show();
                     $(tab.button).addClass('active');
                     App.vent.trigger(tab.onEvent);
-                    Settings.appMode = tab.setting;
                 } else {
                     tabContainer.hide();
                     $(tab.button).removeClass('active');
@@ -137,19 +147,21 @@
 
                         for (var i in that.tabs) {
                             var tab = that.tabs[i];
-                            that.getRegion(tab.region).show(new App.View[tab.startPoint].Root());
-                            var tabContainer = $(that.getRegion(tab.region).el);
 
-                            if (Settings.appMode == tab.setting) {
-                                tabContainer.show();
-                                $(tab.button).addClass('active');
-                            } else {
-                                tabContainer.hide();
-                                $(tab.button).removeClass('active');
-                            }
+                            var region = that.getRegion(tab.region);
+                            console.log(region);
+                            var view = new App.View[tab.startPoint].Root;
+                            console.log(view);
+                            region.show(view);
+
+                            console.log("here: " + i);
+                            var tabContainer = $(that.getRegion(tab.region).el);
+                            console.log(tabContainer);
+                            tabContainer.hide();
+                            $(tab.button).removeClass('active');
                         }
 
-                        that.switchTabTo(Settins.appMode);
+                        that.switchTabTo("songservice");
 
 
 
@@ -186,7 +198,7 @@
 
                 newPresentationWindow.window.onload = function () {
 
-                    newPresentationWindow.x = ((Settings.Utils.getScreens())[Settings.presentation_monitor]).bounds.x;
+                    newPresentationWindow.x = ((Settings.Utils.getScreens())[Settings.GeneralSettings.presentation_monitor]).bounds.x;
                     //App.P_Window.enterFullscreen();
                     newPresentationWindow.setAlwaysOnTop(true);
                     App.presentation_state = true;
@@ -210,7 +222,7 @@
 
             } else {
 
-                console.log("presentation close");
+                win.log("Presentation window closing");
 
                 while (App.PresentationWindows.length > 0) {
                     var openedPresentationWindow = App.PresentationWindows.pop();

@@ -1,46 +1,56 @@
-.settings-container-contain {
+.settings-container {
     z-index: 1;
     background-color: #17181b;
-    height: 100%;
+    height: calc(100vh - 102px);
     width: calc(100% - 5px);
     position: fixed;
     overflow-x: hidden;
     overflow-y: overlay;
     -webkit-overflow-scrolling: touch;
 }
+/*
+#bible-control .content {
+    height: calc(100vh - 102px);
+    width: 100%;
+    float: left;
+    background-color: inherit;
+    background: rgba(0,0,0,0.5);
+}
+*/
 
-.settings-container-contain::-webkit-scrollbar {
+.settings-container::-webkit-scrollbar {
     width: 5px;
 }
 
-.settings-container-contain::-webkit-scrollbar-track {
+.settings-container::-webkit-scrollbar-track {
     background-color: #30333c;
     -webkit-border-radius: 2px;
     border-radius: 2px;
 }
 
-.settings-container-contain::-webkit-scrollbar-thumb {
+.settings-container::-webkit-scrollbar-thumb {
     background-color: #83888c;
     -webkit-border-radius: 2px;
     border-radius: 2px;
 }
 
-.settings-container-contain::-webkit-scrollbar-thumb:hover {
+.settings-container::-webkit-scrollbar-thumb:hover {
     background-color: #93989c;
 }
 
-.settings-container-contain::-webkit-resizer,
-.settings-container-contain::-webkit-scrollbar-corner,
-.settings-container-contain::-webkit-scrollbar-button,
-.settings-container-contain::-webkit-scrollbar-track-piece {
+.settings-container::-webkit-resizer,
+.settings-container::-webkit-scrollbar-corner,
+.settings-container::-webkit-scrollbar-button,
+.settings-container::-webkit-scrollbar-track-piece {
     display: none;
 }
 
-.settings-container-contain::-webkit-scrollbar-track {
+.settings-container::-webkit-scrollbar-track {
     margin-top: 32px;
 }
 
-.settings-container-contain .settings-container {
+
+.settings-container .settings-container {
     z-index: 1;
     width: 100%;
     height: auto;
@@ -50,7 +60,7 @@
     padding-bottom: 20px;
 }
 
-/*.settings-container-contain .preview-container {*/
+/* .preview-container {*/
 /*z-index: 1;*/
 /*width: 50%;*/
 /*left: 50%;*/
@@ -62,7 +72,7 @@
 /*padding-bottom: 20px;*/
 /*}*/
 
-.settings-container-contain .settings-container section {
+ .settings-container section {
     display: -webkit-box;
     display: -webkit-flex;
     display: -ms-flexbox;
@@ -85,7 +95,7 @@
     /* overlay styles, all needed */
 }
 
-.settings-container-contain .settings-container section .title {
+ .settings-container section .title {
     padding-top: 26px;
     color: #2d75df;
     font-family: 'Open Sans', sans-serif;
@@ -96,7 +106,7 @@
     border-right: 1px solid #3a3b3e;
 }
 
-.settings-container-contain .settings-container section .content {
+ .settings-container section .content {
     position: relative;
     padding-top: 30px;
     padding-bottom: 30px;
@@ -110,13 +120,13 @@
     border-bottom: 1px solid #3a3b3e;
 }
 
-.settings-container-contain .settings-container section .content span {
+ .settings-container section .content span {
     float: left;
     width: 100%;
     height: 40px;
 }
 
-.settings-container-contain .settings-container section .content span p {
+ .settings-container section .content span p {
     min-width: 200px;
     color: #c3c5c7;
     font-family: 'Open Sans', sans-serif;
@@ -124,12 +134,12 @@
     float: left;
 }
 
-.settings-container-contain .settings-container section .content span em {
+ .settings-container section .content span em {
     color: #8a8b8e;
     font-size: 12px;
 }
 
-.settings-container-contain .settings-container #qrcode-overlay {
+ .settings-container #qrcode-overlay {
     display: none;
     position: fixed;
     top: 0;
@@ -140,7 +150,7 @@
     z-index: 99998;
 }
 
-.settings-container-contain .settings-container #qrcode-modal {
+ .settings-container #qrcode-modal {
     display: none;
     position: fixed;
     top: 35%;
@@ -154,7 +164,7 @@
     z-index: 99999;
 }
 
-.settings-container-contain .settings-container #qrcode-modal #qrcode-close {
+ .settings-container #qrcode-modal #qrcode-close {
     color: #000;
     cursor: pointer;
     position: absolute;
@@ -168,28 +178,28 @@
     height: 21px;
 }
 
-.settings-container-contain .settings-container #qrcode-modal #qrcode {
+ .settings-container #qrcode-modal #qrcode {
     margin-bottom: 10px;
 }
 
-.settings-container-contain .settings-container #title .title {
+ .settings-container #title .title {
     color: #fff;
     padding-top: 5px;
     font-size: 22px;
 }
 
-.settings-container-contain .settings-container #title .content {
+ .settings-container #title .content {
     padding-top: 5px;
     height: 30px;
     border-bottom: 1px solid transparent;
 }
 
-.settings-container-contain .settings-container #title .content label {
+ .settings-container #title .content label {
     margin-top: -7px;
 }
 
-.settings-container-contain .settings-container #title .content .keyboard,
-.settings-container-contain .settings-container #title .content .help {
+ .settings-container #title .content .keyboard,
+ .settings-container #title .content .help {
     font-size: 21px;
     margin-right: 25px;
     color: #a3a5a7;
@@ -198,56 +208,56 @@
     transition: all 0.5s;
 }
 
-.settings-container-contain .settings-container #title .content .keyboard:hover,
-.settings-container-contain .settings-container #title .content .help:hover {
+ .settings-container #title .content .keyboard:hover,
+ .settings-container #title .content .help:hover {
     color: #fff;
     -webkit-transition: all 0.5s;
     transition: all 0.5s;
 }
 
-.settings-container-contain .settings-container #user-interface .subtitles-language > select,
-.settings-container-contain .settings-container #user-interface .pct-theme > select,
-.settings-container-contain .settings-container #user-interface .start-screen > select,
-.settings-container-contain .settings-container #user-interface .watchedCovers > select {
+ .settings-container #user-interface .subtitles-language > select,
+ .settings-container #user-interface .pct-theme > select,
+ .settings-container #user-interface .start-screen > select,
+ .settings-container #user-interface .watchedCovers > select {
     width: 158px;
 }
 
-.settings-container-contain .settings-container #subtitles .subtitles-language-default > select,
-.settings-container-contain .settings-container #subtitles .subtitles-font > select,
-.settings-container-contain .settings-container #subtitles .subtitles-decoration > select {
+ .settings-container #subtitles .subtitles-language-default > select,
+ .settings-container #subtitles .subtitles-font > select,
+ .settings-container #subtitles .subtitles-decoration > select {
     width: 158px;
 }
 
-.settings-container-contain .settings-container #subtitles .subtitles-size > select {
+ .settings-container #subtitles .subtitles-size > select {
     width: 67px;
 }
 
-.settings-container-contain .settings-container #subtitles .subtitles-custom > .settings-label {
+ .settings-container #subtitles .subtitles-custom > .settings-label {
     margin-left: 40px;
 }
 
-.settings-container-contain .settings-container #subtitles .subtitles-custom .colorsub {
+ .settings-container #subtitles .subtitles-custom .colorsub {
     cursor: pointer;
 }
 
-.settings-container-contain .settings-container #trakt-tv .trakt-options {
+ .settings-container #trakt-tv .trakt-options {
     color: #c3c5c7;
 }
 
-.settings-container-contain .settings-container #trakt-tv .trakt-options a {
+ .settings-container #trakt-tv .trakt-options a {
     display: inline-block;
 }
 
-.settings-container-contain .settings-container #trakt-tv .trakt-options .unauthtext {
+ .settings-container #trakt-tv .trakt-options .unauthtext {
     margin-left: 5px;
     color: #2468cc;
 }
 
-.settings-container-contain .settings-container #trakt-tv .trakt-options .unauthtext:hover {
+ .settings-container #trakt-tv .trakt-options .unauthtext:hover {
     color: #225694;
 }
 
-.settings-container-contain .settings-container #trakt-tv .trakt-options .loading-spinner {
+ .settings-container #trakt-tv .trakt-options .loading-spinner {
     -webkit-animation-duration: 0.75s;
     animation-duration: 0.75s;
     -webkit-animation-iteration-count: infinite;
@@ -272,33 +282,33 @@
     margin-left: 20px;
 }
 
-.settings-container-contain .settings-container #trakt-tv .trakt-options .syncTrakt {
+ .settings-container #trakt-tv .trakt-options .syncTrakt {
     margin-bottom: 15px;
     margin-top: -10px;
 }
 
-.settings-container-contain .settings-container #tvshowtime .tvshowtime-options {
+ .settings-container #tvshowtime .tvshowtime-options {
     margin-bottom: 35px;
 }
 
-.settings-container-contain .settings-container #tvshowtime .tvshowtime-options a {
+ .settings-container #tvshowtime .tvshowtime-options a {
     display: inline-block;
 }
 
-.settings-container-contain .settings-container #tvshowtime .tvshowtime-options .unauthtext {
+ .settings-container #tvshowtime .tvshowtime-options .unauthtext {
     margin-left: 5px;
     color: #2468cc;
 }
 
-.settings-container-contain .settings-container #tvshowtime .tvshowtime-options .unauthtext:hover {
+ .settings-container #tvshowtime .tvshowtime-options .unauthtext:hover {
     color: #225694;
 }
 
-.settings-container-contain .settings-container #tvshowtime .tvshowtime-options #connect-with-tvst {
+ .settings-container #tvshowtime .tvshowtime-options #connect-with-tvst {
     margin-top: -12px;
 }
 
-.settings-container-contain .settings-container #tvshowtime .tvshowtime-options .tvst-loading-spinner {
+ .settings-container #tvshowtime .tvshowtime-options .tvst-loading-spinner {
     -webkit-animation-duration: 0.75s;
     animation-duration: 0.75s;
     -webkit-animation-iteration-count: infinite;
@@ -324,75 +334,75 @@
     margin-top: -2px;
 }
 
-.settings-container-contain .settings-container #connection #overallRatio {
+ .settings-container #connection #overallRatio {
     pointer-events: none;
     -webkit-user-select: none;
 }
 
-.settings-container-contain .settings-container #connection #overallRatio i {
+ .settings-container #connection #overallRatio i {
     padding-left: 4px;
     padding-right: 8px;
 }
 
-.settings-container-contain .settings-container #connection .reset-tvAPI {
+ .settings-container #connection .reset-tvAPI {
     font-size: 13px;
     color: #8a8b8e;
     -webkit-transition: all 0.5s;
     transition: all 0.5s;
 }
 
-.settings-container-contain .settings-container #connection .reset-tvAPI:hover {
+ .settings-container #connection .reset-tvAPI:hover {
     cursor: pointer;
     color: #2468cc;
     -webkit-transition: all 0.5s;
     transition: all 0.5s;
 }
 
-.settings-container-contain .settings-container .open-tmp-folder {
+ .settings-container .open-tmp-folder {
     font-size: 16px;
     margin-left: 10px;
     -webkit-transition: all 0.5s;
     transition: all 0.5s;
 }
 
-.settings-container-contain .settings-container .open-tmp-folder:hover {
+ .settings-container .open-tmp-folder:hover {
     cursor: pointer;
     color: #2468cc;
     -webkit-transition: all 0.5s;
     transition: all 0.5s;
 }
 
-.settings-container-contain .settings-container #database .open-database-folder {
+ .settings-container #database .open-database-folder {
     font-size: 16px;
     margin-left: 10px;
     -webkit-transition: all 0.5s;
     transition: all 0.5s;
 }
 
-.settings-container-contain .settings-container #database .open-database-folder:hover {
+ .settings-container #database .open-database-folder:hover {
     cursor: pointer;
     color: #2468cc;
     -webkit-transition: all 0.5s;
     transition: all 0.5s;
 }
 
-.settings-container-contain .settings-container #vpn .vpn-buttons {
+ .settings-container #vpn .vpn-buttons {
     margin-bottom: 10px;
 }
 
-.settings-container-contain .settings-container .btns {
+ .settings-container .btns {
     padding-top: 10px;
     padding-right: 2%;
     float: right;
 }
 
-.settings-container-contain .settings-container .btns.database {
+ .settings-container .btns.database {
     float: left;
     padding-top: 0;
     padding-bottom: 13px;
 }
 
-.settings-container-contain .settings-container .btn-settings {
+ .settings-container .btn-settings {
     position: relative;
     margin-top: 13px;
     float: left;
@@ -413,43 +423,43 @@
     transition: background-color 0.5s;
 }
 
-.settings-container-contain .settings-container .btn-settings.database {
+ .settings-container .btn-settings.database {
     margin-top: 0;
 }
 
-.settings-container-contain .settings-container .btn-settings:hover {
+ .settings-container .btn-settings:hover {
     background-color: #225694;
     color: #e3e5e7;
     text-decoration: none;
 }
 
-.settings-container-contain .settings-container .btn-settings.disabled {
+ .settings-container .btn-settings.disabled {
     background-color: #393b3d;
 }
 
-.settings-container-contain .settings-container .btn-settings.disabled:hover {
+ .settings-container .btn-settings.disabled:hover {
     background-color: #393b3d;
 }
 
-.settings-container-contain .settings-container .btn-settings.disabled:active {
+ .settings-container .btn-settings.disabled:active {
     background-color: #393b3d;
 }
 
-.settings-container-contain .settings-container .btn-settings.ok {
+ .settings-container .btn-settings.ok {
     background-color: #27ae60;
 }
 
-.settings-container-contain .settings-container .btn-settings.warning {
+ .settings-container .btn-settings.warning {
     background-color: #f15153;
 }
 
-.settings-container-contain .settings-container .btn-settings:active {
+ .settings-container .btn-settings:active {
     -webkit-box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.6);
     box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.6);
     background: #2468cc;
 }
 
-.settings-container-contain .settings-container .dropdown select {
+ .settings-container .dropdown select {
     margin-left: 10px;
     position: relative;
     padding-left: 5px;
@@ -469,13 +479,13 @@
     width: 270px;
 }
 
-.settings-container-contain .settings-container .dropdown option {
+ .settings-container .dropdown option {
     background: #393b3d;
     border: 0 !important;
     outline: 0;
 }
 
-.settings-container-contain .settings-container .dropdown .dropdown-arrow {
+ .settings-container .dropdown .dropdown-arrow {
     width: 0;
     height: 0;
     border-left: 4px solid transparent;
@@ -488,7 +498,7 @@
     cursor: pointer;
 }
 
-.settings-container-contain .success_alert {
+ .success_alert {
     position: fixed;
     top: 45px;
     right: 50px;
@@ -497,7 +507,7 @@
     font-size: 16px;
 }
 
-.settings-container-contain .success_alert #checkmark-notify {
+ .success_alert #checkmark-notify {
     display: inline-block;
     width: 20px;
     height: 20px;
@@ -505,7 +515,7 @@
     transform: rotate(45deg);
 }
 
-.settings-container-contain .success_alert #stem-notify {
+ .success_alert #stem-notify {
     position: absolute;
     width: 3px;
     height: 12px;
@@ -514,7 +524,7 @@
     top: 6px;
 }
 
-.settings-container-contain .success_alert #kick-notify {
+ .success_alert #kick-notify {
     position: absolute;
     width: 6px;
     height: 3px;
@@ -523,10 +533,10 @@
     top: 15px;
 }
 
-.settings-container-contain input[type="text"],
-.settings-container-contain input[type="password"],
-.settings-container-contain input[type="number"],
-.settings-container-contain input[type="color"] {
+.settings-container input[type="text"],
+.settings-container input[type="password"],
+.settings-container input[type="number"],
+.settings-container input[type="color"] {
     margin-left: 10px;
     margin-top: -9px;
     padding-left: 10px;
@@ -543,41 +553,41 @@
     width: 270px;
 }
 
-.settings-container-contain input[type="text"]#fakedatabaseLocation,
-.settings-container-contain input[type="password"]#fakedatabaseLocation,
-.settings-container-contain input[type="number"]#fakedatabaseLocation,
-.settings-container-contain input[type="color"]#fakedatabaseLocation {
+.settings-container input[type="text"]#fakedatabaseLocation,
+.settings-container input[type="password"]#fakedatabaseLocation,
+.settings-container input[type="number"]#fakedatabaseLocation,
+.settings-container input[type="color"]#fakedatabaseLocation {
     pointer-events: none;
     -webkit-user-select: none;
 }
 
-.settings-container-contain input[type="text"]#fakedatabaseLocation,
-.settings-container-contain input[type="password"]#fakedatabaseLocation,
-.settings-container-contain input[type="number"]#fakedatabaseLocation,
-.settings-container-contain input[type="color"]#fakedatabaseLocation,
-.settings-container-contain input[type="text"]#settingsIpAddr,
-.settings-container-contain input[type="password"]#settingsIpAddr,
-.settings-container-contain input[type="number"]#settingsIpAddr,
-.settings-container-contain input[type="color"]#settingsIpAddr {
+.settings-container input[type="text"]#fakedatabaseLocation,
+.settings-container input[type="password"]#fakedatabaseLocation,
+.settings-container input[type="number"]#fakedatabaseLocation,
+.settings-container input[type="color"]#fakedatabaseLocation,
+.settings-container input[type="text"]#settingsIpAddr,
+.settings-container input[type="password"]#settingsIpAddr,
+.settings-container input[type="number"]#settingsIpAddr,
+.settings-container input[type="color"]#settingsIpAddr {
     pointer-events: none;
     -webkit-user-select: none;
 }
 
-.settings-container-contain input[type='color'] {
+.settings-container input[type='color'] {
     -webkit-appearance: none;
     width: 67px;
 }
 
-.settings-container-contain input[type='color']::-webkit-color-swatch {
+.settings-container input[type='color']::-webkit-color-swatch {
     margin: 3px -9px 3px -3px;
 }
 
-.settings-container-contain input[type='number']::-webkit-inner-spin-button {
+.settings-container input[type='number']::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
 }
 
-.settings-container-contain input[type=checkbox].settings-checkbox {
+.settings-container input[type=checkbox].settings-checkbox {
     position: absolute;
     overflow: hidden;
     clip: rect(0 0 0 0);
@@ -588,7 +598,7 @@
     border: 0;
 }
 
-.settings-container-contain input[type=checkbox].settings-checkbox + label.settings-label {
+.settings-container input[type=checkbox].settings-checkbox + label.settings-label {
     height: 15px;
     display: inline-block;
     line-height: 15px;
@@ -599,11 +609,11 @@
     color: #c3c5c7;
 }
 
-.settings-container-contain input[type=checkbox].settings-checkbox:checked + label.settings-label:after {
+.settings-container input[type=checkbox].settings-checkbox:checked + label.settings-label:after {
     opacity: 1;
 }
 
-.settings-container-contain .settings-label:before {
+.settings-container .settings-label:before {
     content: '\f0c8';
     font-family: "fontawesome";
     font-size: 18px;
@@ -613,7 +623,7 @@
     color: #545454;
 }
 
-.settings-container-contain .settings-label:after {
+.settings-container .settings-label:after {
     content: '\f00c';
     font-family: "fontawesome";
     font-size: 12px;
@@ -627,14 +637,14 @@
     transition: opacity 0.1s ease-in-out;
 }
 
-.settings-container-contain .settings-container-check-settings {
+.settings-container .settings-container-check-settings {
     width: 14px;
     height: 14px;
     margin-top: 59px;
     position: relative;
 }
 
-.settings-container-contain .settings-container-check-settings label {
+.settings-container .settings-container-check-settings label {
     cursor: pointer;
     position: absolute;
     top: 0;
@@ -647,7 +657,7 @@
     background-color: #393b3d;
 }
 
-.settings-container-contain .settings-container-check-settings label:after {
+.settings-container .settings-container-check-settings label:after {
     opacity: 0;
     content: '';
     position: absolute;
@@ -663,7 +673,7 @@
     transform: rotate(-45deg);
 }
 
-.settings-container-contain .settings-container-check-settings input[type=checkbox]:checked + label:after {
+.settings-container .settings-container-check-settings input[type=checkbox]:checked + label:after {
     opacity: 1;
 }
 

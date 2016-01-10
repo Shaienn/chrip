@@ -1,1 +1,0 @@
-<textarea id="songeditor_input_textarea" class="chordpro-song-editor"></textarea>

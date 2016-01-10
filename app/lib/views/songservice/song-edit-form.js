@@ -241,11 +241,11 @@
 
                 preview.html(slide_template({
                     number: 0,
-                    background: Settings.background,
+                    background: Settings.SongserviceSettings.background,
                     height: screen_bounds.height,
                     width: screen_bounds.width,
                     text: preparedText,
-                    font: Settings.font_family
+                    font: Settings.SongserviceSettings.font_family
                 }));
 
                 var text_span = preview.find('.slide_text span');
