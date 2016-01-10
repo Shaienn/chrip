@@ -147,16 +147,10 @@
 
                         for (var i in that.tabs) {
                             var tab = that.tabs[i];
-
                             var region = that.getRegion(tab.region);
-                            console.log(region);
                             var view = new App.View[tab.startPoint].Root;
-                            console.log(view);
                             region.show(view);
-
-                            console.log("here: " + i);
                             var tabContainer = $(that.getRegion(tab.region).el);
-                            console.log(tabContainer);
                             tabContainer.hide();
                             $(tab.button).removeClass('active');
                         }
