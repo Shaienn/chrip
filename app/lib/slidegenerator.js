@@ -99,19 +99,30 @@
             slideModel.set("width", screen_bounds.width);
             slideModel.set("height", screen_bounds.height);
             slideModel.set("font", Settings.font_family.toLowerCase());
-                        
+
             d.resolve(slideModel);
             return d.promise;
         },
         _getPartsFromText: function (text) {
 
             var parts = [];
-            var pattern = /\{(?:sos|start_of_slide)\}([\w\s\W\S]+?)\{(?:eos|end_of_slide)\}/g;
             var res;
 
-            while ((res = pattern.exec(text)) != null) {
+            while ((res = App.Config.slide_part.pattern.exec(text)) != null) {
 
-                parts.push(res[1]);
+                var raw_text = res[1].trim();
+                for (var p in App.Config.song_parts_patterns) {
+
+                    var part_pattern = App.Config.song_parts_patterns[p].pattern;
+                    var part = part_pattern.exec(raw_text);
+
+                    if (part == null) {
+                        continue;
+                    }
+
+                    parts.push(part[1].trim());
+                    break;
+                }
             }
             return parts;
 

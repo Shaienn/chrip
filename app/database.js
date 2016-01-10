@@ -6,6 +6,8 @@
     'use strict';
     var sqlite3 = require('sqlite3').verbose();
     var Q = require('q');
+    var assert = require('assert');
+
     App.Database = {
         db: {},
         user_db: {},
@@ -261,6 +263,7 @@
         },
         saveSetting: function (name, value) {
             var d = Q.defer();
+            
             var stmt = App.Database.user_db.prepare("INSERT OR REPLACE INTO Settings VALUES (?,?)");
             stmt.run(name, value, function (err) {
                 if (err)
@@ -274,11 +277,8 @@
         loadSongs: function (author) {
             var d = Q.defer();
 
-            if (typeof author.get('aid') == 'undefined' || isNaN(author.get('aid')))
-                d.reject(new Error());
-
-            if (typeof author.get('gaid') == 'undefined' || isNaN(author.get('gaid')))
-                d.reject(new Error());
+            assert.ok(!isNaN(author.get('aid')));
+            assert.ok(!isNaN(author.get('gaid')));
 
             var stmt = App.Database.db.prepare("SELECT Songs.* FROM Songs WHERE Songs.uaid LIKE ? AND Songs.gaid LIKE ? ORDER BY Songs.name");
             stmt.all(author.get('aid'), author.get('gaid'), function (err, rows) {
@@ -305,8 +305,8 @@
         deleteSong: function (song) {
             var d = Q.defer();
 
-            if (typeof song.get('sid') == 'undefined' || isNaN(song.get('sid')))
-                d.reject(new Error("Sid is wrong"));
+            assert.ok(song instanceof App.Model.Song);
+            assert.ok(!isNaN(song.get('sid')));
 
             if (song.get('db') == '2') {
 
@@ -328,8 +328,7 @@
 
             var d = Q.defer();
 
-            if (!(song instanceof App.Model.Song))
-                d.reject(new Error("Object is not song type: " + song));
+            assert.ok(song instanceof App.Model.Song);
 
             var that = this;
             switch (song.get('db')) {
@@ -442,10 +441,7 @@
 
             var d = Q.defer();
 
-            if (!(song instanceof App.Model.Song)) {
-                d.reject(new Error("Object is not song type: " + song));
-                return d.promise;
-            }
+            assert.ok(song instanceof App.Model.Song);
 
             var stmt = App.Database.user_db.prepare("INSERT INTO LastSongs (gsid, usid) VALUES (?,?)");
             stmt.run(song.get('gsid'), song.get('sid'), function (err) {
@@ -466,7 +462,7 @@
 
             App.Database.user_db.all("SELECT * FROM LastSongs", function (err, rows) {
 
-                if (err){
+                if (err) {
                     d.reject(new Error("Load author failed. Got error: " + err));
                     return;
                 }
@@ -478,7 +474,7 @@
                     var load_promise = Q.defer();
 
                     stmt.get(last_song_item.gsid, last_song_item.usid, function (err, item) {
-                        if (err){
+                        if (err) {
                             load_promise.reject(new Error(err));
                             return;
                         }
@@ -510,8 +506,7 @@
         removeSongFromLastSongs: function (song) {
             var d = Q.defer();
 
-            if (!(song instanceof App.Model.Song))
-                d.reject(new Error("Object is not song type: " + song));
+            assert.ok(song instanceof App.Model.Song);
 
             var stmt = App.Database.user_db.prepare("DELETE FROM LastSongs WHERE gsid = ? AND usid = ?");
             stmt.run(song.get('gsid'), song.get('sid'), function (err) {
@@ -527,7 +522,7 @@
             App.Database.user_db.run("DELETE FROM LastSongs", [], function (err) {
                 if (err)
                     d.reject(new Error(err));
-                
+
                 d.resolve(true);
             });
             return d.promise;
@@ -536,19 +531,10 @@
 
             var d = Q.defer();
 
-            console.log("addSongForApprove");
-
-            if (typeof gaid == 'undefined' || isNaN(gaid))
-                d.reject(new Error("Gaid is wrong: " + typeof gaid + " " + isNaN(gaid)))
-
-            if (typeof uaid == 'undefined' || isNaN(uaid))
-                d.reject(new Error("Uaid is wrong: " + typeof uaid + " " + isNaN(uaid)))
-
-            if (typeof gsid == 'undefined' || isNaN(gsid))
-                d.reject(new Error("Gsid is wrong: " + typeof gsid + " " + isNaN(gsid)))
-
-            if (typeof usid == 'undefined' || isNaN(usid))
-                d.reject(new Error("Usid is wrong: " + typeof usid + " " + isNaN(usid)))
+            assert.ok(!isNaN(gaid));
+            assert.ok(!isNaN(uaid));
+            assert.ok(!isNaN(gsid));
+            assert.ok(!isNaN(usid));
 
             /* Check is it already exist record with corresponding gaid, uaid, gsid and guid values */
 
@@ -625,6 +611,9 @@
             stmt.finalize();
         },
         removeSongForApprove: function (id) {
+
+            assert.ok(!isNaN(id));
+
             var stmt = App.Database.user_db.prepare("DELETE FROM ForApprove WHERE id=?");
             stmt.run(id);
             stmt.finalize();
@@ -632,11 +621,8 @@
         getSinger: function (gaid, uaid) {
             var d = Q.defer();
 
-            if (typeof gaid == 'undefined' || isNaN(gaid))
-                d.reject(new Error("gaid " + gaid));
-
-            if (typeof uaid == 'undefined' || isNaN(uaid))
-                d.reject(new Error("uaid " + uaid));
+            assert.ok(!isNaN(gaid));
+            assert.ok(!isNaN(uaid));
 
             var stmt = App.Database.db.prepare("SELECT * FROM Authors WHERE gaid = ? AND uaid = ?");
             stmt.get(gaid, uaid, function (err, row) {
@@ -678,14 +664,8 @@
         },
         deleteAuthor: function (author) {
 
-            if (!(author instanceof App.Model.Author)) {
-                win.error("Object is not author type: " + author);
-                return;
-            }
-
-            if (typeof author.get('aid') == 'undefined' || isNaN(author.get('aid'))) {
-                return;
-            }
+            assert.ok(author instanceof App.Model.Author);
+            assert.ok(!isNaN(author.get('aid')));
 
             if (author.get('db') == '2') {
 
@@ -699,18 +679,9 @@
         },
         saveAuthor: function (author) {
 
-            if (!(author instanceof App.Model.Author)) {
-                win.error("Object is not author type: " + author);
-                return;
-            }
-
-            if (typeof author.get('aid') == 'undefined' || isNaN(author.get('aid'))) {
-                return;
-            }
-
-            if (typeof author.get('gaid') == 'undefined' || isNaN(author.get('gaid'))) {
-                return;
-            }
+            assert.ok(author instanceof App.Model.Author);
+            assert.ok(!isNaN(author.get('aid')));
+            assert.ok(!isNaN(author.get('gaid')));
 
             switch (author.get('db')) {
 

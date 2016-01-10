@@ -69,33 +69,8 @@
 
 
         },
-        showSlide: function (currentSlide) {
-
-            /*
-             if (typeof App.Window.Presentation != "undefined") {
-             
-             var body = App.Window.Presentation.window.document.body;
-             var content = $(body).find("#presentation-content");
-             var prevImg = content.find('.prevImage');
-             content.append('<img class="nextImage" src="data:image/jpg;base64, ' + currentSlide.get('slide') + '">');
-             var currImg = content.find('.nextImage');
-             
-             if (prevImg.length > 0) {
-             prevImg.stop().fadeOut(1000, function () {
-             prevImg.remove();
-             currImg.removeClass('nextImage').addClass('prevImage');
-             });
-             } else {
-             currImg.removeClass('nextImage').addClass('prevImage');
-             }
-             
-             }
-             */
-        },
         onShow: function () {
-
             this.showControl();
-
         },
         onDestroy: function () {
 

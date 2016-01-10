@@ -1,7 +1,6 @@
 'use strict';
 (function (App) {
     var Q = require('q');
-    var net = require('net');
     var fs = require('fs-extra');
     var http = require('http');
     var assert = require('assert');
@@ -11,7 +10,7 @@
         client: null,
         init: function () {
             App.vent.on("update:run_update", _.bind(this.runUpdate, this));
-            
+
             this.client = restify.createJsonClient({
                 url: Settings.Config.updateServer
             });
@@ -29,7 +28,7 @@
                         /* Do not call server again, because we already got info
                          * that we need to update base
                          * */
-                        
+
                         App.vent.trigger("main_toolbar:set_update_mode_indication", true);
 
                     } else {
@@ -46,8 +45,9 @@
             var d = Q.defer();
             this.client.get('/songbase', function (err, req, res, obj) {
 
-                if (err)
-                    d.reject(err);
+                if (err) {
+                    d.reject(new Error(err));
+                }
 
                 if ((typeof obj != "undefined") && (typeof obj.version != "undefined")) {
                     if (obj.version != Settings.Config.version) {
@@ -66,8 +66,10 @@
             var that = this;
             this.client.get('/songbase/link', function (err, req, res, obj) {
 
-                if (err)
-                    throw error(err);
+                if (err) {
+                    d.reject(new Error(err));
+                    return;
+                }
 
                 if (typeof obj.link != "undefined") {
 
@@ -98,7 +100,7 @@
 
                     }).on('error', function (err) { // Handle errors
                         fs.unlink(dest);
-                        throw error(err);
+                        throw new Error(err);
                     });
                 }
             });
@@ -113,8 +115,10 @@
                             var song = res[i];
                             song.mac = Settings.Config.mac;
                             that.client.post('/approve', song, function (err, req, res, obj) {
-                                if (err)
+                                
+                                if (err) {
                                     throw new Error(err);
+                                }
 
                                 if (typeof obj.approve != "undefined")
                                     App.Database.removeSongForApprove(obj.approve);
