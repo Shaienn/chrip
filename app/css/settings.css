@@ -72,7 +72,7 @@
 /*padding-bottom: 20px;*/
 /*}*/
 
- .settings-container section {
+.settings-container section {
     display: -webkit-box;
     display: -webkit-flex;
     display: -ms-flexbox;
@@ -95,7 +95,7 @@
     /* overlay styles, all needed */
 }
 
- .settings-container section .title {
+.settings-container section .title {
     padding-top: 26px;
     color: #2d75df;
     font-family: 'Open Sans', sans-serif;
@@ -106,7 +106,7 @@
     border-right: 1px solid #3a3b3e;
 }
 
- .settings-container section .content {
+.settings-container section .content {
     position: relative;
     padding-top: 30px;
     padding-bottom: 30px;
@@ -120,13 +120,13 @@
     border-bottom: 1px solid #3a3b3e;
 }
 
- .settings-container section .content span {
+.settings-container section .content span {
     float: left;
     width: 100%;
     height: 40px;
 }
 
- .settings-container section .content span p {
+.settings-container section .content span p {
     min-width: 200px;
     color: #c3c5c7;
     font-family: 'Open Sans', sans-serif;
@@ -134,12 +134,12 @@
     float: left;
 }
 
- .settings-container section .content span em {
+.settings-container section .content span em {
     color: #8a8b8e;
     font-size: 12px;
 }
 
- .settings-container #qrcode-overlay {
+.settings-container #qrcode-overlay {
     display: none;
     position: fixed;
     top: 0;
@@ -150,7 +150,7 @@
     z-index: 99998;
 }
 
- .settings-container #qrcode-modal {
+.settings-container #qrcode-modal {
     display: none;
     position: fixed;
     top: 35%;
@@ -164,7 +164,7 @@
     z-index: 99999;
 }
 
- .settings-container #qrcode-modal #qrcode-close {
+.settings-container #qrcode-modal #qrcode-close {
     color: #000;
     cursor: pointer;
     position: absolute;
@@ -178,28 +178,28 @@
     height: 21px;
 }
 
- .settings-container #qrcode-modal #qrcode {
+.settings-container #qrcode-modal #qrcode {
     margin-bottom: 10px;
 }
 
- .settings-container #title .title {
+.settings-container #title .title {
     color: #fff;
     padding-top: 5px;
     font-size: 22px;
 }
 
- .settings-container #title .content {
+.settings-container #title .content {
     padding-top: 5px;
     height: 30px;
     border-bottom: 1px solid transparent;
 }
 
- .settings-container #title .content label {
+.settings-container #title .content label {
     margin-top: -7px;
 }
 
- .settings-container #title .content .keyboard,
- .settings-container #title .content .help {
+.settings-container #title .content .keyboard,
+.settings-container #title .content .help {
     font-size: 21px;
     margin-right: 25px;
     color: #a3a5a7;
@@ -208,56 +208,56 @@
     transition: all 0.5s;
 }
 
- .settings-container #title .content .keyboard:hover,
- .settings-container #title .content .help:hover {
+.settings-container #title .content .keyboard:hover,
+.settings-container #title .content .help:hover {
     color: #fff;
     -webkit-transition: all 0.5s;
     transition: all 0.5s;
 }
 
- .settings-container #user-interface .subtitles-language > select,
- .settings-container #user-interface .pct-theme > select,
- .settings-container #user-interface .start-screen > select,
- .settings-container #user-interface .watchedCovers > select {
+.settings-container #user-interface .subtitles-language > select,
+.settings-container #user-interface .pct-theme > select,
+.settings-container #user-interface .start-screen > select,
+.settings-container #user-interface .watchedCovers > select {
     width: 158px;
 }
 
- .settings-container #subtitles .subtitles-language-default > select,
- .settings-container #subtitles .subtitles-font > select,
- .settings-container #subtitles .subtitles-decoration > select {
+.settings-container #subtitles .subtitles-language-default > select,
+.settings-container #subtitles .subtitles-font > select,
+.settings-container #subtitles .subtitles-decoration > select {
     width: 158px;
 }
 
- .settings-container #subtitles .subtitles-size > select {
+.settings-container #subtitles .subtitles-size > select {
     width: 67px;
 }
 
- .settings-container #subtitles .subtitles-custom > .settings-label {
+.settings-container #subtitles .subtitles-custom > .settings-label {
     margin-left: 40px;
 }
 
- .settings-container #subtitles .subtitles-custom .colorsub {
+.settings-container #subtitles .subtitles-custom .colorsub {
     cursor: pointer;
 }
 
- .settings-container #trakt-tv .trakt-options {
+.settings-container #trakt-tv .trakt-options {
     color: #c3c5c7;
 }
 
- .settings-container #trakt-tv .trakt-options a {
+.settings-container #trakt-tv .trakt-options a {
     display: inline-block;
 }
 
- .settings-container #trakt-tv .trakt-options .unauthtext {
+.settings-container #trakt-tv .trakt-options .unauthtext {
     margin-left: 5px;
     color: #2468cc;
 }
 
- .settings-container #trakt-tv .trakt-options .unauthtext:hover {
+.settings-container #trakt-tv .trakt-options .unauthtext:hover {
     color: #225694;
 }
 
- .settings-container #trakt-tv .trakt-options .loading-spinner {
+.settings-container #trakt-tv .trakt-options .loading-spinner {
     -webkit-animation-duration: 0.75s;
     animation-duration: 0.75s;
     -webkit-animation-iteration-count: infinite;
@@ -282,33 +282,33 @@
     margin-left: 20px;
 }
 
- .settings-container #trakt-tv .trakt-options .syncTrakt {
+.settings-container #trakt-tv .trakt-options .syncTrakt {
     margin-bottom: 15px;
     margin-top: -10px;
 }
 
- .settings-container #tvshowtime .tvshowtime-options {
+.settings-container #tvshowtime .tvshowtime-options {
     margin-bottom: 35px;
 }
 
- .settings-container #tvshowtime .tvshowtime-options a {
+.settings-container #tvshowtime .tvshowtime-options a {
     display: inline-block;
 }
 
- .settings-container #tvshowtime .tvshowtime-options .unauthtext {
+.settings-container #tvshowtime .tvshowtime-options .unauthtext {
     margin-left: 5px;
     color: #2468cc;
 }
 
- .settings-container #tvshowtime .tvshowtime-options .unauthtext:hover {
+.settings-container #tvshowtime .tvshowtime-options .unauthtext:hover {
     color: #225694;
 }
 
- .settings-container #tvshowtime .tvshowtime-options #connect-with-tvst {
+.settings-container #tvshowtime .tvshowtime-options #connect-with-tvst {
     margin-top: -12px;
 }
 
- .settings-container #tvshowtime .tvshowtime-options .tvst-loading-spinner {
+.settings-container #tvshowtime .tvshowtime-options .tvst-loading-spinner {
     -webkit-animation-duration: 0.75s;
     animation-duration: 0.75s;
     -webkit-animation-iteration-count: infinite;
@@ -334,75 +334,75 @@
     margin-top: -2px;
 }
 
- .settings-container #connection #overallRatio {
+.settings-container #connection #overallRatio {
     pointer-events: none;
     -webkit-user-select: none;
 }
 
- .settings-container #connection #overallRatio i {
+.settings-container #connection #overallRatio i {
     padding-left: 4px;
     padding-right: 8px;
 }
 
- .settings-container #connection .reset-tvAPI {
+.settings-container #connection .reset-tvAPI {
     font-size: 13px;
     color: #8a8b8e;
     -webkit-transition: all 0.5s;
     transition: all 0.5s;
 }
 
- .settings-container #connection .reset-tvAPI:hover {
+.settings-container #connection .reset-tvAPI:hover {
     cursor: pointer;
     color: #2468cc;
     -webkit-transition: all 0.5s;
     transition: all 0.5s;
 }
 
- .settings-container .open-tmp-folder {
+.settings-container .open-tmp-folder {
     font-size: 16px;
     margin-left: 10px;
     -webkit-transition: all 0.5s;
     transition: all 0.5s;
 }
 
- .settings-container .open-tmp-folder:hover {
+.settings-container .open-tmp-folder:hover {
     cursor: pointer;
     color: #2468cc;
     -webkit-transition: all 0.5s;
     transition: all 0.5s;
 }
 
- .settings-container #database .open-database-folder {
+.settings-container #database .open-database-folder {
     font-size: 16px;
     margin-left: 10px;
     -webkit-transition: all 0.5s;
     transition: all 0.5s;
 }
 
- .settings-container #database .open-database-folder:hover {
+.settings-container #database .open-database-folder:hover {
     cursor: pointer;
     color: #2468cc;
     -webkit-transition: all 0.5s;
     transition: all 0.5s;
 }
 
- .settings-container #vpn .vpn-buttons {
+.settings-container #vpn .vpn-buttons {
     margin-bottom: 10px;
 }
 
- .settings-container .btns {
+.settings-container .btns {
     padding-top: 10px;
     padding-right: 2%;
     float: right;
 }
 
- .settings-container .btns.database {
+.settings-container .btns.database {
     float: left;
     padding-top: 0;
     padding-bottom: 13px;
 }
 
- .settings-container .btn-settings {
+.settings-container .btn-settings {
     position: relative;
     margin-top: 13px;
     float: left;
@@ -423,43 +423,43 @@
     transition: background-color 0.5s;
 }
 
- .settings-container .btn-settings.database {
+.settings-container .btn-settings.database {
     margin-top: 0;
 }
 
- .settings-container .btn-settings:hover {
+.settings-container .btn-settings:hover {
     background-color: #225694;
     color: #e3e5e7;
     text-decoration: none;
 }
 
- .settings-container .btn-settings.disabled {
+.settings-container .btn-settings.disabled {
     background-color: #393b3d;
 }
 
- .settings-container .btn-settings.disabled:hover {
+.settings-container .btn-settings.disabled:hover {
     background-color: #393b3d;
 }
 
- .settings-container .btn-settings.disabled:active {
+.settings-container .btn-settings.disabled:active {
     background-color: #393b3d;
 }
 
- .settings-container .btn-settings.ok {
+.settings-container .btn-settings.ok {
     background-color: #27ae60;
 }
 
- .settings-container .btn-settings.warning {
+.settings-container .btn-settings.warning {
     background-color: #f15153;
 }
 
- .settings-container .btn-settings:active {
+.settings-container .btn-settings:active {
     -webkit-box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.6);
     box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.6);
     background: #2468cc;
 }
 
- .settings-container .dropdown select {
+.settings-container .dropdown select {
     margin-left: 10px;
     position: relative;
     padding-left: 5px;
@@ -479,13 +479,13 @@
     width: 270px;
 }
 
- .settings-container .dropdown option {
+.settings-container .dropdown option {
     background: #393b3d;
     border: 0 !important;
     outline: 0;
 }
 
- .settings-container .dropdown .dropdown-arrow {
+.settings-container .dropdown .dropdown-arrow {
     width: 0;
     height: 0;
     border-left: 4px solid transparent;
@@ -498,7 +498,7 @@
     cursor: pointer;
 }
 
- .success_alert {
+.success_alert {
     position: fixed;
     top: 45px;
     right: 50px;
@@ -507,7 +507,7 @@
     font-size: 16px;
 }
 
- .success_alert #checkmark-notify {
+.success_alert #checkmark-notify {
     display: inline-block;
     width: 20px;
     height: 20px;
@@ -515,7 +515,7 @@
     transform: rotate(45deg);
 }
 
- .success_alert #stem-notify {
+.success_alert #stem-notify {
     position: absolute;
     width: 3px;
     height: 12px;
@@ -524,7 +524,7 @@
     top: 6px;
 }
 
- .success_alert #kick-notify {
+.success_alert #kick-notify {
     position: absolute;
     width: 6px;
     height: 3px;
@@ -697,4 +697,23 @@
     align-items: center;
     width:25%;
     height: 100%;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.preview-container > .bible-slide-item {
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.preview-container > .bible-slide-item > .slide-container {
+    opacity: 1.0 !important;
+    -webkit-transform: scale3d(1,1,1) rotate( 0.0001deg) !important;
+}
+
+.settings-container section .content .slide-container span {
+    width: auto;
+    height: auto;
 }

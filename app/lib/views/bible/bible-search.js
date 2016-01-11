@@ -7,8 +7,7 @@
         template: '#bible-search-tpl',
         id: 'bible-search-contain',
         Bible: {
-            Versions: [],
-            Active_bible_index: null,
+            Self: null,
             Shorts: [],
             Book: null,
             Chapter: null,
@@ -27,44 +26,48 @@
         initialize: function () {
 
             App.vent.on("bible:control:onEvent", _.bind(this.onEvent, this));
+            App.vent.on("bible:control:changeBibleXml", _.bind(this.activate, this));
 
             /* Load all bibles version */
-            this.Bible.Versions = new App.Model.XMLBibleCollection();
-            this.Bible.Versions.add(new App.Model.XMLBible({
-                xmlpath: App.Config.runDir + Settings.BibleSettings.bible_xml
-            }));
-
-            this.Bible.Active_bible_index = 0;
         },
         onShow: function () {
+            this.activate(Settings.BibleSettings.bible_xml);
+        },
+        onDestroy: function () {
+            App.vent.off("bible:control:onEvent");
+        },
+        /******************/
+        activate: function (bible_xmlpath) {
+
+            this.Bible.Self = new App.Model.XMLBible({
+                xmlpath: bible_xmlpath
+            });
+
             var that = this;
-            var active_bible = this.Bible.Versions.at(this.Bible.Active_bible_index);
-            active_bible.activate().then(function (res, err) {
-                var books = active_bible.books;
+            this.Bible.Shorts = [];
+
+            this.Bible.Self.activate().then(function (res, err) {
+                var books = that.Bible.Self.books;
                 for (var o in books) {
                     that.Bible.Shorts.push(books[o].short_name);
                 }
                 that.ui.searchInput.suggest(that.Bible.Shorts, {});
             });
         },
-        onDestroy: function () {
-            App.vent.off("bible:control:onEvent");
-        },
-        /******************/
         onEvent: function () {
             this.ui.searchInput.focus();
         },
         getChapter: function (bid, cid) {
-            return this.Bible.Versions.at(this.Bible.Active_bible_index).getChapter(bid, cid);
+            return this.Bible.Self.getChapter(bid, cid);
         },
         getChapterWithVerses: function (bid, cid) {
-            return this.Bible.Versions.at(this.Bible.Active_bible_index).getChapterWithVerses(bid, cid);
+            return this.Bible.Self.getChapterWithVerses(bid, cid);
         },
         getBook: function (bid) {
-            return this.Bible.Versions.at(this.Bible.Active_bible_index).getBook(bid);
+            return this.Bible.Self.getBook(bid);
         },
         search: function (string) {
-            return this.Bible.Versions.at(this.Bible.Active_bible_index).search(string);
+            return this.Bible.Self.search(string);
         },
         /******************/
 
@@ -104,7 +107,7 @@
                 var chapter = this.getChapterWithVerses(this.Bible.Book, this.Bible.Chapter);
                 for (var v in chapter.verses) {
 
-                    console.log(this.getBook(this.Bible.Book));
+                    win.log(this.getBook(this.Bible.Book));
                     var bottom_text = this.getBook(this.Bible.Book).full_name + " " + chapter.number + ":" + chapter.verses[v].$.number;
                     var short_link = this.getBook(this.Bible.Book).short_name + " " + chapter.number + ":" + chapter.verses[v].$.number;
                     var verse = new App.Model.Verse();

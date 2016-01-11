@@ -16,6 +16,7 @@ var path = require("path");
     gui.Screen.Init();
 
     var common_background_path = process.env.PWD + "/backgrounds";
+    var common_bible_path = process.env.PWD + "/bible";
 
     /* User interface */
 
@@ -33,7 +34,8 @@ var path = require("path");
         font_family: "Arial",
         backgrounds_path: common_background_path,
         background: common_background_path + "/1.jpg",
-        bible_xml: "/bible/sinoid_utf.xml",
+        bible_path: common_bible_path,
+        bible_xml: common_bible_path + "/sinoid_utf.xml",
         Utils: {
             backgroundRandom: [],
             getRandomBackground: function (reset) {
@@ -110,8 +112,29 @@ var path = require("path");
             });
 
             return imagesList;
-
         },
+        getBibles: function () {
+            var extensions = [".xml"];
+            var bibleList = [];
+
+            var files = fs.readdirSync(Settings.BibleSettings.bible_path);
+
+            files.forEach(function (file) {
+
+                if (extensions.indexOf(path.extname(file)) >= 0) {
+
+                    var bibleObj = {
+                        name: file,
+                        path: Settings.BibleSettings.bible_path + "/" + file,
+                    };
+
+                    bibleList.push(bibleObj);
+                }
+
+            });
+
+            return bibleList;
+        }
     }
 
 

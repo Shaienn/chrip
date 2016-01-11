@@ -27,7 +27,7 @@
                 if (err != null) {
                     console.log("Load bible file: " + err);
                     that.valid = false;
-                    return d.promise();
+                    d.reject(false);
                 }
 
                 console.log("Bible file: " + that.xmlpath);
@@ -36,7 +36,7 @@
                     if (err != null) {
                         console.log("Parse bible file: " + err);
                         that.valid = false;
-                        return d.promise;
+                        d.reject(false);
                     }
 
                     console.log("Bible version: " + that.xmlpath);
@@ -74,7 +74,7 @@
             if (this.valid == false)
                 return null
 
-            if (typeof(this.bible.BIBLE.BOOK[bid]) == "undefined") {
+            if (typeof (this.bible.BIBLE.BOOK[bid]) == "undefined") {
                 console.log("There is no book with bid: " + bid);
                 return null;
             }
@@ -139,7 +139,7 @@
                             var line = this.bible.BIBLE.BOOK[b].CHAPTER[c].LINE[l];
                             var text = line._;
                             var found = text.match(search_regexp);
-                                                        
+
                             if (found) {
                                 search_result.push({
                                     bid: b,

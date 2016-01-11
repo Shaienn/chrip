@@ -14,7 +14,7 @@
         ui: {
             fakeBackgroundsDir: '#fakebackgroundsdir',
             backgrounds_path: '#backgrounds_path',
-            slidePreviewArea: '.preview-container',
+            sections: 'section',
         },
         events: {
             'change select,input': 'saveSetting',
@@ -30,20 +30,75 @@
             console.log("onShow");
             this.render();
             this.refreshBackgroundFiles();
+            this.refreshBibleFiles();
             this.redrawPreview();
         },
-        redrawPreview: function () {
-            console.log("redrawPreview");
+        redrawPreview: function (target) {
+            win.log("redrawPreview");
             that = this;
-            App.SlideGenerator
-                    .makeSlideFromText("Строка\r\nДлинная строка\r\nСтрока\r\nОчень очень длинная строка")
-                    .then(this.drawSlide);
 
+            if (typeof target == "undefined") {
+                var target = this.ui.sections;
+            }
+
+            win.log(target);
+
+            target.each(function () {
+                var id = $(this).attr('id');
+
+                switch (id) {
+                    case 'SongserviceSettings':
+
+                        App.SlideGenerator
+                                .makeSlideFromText("Строка\r\nДлинная строка\r\nСтрока\r\nОчень очень длинная строка")
+                                .then(that.drawSlide);
+
+                        break;
+                    case 'BibleSettings':
+
+                        var verse = new App.Model.Verse();
+                        verse.set("text", "И ходил этот человек из города своего в положенные дни поклоняться и приносить жертву Господу Саваофу в Силом; там были Илий и два сына его, Офни и Финеес, священниками Господа.");
+                        verse.set("bottom_text", "Подпись к стиху");
+
+                        App.SlideGenerator
+                                .makeSlideFromVerse(verse)
+                                .then(that.drawVerse);
+
+                        break;
+                }
+
+            });
+        },
+        drawVerse: function (slide) {
+            win.log("drawVerse");
+            var target = $('#BibleSettings').find(".bible-slide-item");
+            var verse_template = _.template($('#verse-slide-tpl').html());
+            target.html(verse_template({
+                background: slide.get("background"),
+                text: slide.get("text"),
+                link: slide.get("link"),
+                height: slide.get("height"),
+                width: slide.get("width"),
+                number: slide.get("number"),
+                font: slide.get("font"),
+            }));
+
+            var verse_text = target.find('.slide-verse-text');
+            var background = target.find('img.slide_background');
+            
+            verse_text.hide();
+            background.load(function () {
+                verse_text.show();
+                verse_text.boxfit({multiline: true});
+            });
+            
+            
         },
         drawSlide: function (slide) {
-            console.log("drawSlide");
+            win.log("drawSlide");
+            var target = $('#SongserviceSettings').find(".preview-container");
             var slide_template = _.template($('#slide-tpl').html());
-            that.ui.slidePreviewArea.html(slide_template({
+            target.html(slide_template({
                 background: slide.get("background"),
                 text: slide.get("text"),
                 height: slide.get("height"),
@@ -52,9 +107,9 @@
                 font: slide.get("font"),
             }));
 
-            var text_span = that.ui.slidePreviewArea.find('.slide_text span');
+            var text_span = target.find('.slide_text span');
             text_span.hide();
-            that.ui.slidePreviewArea.find('img').load(function () {
+            target.find('img').load(function () {
                 text_span.show();
                 text_span.bigText();
             });
@@ -62,6 +117,17 @@
         },
         onDestroy: function () {
             win.log("settings destroy request");
+        },
+        refreshBibleFiles: function () {
+            var bibles = Settings.Utils.getBibles();
+            var bibles_selector = "";
+
+            for (var i = 0; i < bibles.length; i++) {
+                bibles_selector += "<option " + (Settings.BibleSettings.bible_xml == bibles[i].path ? "selected='selected'" : "") + " value='" + bibles[i].path + "'>" + bibles[i].name + "</option>";
+            }
+
+            $("#bibleSelector").html(bibles_selector);
+
         },
         refreshBackgroundFiles: function () {
 
@@ -81,6 +147,8 @@
             var value = false;
             var field = $(e.currentTarget);
             var background_path_changed = false;
+            var bible_changed = false;
+
             var section = field.closest("section").attr('id');
 
             switch (field.attr('name')) {
@@ -114,6 +182,13 @@
                     value = $('option:selected', field).val();
 
                     break;
+
+                case ('bible_xml'):
+
+                    value = $('option:selected', field).val();
+                    bible_changed = true;
+
+                    break;
             }
 
             win.info(section + ' changed: ' + field.attr('name') + ' - ' + value);
@@ -126,6 +201,10 @@
 
             if (background_path_changed == true) {
                 this.refreshBackgroundFiles();
+            }
+
+            if (bible_changed == true) {
+                App.vent.trigger("bible:control:changeBibleXml", Settings.BibleSettings.bible_xml);
             }
 
             /* Redraw slide */
