@@ -42,8 +42,8 @@
         },
         presentationBtnHandler: function () {
 
-            App.vent.trigger("main-window:toggle_presentation_state");
-
+//            App.vent.trigger("main-window:toggle_presentation_state");
+            App.Presentation.toggle_presentation();
         },
         set_update_mode_indication: function (state) {
             if (state) {

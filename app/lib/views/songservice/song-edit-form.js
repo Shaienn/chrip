@@ -205,7 +205,7 @@
             var preview = details.find(".songpart-preview .slide-item");
 
             var slide_template = _.template($('#slide-tpl').html());
-            var screen_bounds = ((Settings.Utils.getScreens())[Settings.GeneralSettings.presentation_monitor]).bounds;
+            var screen_bounds = Settings.Utils.getPresentationScreen().bounds;
 
             typeSelector.on("change", function () {
 

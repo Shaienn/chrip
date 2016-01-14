@@ -65,15 +65,14 @@ _.extend(App, {
         Videoplayer: {},
     },
     ControlWindow: null,
-    PresentationWindows: [],
+    Presentation: {},
     Settings: {},
     Localization: {},
     Database: {},
     presentation_state: false,
     vlc: null,
     video_contexts: [],
-    freeze_mode: false,
-    black_mode: false
+    active_mode: false,
 });
 
 App.ViewStack = [];

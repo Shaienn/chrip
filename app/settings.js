@@ -68,9 +68,15 @@ var path = require("path");
 
     Settings.Utils = {
         getScreens: function () {
-
             return gui.Screen.screens;
-
+        },
+        getPresentationScreen: function () {
+            var screens = Settings.Utils.getScreens();
+            if (typeof screens[Settings.GeneralSettings.presentation_monitor] == "undefined") {
+                return screens[0];
+            } else {
+                return screens[Settings.GeneralSettings.presentation_monitor];
+            }
         },
         getRandomBackground: function (path, array, reset) {
 
@@ -136,7 +142,8 @@ var path = require("path");
             return bibleList;
         }
     }
-
+    
+   
 
 })(window.App);
 

@@ -59,7 +59,7 @@
             App.vent.off("songbase:search");
         },
         loadText: function (song) {
-
+            
             if (!(song instanceof App.Model.Song)) {
                 win.error("Wrong song object");
                 return;

@@ -5,75 +5,10 @@
 (function (App) {
     'use strict';
 
-    var sl_prevX = 0;
-    var sl_prevY = 0;
-
-    var ControlPanelView = Marionette.ItemView.extend({
-        tagName: 'li',
-        className: 'slide-item',
-        template: "#slide-tpl",
-        background_loaded: false,
-        ui: {
-            background: ".slide_background",
-            text_span: ".slide_text span",
-        },
-        events: {
-            'click .slide-container': 'showSlide',
-        },
-        showSlide: function (e) {
-
-            console.log("showslide");
-            var elem = $(this.el);
-
-            if (e.pageX !== sl_prevX || e.pageY !== sl_prevY) {
-                $('.slide-item.active').removeClass('active');
-                elem.addClass('active');
-                sl_prevX = e.pageX;
-                sl_prevY = e.pageY;
-            }
-
-            App.vent.trigger("songservice:control:showslide", this.model);
-
-        },
-        initialize: function () {
-            $(window).on("resize", _.bind(this.onShow, this));
-
-
-        },
-        onShow: function () {
-
-            var that = this;
-
-            /* We wait first time until loading background image, 
-             * cause container dimensions for bigText() depends on it */
-
-            if (this.background_loaded) {
-                this.ui.text_span.bigText();
-                return;
-            } else {
-                
-                this.ui.text_span.hide();
-                
-                this.ui.background.load(function () {
-                    console.log("loaded");
-                    that.ui.text_span.show();
-                    that.ui.text_span.bigText();
-                    that.background_loaded = true;
-                });
-            }
-        },
-        onDestroy: function () {
-            $(window).off("resize", this.onShow);
-        },
-    });
-
-    App.View.ControlPanel = ControlPanelView;
-
-
     var ControlPanelCollection = Marionette.CollectionView.extend({
         tagName: 'ul',
         className: 'control-panel-list',
-        childView: App.View.ControlPanel,
+        childView: App.View.SongService.GroupSlide,
         initialize: function () {
 
             $(window).on("resize", _.bind(this.redrawSlides, this));

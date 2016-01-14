@@ -26,6 +26,8 @@
 
         initialize: function () {
 
+            
+
             App.vent.on("churchservice:playlist:item_selected", _.bind(this.showPlaylistItemControl, this));
             App.vent.on("songservice:control:do_on_show", _.bind(this.doOnShow, this));
             App.vent.on("songservice:control:do_on_hide", _.bind(this.doOnHide, this));
@@ -41,6 +43,8 @@
 
             App.Database.getLastSongs().then(function (lastSongs) {
 
+                win.log(lastSongs);
+
                 for (var i = 0; i < lastSongs.length; i++) {
                     lastSongs[i].rebuild_slides();
                     App.Model.PlayListCollection.add(lastSongs[i], {silent: true});
@@ -52,7 +56,7 @@
                 });
 
                 that.List_r.show(that.collection);
-                that.doOnShow();
+                _.bind(that.doOnShow, that)();
             });
         },
         onDestroy: function () {
@@ -65,46 +69,7 @@
         /**************************************/
         showSlide: function (slide) {
 
-            if (App.freeze_mode == true)
-                return;
-
-            if (App.black_mode == true)
-                return;
-
-            /* TODO some logic to separate to few presentation screens */
-
-            for (var i in App.PresentationWindows) {
-
-                var body = App.PresentationWindows[i].window.document.body;
-                var content = $(body).find("#presentation-content");
-
-                /* Find everything inside this container */
-
-                var garbage = content.children().addClass("garbage");
-                var slide_template = _.template($('#slide-tpl').html());
-                content.append(slide_template({
-                    background: slide.get("background"),
-                    text: slide.get("text"),
-                    height: slide.get("height"),
-                    width: slide.get("width"),
-                    number: slide.get("number"),
-                    font: slide.get("font"),
-                }));
-                var newSlide = content.find('div.slide-container').not(".garbage");
-                newSlide.find("div.slide_text span").bigText();
-                newSlide.css("opacity", 0);
-
-                newSlide.animate({opacity: 1.0}, {duration: 1000, queue: false});
-                garbage.animate({opacity: 0.0},
-                        {
-                            duration: 1000,
-                            queue: false,
-                            complete: function () {
-                                $(this).remove();
-                            }
-                        }
-                );
-            }
+            App.vent.trigger("presentation:set_new_element", slide);
 
             $('.control-panel-list .slide-item.active').removeClass('active');
             $('.control-panel-list .slide-item div[number=' + slide.get('number') + ']')
@@ -156,9 +121,9 @@
             var key = event.which;
 
             if (event.ctrlKey) {
-                
+
                 /* CTRL + O opens songbase */
-                
+
                 if (key == 79) {
                     win.log("Open songbase request");
                     App.vent.trigger("churchservice:songbase:show");

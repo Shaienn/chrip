@@ -59,8 +59,12 @@
 
             /* Assign events */
 
-            App.vent.on('appmode:switch_tab_to', this.switchTabTo);
-            App.vent.on('main-window:toggle_presentation_state', _.bind(this.togglePresentationState, this));
+            this.listenTo(App.vent, 'appmode:switch_tab_to', this.switchTabTo);
+//            this.listenTo($(App.ControlWindow.window.document), 'keydown', this.keyHandler);
+
+
+//            App.vent.on('appmode:switch_tab_to', this.switchTabTo);
+//            App.vent.on('main-window:toggle_presentation_state', _.bind(this.togglePresentationState, this));
             $(App.ControlWindow.window.document).on('keydown', this.keyHandler);
 
         },
@@ -84,17 +88,15 @@
                 /* CTRL + SPACE => switch freeze mode */
 
                 if (key == 32) {
-                    App.freeze_mode = App.freeze_mode == true ? false : true;
-                    console.log("Freeze is " + App.freeze_mode);
-                    App.vent.trigger("main_toolbar:set_freeze_mode_indication", App.freeze_mode);
+                    App.active_mode = App.active_mode == true ? false : true;
+                    console.log("Freeze is " + App.active_mode);
+                    App.vent.trigger("main_toolbar:set_freeze_mode_indication", App.active_mode);
                 }
 
                 /* CTRL + B => switch black screen mode */
 
                 if (key == 66) {
-                    App.black_mode = App.black_mode == true ? false : true;
-                    console.log("Black is " + App.black_mode);
-                    App.vent.trigger("main_toolbar:set_black_mode_indication", App.black_mode);
+                    App.vent.trigger("presentation:toggle_black_mode");
                 }
 
             }
@@ -168,63 +170,7 @@
                     });
                 });
             });
-        },
-        togglePresentationState: function () {
-
-            /* Toggle presentation window */
-
-            if (App.presentation_state == false) {
-
-                console.log("presentation open");
-
-                /* Create new windows */
-
-                /* TODO maybe more than 1 presentation monitor... */
-
-                var newPresentationWindow = gui.Window.get(
-                        window.open("./presentation.html", "presentation", {
-                            "show": true,
-                            "frame": false,
-                            "position": "left",
-                            "show_in_taskbar": false,
-                        })
-                        );
-
-                newPresentationWindow.window.onload = function () {
-
-                    newPresentationWindow.x = ((Settings.Utils.getScreens())[Settings.GeneralSettings.presentation_monitor]).bounds.x;
-                    //App.P_Window.enterFullscreen();
-                    newPresentationWindow.setAlwaysOnTop(true);
-                    App.presentation_state = true;
-                    App.vent.trigger("presentation:changed", true);
-
-                    newPresentationWindow.on("closed", function () {
-
-                        for (var i = 0; i < App.PresentationWindows.length; i++) {
-                            if (App.PresentationWindows[i].routing_id == this.routing_id) {
-                                App.PresentationWindows.splice(i, 1);
-                                break;
-                            }
-                        }
-
-                        App.presentation_state = false;
-                        App.vent.trigger("presentation:changed", false);
-                    });
-                }
-
-                App.PresentationWindows.push(newPresentationWindow);
-
-            } else {
-
-                win.log("Presentation window closing");
-
-                while (App.PresentationWindows.length > 0) {
-                    var openedPresentationWindow = App.PresentationWindows.pop();
-                    openedPresentationWindow.close();
-                }
-            }
-
-        },
+        }
     });
 
 }(window.App));

@@ -701,14 +701,14 @@
     margin: 0 !important;
 }
 
-.preview-container > .bible-slide-item {
+.preview-container > div {
     padding: 0 !important;
     margin: 0 !important;
     width: 100% !important;
     height: 100% !important;
 }
 
-.preview-container > .bible-slide-item > .slide-container {
+.preview-container > div > .slide-container {
     opacity: 1.0 !important;
     -webkit-transform: scale3d(1,1,1) rotate( 0.0001deg) !important;
 }

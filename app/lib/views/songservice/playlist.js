@@ -59,7 +59,6 @@
         },
         removeFromPlaylist: function () {
             App.Model.PlayListCollection.remove(this.model);
-//            App.Database.removeSongFromLastSongs(this.model);
         },
     });
 
@@ -110,10 +109,6 @@
         },
     });
 
-    
-    
-    
-    
     App.View.PlayListCollection = PlayListCollection;
 
 })(window.App);

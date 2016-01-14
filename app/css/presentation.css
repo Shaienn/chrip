@@ -16,7 +16,7 @@ body {
     color: white;
 }
 
-#presentation-content .slide{
+#presentation-content .slide-container{
     position: absolute;
     width: inherit;
     height: inherit;

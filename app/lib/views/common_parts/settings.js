@@ -24,24 +24,31 @@
             this.ui.backgrounds_path.click();
         },
         initialize: function () {
-
+            that = this;
+            App.vent.on("settings:control:onEvent", _.bind(this.onEvent, this));
+            App.vent.on("settings:control:offEvent", _.bind(this.offEvent, this));
         },
         onShow: function () {
-            console.log("onShow");
             this.render();
             this.refreshBackgroundFiles();
             this.refreshBibleFiles();
+        },
+        onEvent: function () {
             this.redrawPreview();
+            $(window).on("resize", this.resizeHandler);
+        },
+        offEvent: function () {
+            $(window).off("resize", this.resizeHandler);
+        },
+        resizeHandler: function () {
+            that.redrawPreview();
         },
         redrawPreview: function (target) {
             win.log("redrawPreview");
-            that = this;
 
             if (typeof target == "undefined") {
-                var target = this.ui.sections;
+                var target = that.ui.sections;
             }
-
-            win.log(target);
 
             target.each(function () {
                 var id = $(this).attr('id');
@@ -85,14 +92,14 @@
 
             var verse_text = target.find('.slide-verse-text');
             var background = target.find('img.slide_background');
-            
+
             verse_text.hide();
             background.load(function () {
                 verse_text.show();
                 verse_text.boxfit({multiline: true});
             });
-            
-            
+
+
         },
         drawSlide: function (slide) {
             win.log("drawSlide");
@@ -108,8 +115,10 @@
             }));
 
             var text_span = target.find('.slide_text span');
+            var background = target.find('img.slide_background');
+
             text_span.hide();
-            target.find('img').load(function () {
+            background.load(function () {
                 text_span.show();
                 text_span.bigText();
             });
@@ -149,7 +158,7 @@
             var background_path_changed = false;
             var bible_changed = false;
 
-            var section = field.closest("section").attr('id');
+            var section = field.closest("section");
 
             switch (field.attr('name')) {
 
@@ -191,13 +200,13 @@
                     break;
             }
 
-            win.info(section + ' changed: ' + field.attr('name') + ' - ' + value);
+            win.info(section.attr('id') + ' changed: ' + field.attr('name') + ' - ' + value);
 
-            Settings[section][field.attr('name')] = value;
+            Settings[section.attr('id')][field.attr('name')] = value;
 
             /* Database save */
 
-            App.Database.saveSetting(section, field.attr('name'), value);
+            App.Database.saveSetting(section.attr('id'), field.attr('name'), value);
 
             if (background_path_changed == true) {
                 this.refreshBackgroundFiles();
@@ -209,7 +218,7 @@
 
             /* Redraw slide */
 
-            this.redrawPreview();
+            this.redrawPreview(section);
 
         },
     });

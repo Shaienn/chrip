@@ -30,7 +30,7 @@
             /* Find _strings_ and make it italic */
 
             var preparedText = sourceText.trim().replace(/_(.*?)_/g, "<span class='italic'>$1</span>");
-            var screen_bounds = ((Settings.Utils.getScreens())[Settings.GeneralSettings.presentation_monitor]).bounds;
+            var screen_bounds = Settings.Utils.getPresentationScreen().bounds;
 
 
             slideModel.set("text", preparedText);
@@ -43,6 +43,8 @@
             return d.promise;
         },
         makeSlidesFromSong: function (song) {
+
+            win.log("makeSlidesFromSong");
 
             if (!(song instanceof App.Model.Song)) {
                 win.error("Object is not song");
@@ -70,11 +72,14 @@
         makeSlideFromText: function (text, number) {
             var d = Q.defer();
 
+
+
             var slideModel = new App.Model.SongSlide();
 
             if (number != "undefined") {
                 slideModel.set('number', number);
             }
+
 
             var slideBackground;
             switch (Settings.SongserviceSettings.background_mode) {
@@ -90,7 +95,7 @@
             /* Change newline characters for <br> tag. Needs for bigtext script */
 
             var preparedText = text.trim().replace(/\r\n|\n/g, "<br>");
-            var screen_bounds = ((Settings.Utils.getScreens())[Settings.GeneralSettings.presentation_monitor]).bounds;
+            var screen_bounds = Settings.Utils.getPresentationScreen().bounds;
 
             slideModel.set("text", preparedText);
             slideModel.set("background", slideBackground);
