@@ -6,7 +6,6 @@
         State: false,
         BlackMode: false,
         Windows: [],
-        VlcTask: false,
         Elements: [
             {
                 element: "SongSlide",
@@ -15,7 +14,7 @@
                     var element_body = slide_template(slide.attributes);
                     return element_body;
                 },
-                after: function (w, target) {
+                after: function (target) {
 
                     var text_span = target.find('.slide_text span');
                     var background = target.find('img.slide_background');
@@ -34,7 +33,7 @@
                     var element_body = verse_template(slide.attributes);
                     return element_body;
                 },
-                after: function (w, target) {
+                after: function (target) {
                     var verse_text = target.find('.slide-verse-text');
                     var background = target.find('img.slide_background');
 
@@ -54,16 +53,8 @@
                     })[0];
 
                 },
-                after: function (w, target) {
-
-                    var newPlayerContext = {
-                        id: md5(w.toString()),
-                        window: w,
-                        canvas: target[0],
-                    };
-
-                    console.log(newPlayerContext);
-                    App.vent.trigger("mediaplayer:add_video_context", newPlayerContext);
+                after: function (target) {
+                    App.vent.trigger("mediaplayer:add_video_context", target[0]);
                 }
             }
 
@@ -84,16 +75,10 @@
                     content.animate({opacity: 0.0}, {
                         duration: Settings.GeneralSettings.transition_time,
                         complete: function () {
-                            if (App.vlc.playing) {
-                                Presentation.VlcTask = true;
-                                App.vent.trigger("mediaplayer:pause");
-                            }
+                            App.vent.trigger("mediaplayer:pause");
                         }});
                 } else {
-                    if (Presentation.VlcTask) {
-                        Presentation.VlcTask = false;
-                        App.vent.trigger("mediaplayer:play");
-                    }
+                    App.vent.trigger("mediaplayer:play");
                     content.animate({opacity: 1.0}, {duration: Settings.GeneralSettings.transition_time});
                 }
             }
@@ -128,7 +113,7 @@
                         var garbage = content.children().addClass("garbage");
                         content.append(element_body);
                         var newElement = content.children().not(".garbage");
-                        Presentation.Elements[i].after(Presentation.Windows[w].window, newElement);
+                        Presentation.Elements[i].after(newElement);
                         newElement.css("opacity", 0);
                         newElement.animate({opacity: 1.0},
                                 {

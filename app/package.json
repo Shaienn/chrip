@@ -47,8 +47,8 @@
     "q": "^1.4.1",
     "restify": "^4.0.3",
     "sqlite3": "^3.1.0",
-    "wcjs-multiscreen-renderer": "^0.1.10",
-    "wcjs-prebuilt": "latest"
+    "wcjs-prebuilt": "latest",
+    "webgl-video-renderer": "^0.2.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

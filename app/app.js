@@ -21,7 +21,6 @@ var
         PEG = require("pegjs");
 
 var keypress = require('keypress');
-var wcjs = require("wcjs-prebuilt");
 
 win.log = console.log.bind(console);
 win.debug = function () {
@@ -70,7 +69,6 @@ _.extend(App, {
     Localization: {},
     Database: {},
     presentation_state: false,
-    vlc: null,
     video_contexts: [],
     active_mode: false,
 });
@@ -155,7 +153,6 @@ var initApp = function () {
     App.Config.execDir = process.cwd();
     App.Config.runDir = nwCwd;
     App.ControlWindow = win;
-    App.vlc = wcjs.createPlayer();
 
     win.maximize();
     win.show();

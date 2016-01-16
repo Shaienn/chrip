@@ -4,6 +4,8 @@ var renderer = require("wcjs-multiscreen-renderer");
 
 (function (App) {
 
+    var wcjs = require("wcjs-prebuilt");
+
     var sl_prevX = 0;
     var sl_prevY = 0;
     var that;
@@ -15,6 +17,9 @@ var renderer = require("wcjs-multiscreen-renderer");
         seekDrag: false,
         volDrag: false,
         contexts_ready: false,
+        main_context: null,
+        contexts: [],
+        vlc: null,
         ui: {
             wrapper: '.wcp-wrapper',
             center: '.wcp-center',
@@ -52,9 +57,7 @@ var renderer = require("wcjs-multiscreen-renderer");
             var button = $(".wcp-button.wcp-play");
             if (button.length > 0) {
 
-                win.log(App.vlc);
-
-                if (App.vlc.playing == false) {
+                if (this.vlc.playing == false) {
 
                     win.log("mediaPlay");
 
@@ -64,16 +67,16 @@ var renderer = require("wcjs-multiscreen-renderer");
 
                     /* Stopped */
 
-                    if (App.vlc.state == 5 || App.vlc.state == 0) {
+                    if (this.vlc.state == 5 || this.vlc.state == 0) {
                         win.log("stopped");
-                        App.vlc.play(that.media_element.get('mrl'));
+                        this.vlc.play(this.media_element.get('mrl'));
                     }
 
                     /* Paused */
 
-                    else if (App.vlc.state == 4) {
+                    else if (this.vlc.state == 4) {
                         win.log("paused");
-                        App.vlc.play();
+                        this.vlc.play();
                     }
 
                     button.removeClass("wcp-play").addClass("wcp-pause");
@@ -83,21 +86,21 @@ var renderer = require("wcjs-multiscreen-renderer");
         mediaPause: function () {
             var button = $(".wcp-button.wcp-pause");
             if (button.length > 0) {
-                if (App.vlc.playing) {
+                if (this.vlc.playing) {
                     win.log("mediaPause");
                     button.removeClass("wcp-pause").addClass("wcp-play");
-                    App.vlc.pause();
+                    this.vlc.pause();
                 }
             }
         },
         mediaStop: function () {
             var button = $(".wcp-button.wcp-pause");
             if (button.length > 0) {
-                if (App.vlc.playing) {
+                if (this.vlc.playing) {
                     win.log("mediaStop");
                     button.removeClass("wcp-pause").addClass("wcp-play");
-                    App.vlc.stop();
-                    this.contexts_ready = false;
+                    this.vlc.stop();
+                    this.contexts = [];
                 }
             }
         },
@@ -107,7 +110,6 @@ var renderer = require("wcjs-multiscreen-renderer");
                 this.media_element = options.media_element;
             }
 
-//            this.listenTo(App.vent, "presentation:changed", _.bind(this.sendMediaToPresentation, this));
             this.listenTo(App.vent, "mediaplayer:pause", _.bind(this.mediaPause, this));
             this.listenTo(App.vent, "mediaplayer:play", _.bind(this.mediaPlay, this));
             this.listenTo(App.vent, "mediaplayer:stop", _.bind(this.mediaStop, this));
@@ -116,39 +118,38 @@ var renderer = require("wcjs-multiscreen-renderer");
             this.listenTo(App.vent, "resize", _.bind(this.onResize, this));
             this.listenTo(App.vent, "active_mode_changed", _.bind(this.onResize, this));
 
-//            _.bind(this.sendMediaToPresentation, this)();
+            this.vlc = wcjs.createPlayer();
+
+            this.vlc.onFrameReady = function (frame) {
+                that.main_context.render(frame, frame.width, frame.height, frame.uOffset, frame.vOffset);
+                for (var i = 0; i < that.contexts.length; i++) {
+                    that.contexts[i].render(frame, frame.width, frame.height, frame.uOffset, frame.vOffset);
+                }
+            }
         },
         onShow: function () {
 
             this.playerInterfaceInit();
 
-            App.vlc.onTimeChanged = this.onTimeChanged;
-            App.vlc.onPositionChanged = this.onPositionChanged;
-            App.vlc.onPlaying = this.onPlaying;
+            this.vlc.onTimeChanged = this.onTimeChanged;
+            this.vlc.onPositionChanged = this.onPositionChanged;
+            this.vlc.onPlaying = this.onPlaying;
 
-            var main_context = {
-                id: "main",
-                window: App.ControlWindow.window,
-                canvas: this.ui.canvas[0],
-            };
+            this.main_context = require("webgl-video-renderer").setupCanvas(this.ui.canvas[0]);
 
-            renderer.setMainContext(App.vlc, main_context);
-            renderer.init();
         },
         onDestroy: function () {
-            App.vlc.stop();
-            renderer.deinit();
+            this.vlc.stop();
         },
         onActiveModeChanged: function (new_state) {
 
             /* If active mode changed while player was stopped */
 
-            if (new_state == false && App.vlc.playing == false) {
+            if (new_state == false && this.vlc.playing == false) {
 
-                /* Remove additional context from vlc */
+                /* Remove additional context */
 
-                renderer.deinit(true);
-                this.contexts_ready = false;
+                this.contexts = [];
 
             }
         },
@@ -174,46 +175,8 @@ var renderer = require("wcjs-multiscreen-renderer");
 
             this.ui.canvas.css("width", "100%");
         },
-        onPresentationResize: function () {
-
-            for (var i = 0; i < App.PresentationWindows.length; i++) {
-
-                var currentContext = App.PresentationWindows[i].context;
-
-                if (currentContext == null)
-                    continue;
-
-                var contextCanvas = $(currentContext.canvas);
-                var contextWrapper = $(currentContext.wrapper)
-
-                var canvasAspect = contextCanvas.width() / contextCanvas.height();
-                var destAspect = contextWrapper.width() / contextWrapper.height();
-
-                var p = contextCanvas.parent();
-
-                if (destAspect > canvasAspect) {
-
-                    p.css("height", "100%");
-                    p.css("width", ((contextWrapper.height() * canvasAspect) / contextWrapper.width()) * 100 + "%");
-                } else {
-
-                    p.css("width", "100%");
-                    p.css("height", ((contextWrapper.width() * canvasAspect) / contextWrapper.height()) * 100 + "%");
-                }
-
-                contextCanvas.css("width", "100%");
-            }
-
-        },
-//        sendMediaToPresentation: function () {
-//            if (App.active_mode == true) {
-//                App.vent.trigger("presentation:set_new_element", this.media_element);
-//            }
-//        },
-        addVideoContext: function (context) {
-            win.log(context);
-            renderer.addAdditionalContext(context);
-            this.contexts_ready = true;
+        addVideoContext: function (context_canvas) {
+            this.contexts.push(require("webgl-video-renderer").setupCanvas(context_canvas));
         },
         playerInterfaceInit: function () {
 
@@ -318,7 +281,7 @@ var renderer = require("wcjs-multiscreen-renderer");
 
             if (t > 0) {
 
-                var t_str = that.parseTime(t, App.vlc.length);
+                var t_str = that.parseTime(t, that.vlc.length);
                 $(that.ui.time_current).text(t_str);
 
             } else if ($(that.ui.time_current).text() != ""
@@ -336,7 +299,7 @@ var renderer = require("wcjs-multiscreen-renderer");
                 var p = (e.pageX - rect.left) / (rect.right - rect.left);
                 that.ui.progress_seen.css("width", (p * 100) + "%");
 
-                var newtime = Math.floor(App.vlc.length * ((e.pageX - rect.left) / that.ui.wrapper.width()));
+                var newtime = Math.floor(this.vlc.length * ((e.pageX - rect.left) / that.ui.wrapper.width()));
                 if (newtime > 0) {
                     that.ui.tooltip_inner.text(that.parseTime(newtime));
                     var offset = Math.floor(that.ui.tooltip.width() / 2);
@@ -369,7 +332,7 @@ var renderer = require("wcjs-multiscreen-renderer");
                 that.seekDrag = false;
                 var p = (e.pageX - rect.left) / (rect.right - rect.left);
                 that.ui.progress_seen.css("width", (p * 100) + "%");
-                App.vlc.position = p;
+                this.vlc.position = p;
                 that.ui.time_current.text(that.ui.tooltip_inner.text());
             }
 
@@ -410,12 +373,12 @@ var renderer = require("wcjs-multiscreen-renderer");
             }
         },
         selectNewProgressPosition: function (e) {
-            if (App.vlc.length) {
+            if (that.vlc.length) {
 
                 var rect = that.ui.wrapper[0].getBoundingClientRect();
                 if (e.pageX >= rect.left && e.pageX <= rect.right) {
 
-                    var newtime = Math.floor(App.vlc.length * ((e.pageX - rect.left) / that.ui.wrapper.width()));
+                    var newtime = Math.floor(that.vlc.length * ((e.pageX - rect.left) / that.ui.wrapper.width()));
                     if (newtime > 0) {
 
                         that.ui.tooltip_inner.text(that.parseTime(newtime));
@@ -442,17 +405,17 @@ var renderer = require("wcjs-multiscreen-renderer");
         changeVolume: function (newVolume) {
 
             if (typeof newVolume !== 'undefined' && !isNaN(newVolume) && newVolume >= 0 && newVolume <= 5) {
-                this.lastVolume = App.vlc.volume;
-                App.vlc.volume = 0;
+                this.lastVolume = this.vlc.volume;
+                this.vlc.volume = 0;
 
-                if (!App.vlc.mute) {
+                if (!this.vlc.mute) {
 
                 }
 
             } else if (newVolume && !isNaN(newVolume) && newVolume > 5 && newVolume <= 200) {
 
-                if (App.vlc.mute) {
-                    App.vlc.mute = false;
+                if (this.vlc.mute) {
+                    this.vlc.mute = false;
                 }
 
                 this.ui.vol_button.removeClass("wcp-mute");
@@ -480,10 +443,10 @@ var renderer = require("wcjs-multiscreen-renderer");
                 }
 
                 this.ui.vol_bar_full.css("width", (((newVolume / 200) * parseInt(this.ui.vol_bar.css("width"))) - parseInt(this.ui.vol_bar_pointer.css("width"))) + "px");
-                App.vlc.volume = parseInt(newVolume);
+                this.vlc.volume = parseInt(newVolume);
 
             } else
-                return App.vlc.volume;
+                return this.vlc.volume;
         },
     });
 
