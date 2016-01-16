@@ -8,23 +8,16 @@
     'use strict'
 
     App.View.SongService.Control.BottomToolBar = Backbone.Marionette.ItemView.extend({
-
         template: '#churchservice-playlist-bottomtoolbar-tpl',
         className: 'churchservice-playlist-bottomtoolbar',
-
         events: {
-
             'click #churchservice-openbase-btn': 'openSongBase'
 
         },
-
         openSongBase: function () {
-
             win.log("open songbase button click");
-            App.vent.trigger("churchservice:songbase:show");
-
+            App.vent.trigger("songservice:show_songbase");
         },
-
     });
 
 })(window.App);

@@ -38,28 +38,20 @@
         selectedAuthor: {},
         selectedSong: {},
         initialize: function () {
-
-            App.vent.on("songbase:loadsongs", _.bind(this.loadSongs, this));
-            App.vent.on("churchservice:songbase:loadtext", _.bind(this.loadText, this));
-            App.vent.on("songbase:search", _.bind(this.search, this));
-            App.vent.on("songbase:selectAuthor", _.bind(this.selectAuthor, this));
-
+            this.listenTo(App.vent, "songbase:loadsongs", _.bind(this.loadSongs, this));
+            this.listenTo(App.vent, "songbase:search", _.bind(this.search, this));
+            this.listenTo(App.vent, "songbase:selectAuthor", _.bind(this.selectAuthor, this));
+            this.listenTo(App.vent, "songbase:loadtext", _.bind(this.loadText, this));
         },
         onDestroy: function () {
-
             win.log("songbase destroy request");
             $('#churchservice-control').show();
             $('#appmode-menu').show();
             $('#main-window-toptoolbar').show();
             $('#header').removeClass('header-shadow');
-
-            App.vent.off("songbase:loadsongs");
-            App.vent.off("churchservice:songbase:loadtext");
-            App.vent.off("songbase:selectAuthor");
-            App.vent.off("songbase:search");
         },
         loadText: function (song) {
-            
+
             if (!(song instanceof App.Model.Song)) {
                 win.error("Wrong song object");
                 return;
@@ -267,16 +259,6 @@
             });
 
         },
-        onRender: function () {
-
-            console.log("songbase render");
-
-            //App.Database.convert();
-            //
-            //return;
-
-
-        },
         loadAuthorsLoader: function () {
             this.ui.A_Loader.show();
         },
@@ -332,10 +314,10 @@
             this.TopToolbar_r.show(new App.View.SongService.SongBaseToolbar());
         },
         closeSongbase: function () {
-            App.vent.trigger('churchservice:songbase:close');
+            App.vent.trigger('songservice:close_songbase');
         },
     });
 
-    
+
 
 }(window.App));

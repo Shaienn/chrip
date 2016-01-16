@@ -20,6 +20,19 @@ span.italic{
     padding: 2%;
 }
 
+.inner-item {
+    display: flex;
+    align-items: center;
+    float: left;
+    width: inherit;
+    height: inherit;
+    color: white;
+    cursor: pointer;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
 .slide-item{
     white-space: nowrap;
 

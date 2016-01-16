@@ -60,28 +60,14 @@
 
             /* Assign events */
 
-            App.vent.on('churchservice:songbase:show', _.bind(this.showSongbase, this));
-            App.vent.on('churchservice:songbase:close', _.bind(this.closeSongbase, this));
-
-            App.vent.on('settings:show', _.bind(this.showSettings, this));
-            App.vent.on('settings:close', _.bind(this.Settings_r.destroy, this.Settings_r));
-
-
+            this.listenTo(App.vent, 'songservice:show_songbase', _.bind(this.showSongbase, this));
+            this.listenTo(App.vent, 'songservice:close_songbase', _.bind(this.closeSongbase, this));
 
         },
         onShow: function () {
             this.showControl();
         },
         onDestroy: function () {
-
-            App.vent.off('churchservice:songbase:show');
-            App.vent.off('churchservice:songbase:close');
-
-            App.vent.off('settings:show');
-            App.vent.off('settings:close');
-
-            App.vent.off("control:showslide");
-            App.vent.off("churchservice:playlist:prepare_slides");
 
         },
         /************ Regions part ************/

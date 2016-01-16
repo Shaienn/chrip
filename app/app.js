@@ -161,6 +161,7 @@ var initApp = function () {
     win.show();
     win.on("close", closeApp);
 
+
     try {
         App.Window.show(new App.View.MainWindow.Root());
     } catch (e) {
@@ -175,7 +176,6 @@ App.addRegions({
 
 
 App.addInitializer(function (options) {
-
     win.info("Start init");
     initTemplates()
             .then(getMac)

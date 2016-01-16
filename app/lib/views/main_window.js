@@ -24,8 +24,8 @@
                 startPoint: "SongService",
                 button: "#appmode-menu-churchservice-btn",
                 setting: "songservice",
-                onEvent: "songservice:control:do_on_show",
-                offEvent: "songservice:control:do_on_hide",
+                onEvent: "songservice:control:onEvent",
+                offEvent: "songservice:control:offEvent",
             },
             {
                 region: "Bible_Tab_r",
@@ -60,12 +60,11 @@
             /* Assign events */
 
             this.listenTo(App.vent, 'appmode:switch_tab_to', this.switchTabTo);
-//            this.listenTo($(App.ControlWindow.window.document), 'keydown', this.keyHandler);
-
-
-//            App.vent.on('appmode:switch_tab_to', this.switchTabTo);
-//            App.vent.on('main-window:toggle_presentation_state', _.bind(this.togglePresentationState, this));
             $(App.ControlWindow.window.document).on('keydown', this.keyHandler);
+            $(App.ControlWindow.window).on("resize", function () {
+                App.vent.trigger("resize");
+            });
+
 
         },
         keyHandler: function (event) {

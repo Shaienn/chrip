@@ -1,7 +1,7 @@
 (function (App) {
     'use strict'
 
-    App.View.Bible.VerseSlide = Backbone.Marionette.ItemView.extend({
+    var BibleVerseSlideGeneral = Backbone.Marionette.ItemView.extend({
         template: "#verse-slide-tpl",
         className: 'bible-slide-item',
         background_loaded: false,
@@ -11,11 +11,11 @@
             verse_link: ".slide-verse-link",
         },
         initialize: function () {
-            this.bindUIElements();
-            this.listenTo($(window), "resize", _.bind(this.onShow, this));
+            this.listenTo(App.vent, "resize", _.bind(this.onShow, this));
         },
         onShow: function () {
             var that = this;
+            this.bindUIElements();
 
             /* We wait first time until loading background image, 
              * cause container dimensions for boxfit() depends on it */
@@ -33,4 +33,8 @@
 
         }
     });
+
+    App.View.Bible.SingleVerseSlide = BibleVerseSlideGeneral.extend({});
+
+
 }(window.App));

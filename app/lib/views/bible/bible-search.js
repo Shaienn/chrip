@@ -25,16 +25,14 @@
         },
         initialize: function () {
 
-            App.vent.on("bible:control:onEvent", _.bind(this.onEvent, this));
-            App.vent.on("bible:control:changeBibleXml", _.bind(this.activate, this));
+            this.listenTo(App.vent, "bible:control:onEvent", _.bind(this.onEvent, this));
+            this.listenTo(App.vent, "bible:control:changeBibleXml", _.bind(this.activate, this));
 
-            /* Load all bibles version */
         },
         onShow: function () {
             this.activate(Settings.BibleSettings.bible_xml);
         },
         onDestroy: function () {
-            App.vent.off("bible:control:onEvent");
         },
         /******************/
         activate: function (bible_xmlpath) {
@@ -127,11 +125,10 @@
             var first_pattern = /([0-9]?[А-Яа-яЁё]+)/i
             var value = this.ui.searchInput.val();
             var found = value.match(full_pattern);
-            console.log(found);
             if (found) {
 
                 if (this.book_validate(found[1]) == false) {
-                    console.log("Book validation failed");
+                    win.log("Book validation failed");
                     this.Bible.Valid = false;
                     return;
                 }
@@ -144,7 +141,7 @@
                 if (found[3]) {
                     var verse_number = parseInt(found[3], 10) - 1;
                     if (verse_number > chapter.verses.length) {
-                        console.log("There is no " + verse_number + " verse");
+                        win.log("There is no " + verse_number + " verse");
                         this.Bible.Valid = false;
                         return;
                     }
@@ -155,7 +152,7 @@
                     return;
                 }
 
-                console.log("Verses validation failed");
+                win.log("Verses validation failed");
                 this.Bible.Valid = false;
                 return;
             }

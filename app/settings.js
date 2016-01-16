@@ -27,6 +27,7 @@ var path = require("path");
         update_period: 300000,
         appMode: 'songservice',
         presentation_monitor: 0,
+        transition_time: 300
     };
 
     Settings.BibleSettings = {
@@ -142,8 +143,8 @@ var path = require("path");
             return bibleList;
         }
     }
-    
-   
+
+
 
 })(window.App);
 

@@ -1,6 +1,5 @@
 (function (App) {
     'use strict';
-
     var Presentation = {
         State: false,
         BlackMode: false,
@@ -19,15 +18,16 @@
                 var content = $(body).find("#presentation-content");
 
                 if (Presentation.BlackMode) {
-                    content.animate({opacity: 0.0}, {duration: 600});
+                    content.animate({opacity: 0.0}, {duration: Settings.GeneralSettings.transition_time});
                 } else {
-                    content.animate({opacity: 1.0}, {duration: 600});
+                    content.animate({opacity: 1.0}, {duration: Settings.GeneralSettings.transition_time});
                 }
             }
 
             App.vent.trigger("main_toolbar:set_black_mode_indication", Presentation.BlackMode);
         },
         set_new_element: function (new_element) {
+            win.log("set_new_element");
 
             if (Presentation.State == false)
                 return;
@@ -35,46 +35,35 @@
             if (Presentation.BlackMode == true)
                 return;
 
-            for (var i = 0; i < Presentation.Elements; i++) {
+            for (var i = 0; i < Presentation.Elements.length; i++) {
                 if (new_element instanceof Presentation.Elements[i].element) {
-                    Presentation.Elements[i].handler(new_element);
+
+                    var element_body = Presentation.Elements[i].handler(new_element);
+
+                    for (var w in Presentation.Windows) {
+
+                        var body = Presentation.Windows[w].window.document.body;
+                        var content = $(body).find("#presentation-content");
+
+                        /* Find everything inside this container */
+
+                        var garbage = content.children().addClass("garbage");
+                        content.append(element_body);
+                        var newElement = content.children('div').not(".garbage");
+                        Presentation.Elements[i].after(newElement);
+                        newElement.css("opacity", 0);
+                        newElement.animate({opacity: 1.0},
+                                {
+                                    duration: Settings.GeneralSettings.transition_time,
+                                    queue: false,
+                                    complete: function () {
+                                        garbage.remove();
+                                    }
+                                }
+                        );
+                    }
                     break;
                 }
-            }
-        },
-        set_new_slide: function (slide) {
-            for (var i in App.PresentationWindows) {
-
-                var body = App.PresentationWindows[i].window.document.body;
-                var content = $(body).find("#presentation-content");
-
-                /* Find everything inside this container */
-
-                var garbage = content.children().addClass("garbage");
-
-                var slide_template = _.template($('#slide-tpl').html());
-                content.append(slide_template({
-                    background: slide.get("background"),
-                    text: slide.get("text"),
-                    height: slide.get("height"),
-                    width: slide.get("width"),
-                    number: slide.get("number"),
-                    font: slide.get("font"),
-                }));
-                var newSlide = content.find('div.slide-container').not(".garbage");
-                newSlide.find("div.slide_text span").bigText();
-                newSlide.css("opacity", 0);
-
-                newSlide.animate({opacity: 1.0}, {duration: 600, queue: false});
-                garbage.animate({opacity: 0.0},
-                        {
-                            duration: 600,
-                            queue: false,
-                            complete: function () {
-                                $(this).remove();
-                            }
-                        }
-                );
             }
         },
         toggle_presentation: function () {
@@ -91,6 +80,47 @@
                 App.vent.on("presentation:toggle_black_mode", Presentation.toggle_black_mode);
 
 
+                Presentation.Elements = [
+                    {
+                        element: App.Model.SongSlide,
+                        handler: function (slide) {
+                            var slide_template = _.template($('#slide-tpl').html());
+                            var element_body = slide_template(slide.attributes);
+                            return element_body;
+                        },
+                        after: function (target) {
+
+                            var text_span = target.find('.slide_text span');
+                            var background = target.find('img.slide_background');
+
+                            text_span.hide();
+                            background.load(function () {
+                                text_span.show();
+                                text_span.bigText();
+                            });
+                        }
+                    },
+                    {
+                        element: App.Model.BibleSlide,
+                        handler: function (slide) {
+                            var verse_template = _.template($('#verse-slide-tpl').html());
+                            var element_body = verse_template(slide.attributes);
+                            return element_body;
+                        },
+                        after: function (target) {
+                            var verse_text = target.find('.slide-verse-text');
+                            var background = target.find('img.slide_background');
+
+                            verse_text.hide();
+                            background.load(function () {
+                                verse_text.show();
+                                verse_text.boxfit({multiline: true});
+                            });
+                        }
+                    }
+                ];
+
+
                 /* TODO maybe more than 1 presentation monitor... */
 
                 var newPresentationWindow = gui.Window.get(
@@ -104,8 +134,8 @@
 
                 newPresentationWindow.window.onload = function () {
 
-                    newPresentationWindow.x = ((Settings.Utils.getScreens())[Settings.GeneralSettings.presentation_monitor]).bounds.x;
-                    newPresentationWindow.enterFullscreen();
+                    newPresentationWindow.x = Settings.Utils.getPresentationScreen().bounds.x;
+//                    newPresentationWindow.enterFullscreen();
 //                    newPresentationWindow.setAlwaysOnTop(true);
                     newPresentationWindow.on("closed", function () {
 
@@ -132,6 +162,9 @@
                 App.vent.off("presentation:set_new_element");
                 App.vent.off("presentation:toggle_black_mode");
 
+
+                Presentation.Elements = [];
+
                 while (Presentation.Windows.length > 0) {
                     var openedPresentationWindow = Presentation.Windows.pop();
                     openedPresentationWindow.close();
@@ -141,10 +174,6 @@
         },
     };
 
-    Presentation.Elements = [
-        {element: App.Model.SongSlide, handler: Presentation.set_new_slide},
-        {element: App.Model.BibleSlide, handler: Presentation.set_new_slide}
-    ];
 
     App.Presentation = Presentation;
 

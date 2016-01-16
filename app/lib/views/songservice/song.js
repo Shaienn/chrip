@@ -56,8 +56,7 @@
             var elem = $(this.el);
             $('.songItem').parents('.item.active').removeClass('active');
             elem.addClass('active');
-            App.vent.trigger("churchservice:songbase:loadtext", this.model);
-
+            App.vent.trigger("songbase:loadtext", this.model);
         },
     });
 

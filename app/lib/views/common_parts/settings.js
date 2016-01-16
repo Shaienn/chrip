@@ -6,7 +6,6 @@
 (function (App) {
 
     var fontManager = require('font-manager-nw');
-    var that;
     App.View.Settings.Root = Backbone.Marionette.ItemView.extend({
         template: '#settings-tpl',
         id: 'settings-main-window',
@@ -24,9 +23,9 @@
             this.ui.backgrounds_path.click();
         },
         initialize: function () {
-            that = this;
-            App.vent.on("settings:control:onEvent", _.bind(this.onEvent, this));
-            App.vent.on("settings:control:offEvent", _.bind(this.offEvent, this));
+            this.listenTo(App.vent, "settings:control:onEvent", _.bind(this.onEvent, this));
+            this.listenTo(App.vent, "settings:control:offEvent", _.bind(this.offEvent, this));
+            this.listenTo(App.vent, "resize", _.bind(this.redrawPreview, this));
         },
         onShow: function () {
             this.render();
@@ -35,19 +34,15 @@
         },
         onEvent: function () {
             this.redrawPreview();
-            $(window).on("resize", this.resizeHandler);
         },
         offEvent: function () {
-            $(window).off("resize", this.resizeHandler);
-        },
-        resizeHandler: function () {
-            that.redrawPreview();
+
         },
         redrawPreview: function (target) {
             win.log("redrawPreview");
-
+            var that = this;
             if (typeof target == "undefined") {
-                var target = that.ui.sections;
+                var target = this.ui.sections;
             }
 
             target.each(function () {
@@ -78,18 +73,9 @@
         },
         drawVerse: function (slide) {
             win.log("drawVerse");
-            var target = $('#BibleSettings').find(".bible-slide-item");
+            var target = $('#BibleSettings > .content > .preview-container');
             var verse_template = _.template($('#verse-slide-tpl').html());
-            target.html(verse_template({
-                background: slide.get("background"),
-                text: slide.get("text"),
-                link: slide.get("link"),
-                height: slide.get("height"),
-                width: slide.get("width"),
-                number: slide.get("number"),
-                font: slide.get("font"),
-            }));
-
+            target.html(verse_template(slide.attributes));
             var verse_text = target.find('.slide-verse-text');
             var background = target.find('img.slide_background');
 
@@ -103,17 +89,9 @@
         },
         drawSlide: function (slide) {
             win.log("drawSlide");
-            var target = $('#SongserviceSettings').find(".preview-container");
+            var target = $('#SongserviceSettings > .content > .preview-container');
             var slide_template = _.template($('#slide-tpl').html());
-            target.html(slide_template({
-                background: slide.get("background"),
-                text: slide.get("text"),
-                height: slide.get("height"),
-                width: slide.get("width"),
-                number: slide.get("number"),
-                font: slide.get("font"),
-            }));
-
+            target.html(slide_template(slide.attributes));
             var text_span = target.find('.slide_text span');
             var background = target.find('img.slide_background');
 

@@ -4,29 +4,22 @@
 
 (function (App) {
     'use strict';
-
     var ControlPanelCollection = Marionette.CollectionView.extend({
         tagName: 'ul',
         className: 'control-panel-list',
         childView: App.View.SongService.GroupSlide,
         initialize: function () {
-
-            $(window).on("resize", _.bind(this.redrawSlides, this));
-            App.vent.on("control:showActiveSlide", _.bind(this.showActiveSlide, this));
-
+            this.listenTo(App.vent, "resize", _.bind(this.redrawSlides, this));
+            this.listenTo(App.vent, "control:showActiveSlide", _.bind(this.showActiveSlide, this));
         },
         onDestroy: function () {
-            $(window).off("resize", this.redrawSlides);
-            App.vent.off("control:showActiveSlide");
+
         },
         showActiveSlide: function () {
-
             win.log("showActiveSlide");
-
             var controlPanel = $('#controlPanel ul');
             var currentSlide = controlPanel.find('li.active');
             currentSlide.find('.slide-container').trigger('click');
-
         },
         redrawSlides: function () {
             win.log("redraw slides");
@@ -39,7 +32,6 @@
             win.log("show control");
             this.redrawSlides();
             App.vent.trigger("songservice:control:showslide", this.collection.at(0));
-            
         },
     });
 

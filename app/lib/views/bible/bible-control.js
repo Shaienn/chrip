@@ -15,11 +15,10 @@
         /******************* Layout functions *******************/
 
         initialize: function () {
-
-            App.vent.on("bible:control:verse_selected", _.bind(this.showVerseSlide, this));
-            App.vent.on("bible:control:select_verse", _.bind(this.selectVerse, this));
-            App.vent.on("bible:control:add_to_queue", _.bind(this.addVerseToQueue, this));
-            App.vent.on("bible:control:remove_from_queue", _.bind(this.removeVerseFromQueue, this));
+            this.listenTo(App.vent, 'bible:control:verse_selected', _.bind(this.showVerseSlide, this));
+            this.listenTo(App.vent, 'bible:control:select_verse', _.bind(this.selectVerse, this));
+            this.listenTo(App.vent, 'bible:control:add_to_queue', _.bind(this.addVerseToQueue, this));
+            this.listenTo(App.vent, 'bible:control:remove_from_queue', _.bind(this.removeVerseFromQueue, this));
         },
         onShow: function () {
 
@@ -42,12 +41,6 @@
             }));
 
         },
-        onDestroy: function () {
-
-            App.vent.off("bible:control:verse_selected");
-            App.vent.off("bible:control:select_verse");
-
-        },
         /**************************************/
 
         addVerseToQueue: function (verse) {
@@ -58,10 +51,11 @@
         },
         showVerseSlide: function (verse) {
 
-            this.SlideControl_r.show(new App.View.Bible.VerseSlide({
+            this.SlideControl_r.show(new App.View.Bible.SingleVerseSlide({
                 model: verse.slide
             }));
 
+            App.vent.trigger("presentation:set_new_element", verse.slide);
         },
         selectVerse: function (verse_number) {
 

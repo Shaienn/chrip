@@ -2,7 +2,6 @@
     'use strict';
     var sl_prevX = 0;
     var sl_prevY = 0;
-
     var SongServiceSlideGeneral = Backbone.Marionette.ItemView.extend({
         className: 'slide-item',
         template: "#slide-tpl",
@@ -12,12 +11,11 @@
             text_span: ".slide_text span",
         },
         initialize: function () {
-            this.bindUIElements();
-            $(window).on("resize", this.onShow);
-            this.listenTo($(window), "resize", _.bind(this.onShow, this));
+            this.listenTo(App.vent, "resize", _.bind(this.onShow, this));
         },
         onShow: function () {
             var that = this;
+            this.bindUIElements();
 
             /* We wait first time until loading background image, 
              * cause container dimensions for bigText() depends on it */
@@ -34,6 +32,8 @@
                 });
             }
         },
+        onDestroy: function () {
+        }
     });
 
     App.View.SongService.SingleSlide = SongServiceSlideGeneral.extend({});

@@ -25,14 +25,10 @@
         /******************* Layout functions *******************/
 
         initialize: function () {
-
-            
-
-            App.vent.on("churchservice:playlist:item_selected", _.bind(this.showPlaylistItemControl, this));
-            App.vent.on("songservice:control:do_on_show", _.bind(this.doOnShow, this));
-            App.vent.on("songservice:control:do_on_hide", _.bind(this.doOnHide, this));
-            App.vent.on("songservice:control:showslide", _.bind(this.showSlide, this));
-
+            this.listenTo(App.vent, 'songservice:playlist:item_selected', _.bind(this.showPlaylistItemControl, this));
+            this.listenTo(App.vent, 'songservice:control:onEvent', _.bind(this.onEvent, this));
+            this.listenTo(App.vent, 'songservice:control:offEvent', _.bind(this.offEvent, this));
+            this.listenTo(App.vent, 'songservice:control:showslide', _.bind(this.showSlide, this));
         },
         onShow: function () {
 
@@ -58,13 +54,6 @@
                 that.List_r.show(that.collection);
                 _.bind(that.doOnShow, that)();
             });
-        },
-        onDestroy: function () {
-
-            App.vent.off("songservice:control:assignKeys");
-            App.vent.off("songservice:control:freeKeys");
-            App.vent.off("churchservice:playlist:item_selected");
-            App.vent.off("songservice:control:showslide");
         },
         /**************************************/
         showSlide: function (slide) {
@@ -102,14 +91,13 @@
             this.ControlPanel_r.show(itemCollectionView);
 
         },
-        doOnShow: function () {
-
-            this.doOnHide();
+        onEvent: function () {
+            this.offEvent();
             $(App.ControlWindow.window.document).on('keydown', this.keyHandler);
             this.List_r.currentView.render();
-
+            App.vent.trigger("resize");
         },
-        doOnHide: function () {
+        offEvent: function () {
 
             $(App.ControlWindow.window.document).off('keydown', this.keyHandler);
 
@@ -126,7 +114,7 @@
 
                 if (key == 79) {
                     win.log("Open songbase request");
-                    App.vent.trigger("churchservice:songbase:show");
+                    App.vent.trigger("songservice:show_songbase");
                 }
             }
 

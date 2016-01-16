@@ -54,7 +54,7 @@
             var elem = $(this.el);
             $('.playlistItem').parents('.item.active').removeClass('active');
             elem.addClass('active');
-            App.vent.trigger("churchservice:songbase:loadtext", this.model);
+            App.vent.trigger("songbase:loadtext", this.model);
             App.vent.trigger("songbase:selectAuthor", this.model);
         },
         removeFromPlaylist: function () {
@@ -74,7 +74,7 @@
             var elem = $(this.el);
             $('.playlistItem').parents('.item.active').removeClass('active');
             elem.addClass('active');
-            App.vent.trigger("churchservice:playlist:item_selected", this.model);
+            App.vent.trigger("songservice:playlist:item_selected", this.model);
 
         },
         show_context_menu: function (e) {
