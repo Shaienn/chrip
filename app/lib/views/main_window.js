@@ -89,7 +89,6 @@
                 if (key == 32) {
                     App.active_mode = App.active_mode == true ? false : true;
                     console.log("Freeze is " + App.active_mode);
-                    App.vent.trigger("main_toolbar:set_freeze_mode_indication", App.active_mode);
                     App.vent.trigger("active_mode_changed", App.active_mode);
                 }
 
@@ -144,7 +143,7 @@
 
                         that.TopToolbar_r.show(new App.View.MainWindow.TopToolbar);
 
-                        App.vent.trigger("main_toolbar:set_freeze_mode_indication", App.freeze_mode);
+                        App.vent.trigger("active_mode_changed", App.active_mode);
                         App.vent.trigger("main_toolbar:set_black_mode_indication", App.black_mode);
 
                         for (var i in that.tabs) {
@@ -158,19 +157,10 @@
                         }
 
                         that.switchTabTo("songservice");
-
-
-
-                        /* Application is ready to work */
-
-//                        App.vent.trigger('main:ready');
-
                         console.log("Ready");
-
                     });
                 });
             });
         }
     });
-
 }(window.App));

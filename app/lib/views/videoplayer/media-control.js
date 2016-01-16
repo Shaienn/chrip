@@ -1,22 +1,13 @@
 'use strict';
-
-var renderer = require("wcjs-multiscreen-renderer");
-
 (function (App) {
-
     var wcjs = require("wcjs-prebuilt");
-
-    var sl_prevX = 0;
-    var sl_prevY = 0;
     var that;
-
     App.View.MediaControl = Marionette.ItemView.extend({
         template: "#media-control-tpl",
         className: "media-control",
         firstTime: true,
         seekDrag: false,
         volDrag: false,
-        contexts_ready: false,
         main_context: null,
         contexts: [],
         vlc: null,
@@ -61,7 +52,7 @@ var renderer = require("wcjs-multiscreen-renderer");
 
                     win.log("mediaPlay");
 
-                    if (this.contexts_ready == false && App.active_mode == true) {
+                    if (this.contexts.length == 0 && App.active_mode == true) {
                         App.vent.trigger("presentation:set_new_element", this.media_element);
                     }
 

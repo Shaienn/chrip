@@ -16,17 +16,11 @@
         },
         initialize: function () {
             $("#presentation-btn").css("color", "gray");
-            App.vent.on("presentation:changed", _.bind(this.set_start_button_state, this));
-            App.vent.on("main_toolbar:set_freeze_mode_indication", _.bind(this.set_freeze_mode_indication, this));
-            App.vent.on("main_toolbar:set_update_mode_indication", _.bind(this.set_update_mode_indication, this));
-            App.vent.on("main_toolbar:set_black_mode_indication", _.bind(this.set_black_screen_mode_indication, this));
 
-        },
-        onDestroy: function () {
-            App.vent.off("presentation:changed");
-            App.vent.off("main_toolbar:set_freeze_mode_indication");
-            App.vent.off("main_toolbar:set_update_mode_indication");
-            App.vent.off("main_toolbar:set_black_mode_indication");
+            this.listenTo(App.vent, 'active_mode_changed', _.bind(this.set_active_mode_indication, this));
+            this.listenTo(App.vent, "presentation:changed", _.bind(this.set_start_button_state, this));
+            this.listenTo(App.vent, "main_toolbar:set_update_mode_indication", _.bind(this.set_update_mode_indication, this));
+            this.listenTo(App.vent, "main_toolbar:set_black_mode_indication", _.bind(this.set_black_screen_mode_indication, this));
         },
         updateBtnHandler: function () {
             App.vent.trigger("update:run_update");
@@ -41,8 +35,6 @@
 
         },
         presentationBtnHandler: function () {
-
-//            App.vent.trigger("main-window:toggle_presentation_state");
             App.Presentation.toggle_presentation();
         },
         set_update_mode_indication: function (state) {
@@ -52,7 +44,7 @@
                 $("#update-btn").hide();
             }
         },
-        set_freeze_mode_indication: function (state) {
+        set_active_mode_indication: function (state) {
             var container = $("#app-mode-btn-container");
             if (state) {
                 container.find("#passive_mode").hide();

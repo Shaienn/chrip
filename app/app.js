@@ -69,7 +69,6 @@ _.extend(App, {
     Localization: {},
     Database: {},
     presentation_state: false,
-    video_contexts: [],
     active_mode: false,
 });
 
