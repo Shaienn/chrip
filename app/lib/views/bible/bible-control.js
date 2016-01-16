@@ -55,7 +55,9 @@
                 model: verse.slide
             }));
 
-            App.vent.trigger("presentation:set_new_element", verse.slide);
+            if (App.active_mode == true) {
+                App.vent.trigger("presentation:set_new_element", verse.slide);
+            }
         },
         selectVerse: function (verse_number) {
 

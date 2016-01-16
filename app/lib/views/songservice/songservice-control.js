@@ -58,11 +58,13 @@
         /**************************************/
         showSlide: function (slide) {
 
-            App.vent.trigger("presentation:set_new_element", slide);
-
             $('.control-panel-list .slide-item.active').removeClass('active');
             $('.control-panel-list .slide-item div[number=' + slide.get('number') + ']')
                     .parent().addClass("active");
+
+            if (App.active_mode == true) {
+                App.vent.trigger("presentation:set_new_element", slide);
+            }
 
         },
         /* Modal window */

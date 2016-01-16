@@ -1,31 +1,25 @@
 /* Video control screen */
 
-(function (App){
+(function (App) {
     'use strict'
 
     App.View.Videoplayer.Control = Backbone.Marionette.LayoutView.extend({
-
         template: '#videoplayer-control-tpl',
         id: 'videoplayer-control-contain',
-
         regions: {
-
             MediaList_r: '#videoplayer_videolist',
             BottomToolBar_r: '#videoplayer_bottomtoolbar',
             MediaControl_r: '#videoplayer_videocontrol',
         },
-
-
         /******************* Layout functions *******************/
 
-        initialize: function(){
+        initialize: function () {
 
-            App.vent.on("mediaplayer:control:media_selected",
-                        _.bind(this.mediaSelected, this));
+
+            this.listenTo(App.vent, "mediaplayer:control:media_selected", _.bind(this.mediaSelected, this));
 
         },
-
-        onShow: function(){
+        onShow: function () {
 
 
             this.BottomToolBar_r.show(new App.View.Videoplayer.Control.BottomToolBar);
@@ -36,32 +30,24 @@
             }));
 
         },
-
-        onDestroy: function(){
-
-            App.vent.off("mediaplayer:control:media_selected");
-        },
-
-
         /**************************************/
 
-        mediaSelected: function(media){
-            console.log("media selected: "+media.get('type'));
+        mediaSelected: function (media) {
+            console.log("media selected: " + media.get('type'));
 
-            switch (media.get('type')){
-            case ("video"):
-            case ("audio"):
-                this.MediaControl_r.show(new App.View.MediaControl({
-                    media_element: media,
-                }));
-                break;
-            default:
+            switch (media.get('type')) {
+                case ("video"):
+                case ("audio"):
+                    this.MediaControl_r.show(new App.View.MediaControl({
+                        media_element: media,
+                    }));
+                    break;
+                default:
 
-                break;
+                    break;
             }
 
         },
-
     });
 
 }(window.App));

@@ -1,10 +1,73 @@
 (function (App) {
     'use strict';
+    var md5 = require('md5');
+
     var Presentation = {
         State: false,
         BlackMode: false,
         Windows: [],
-        Elements: [],
+        VlcTask: false,
+        Elements: [
+            {
+                element: "SongSlide",
+                handler: function (slide) {
+                    var slide_template = _.template($('#slide-tpl').html());
+                    var element_body = slide_template(slide.attributes);
+                    return element_body;
+                },
+                after: function (w, target) {
+
+                    var text_span = target.find('.slide_text span');
+                    var background = target.find('img.slide_background');
+
+                    text_span.hide();
+                    background.load(function () {
+                        text_span.show();
+                        text_span.bigText();
+                    });
+                }
+            },
+            {
+                element: "BibleSlide",
+                handler: function (slide) {
+                    var verse_template = _.template($('#verse-slide-tpl').html());
+                    var element_body = verse_template(slide.attributes);
+                    return element_body;
+                },
+                after: function (w, target) {
+                    var verse_text = target.find('.slide-verse-text');
+                    var background = target.find('img.slide_background');
+
+                    verse_text.hide();
+                    background.load(function () {
+                        verse_text.show();
+                        verse_text.boxfit({multiline: true});
+                    });
+                }
+            },
+            {
+                element: "Media",
+                handler: function (media) {
+
+                    return $("<canvas/>", {
+                        id: 'media-canvas'
+                    })[0];
+
+                },
+                after: function (w, target) {
+
+                    var newPlayerContext = {
+                        id: md5(w.toString()),
+                        window: w,
+                        canvas: target[0],
+                    };
+
+                    console.log(newPlayerContext);
+                    App.vent.trigger("mediaplayer:add_video_context", newPlayerContext);
+                }
+            }
+
+        ],
         toggle_black_mode: function () {
 
             if (Presentation.State == false)
@@ -18,8 +81,19 @@
                 var content = $(body).find("#presentation-content");
 
                 if (Presentation.BlackMode) {
-                    content.animate({opacity: 0.0}, {duration: Settings.GeneralSettings.transition_time});
+                    content.animate({opacity: 0.0}, {
+                        duration: Settings.GeneralSettings.transition_time,
+                        complete: function () {
+                            if (App.vlc.playing) {
+                                Presentation.VlcTask = true;
+                                App.vent.trigger("mediaplayer:pause");
+                            }
+                        }});
                 } else {
+                    if (Presentation.VlcTask) {
+                        Presentation.VlcTask = false;
+                        App.vent.trigger("mediaplayer:play");
+                    }
                     content.animate({opacity: 1.0}, {duration: Settings.GeneralSettings.transition_time});
                 }
             }
@@ -35,8 +109,12 @@
             if (Presentation.BlackMode == true)
                 return;
 
+            /* Just in case stop playing anything */
+
+            App.vent.trigger("mediaplayer:stop");
+
             for (var i = 0; i < Presentation.Elements.length; i++) {
-                if (new_element instanceof Presentation.Elements[i].element) {
+                if (new_element instanceof App.Model[Presentation.Elements[i].element]) {
 
                     var element_body = Presentation.Elements[i].handler(new_element);
 
@@ -49,8 +127,8 @@
 
                         var garbage = content.children().addClass("garbage");
                         content.append(element_body);
-                        var newElement = content.children('div').not(".garbage");
-                        Presentation.Elements[i].after(newElement);
+                        var newElement = content.children().not(".garbage");
+                        Presentation.Elements[i].after(Presentation.Windows[w].window, newElement);
                         newElement.css("opacity", 0);
                         newElement.animate({opacity: 1.0},
                                 {
@@ -78,47 +156,6 @@
 
                 App.vent.on("presentation:set_new_element", Presentation.set_new_element);
                 App.vent.on("presentation:toggle_black_mode", Presentation.toggle_black_mode);
-
-
-                Presentation.Elements = [
-                    {
-                        element: App.Model.SongSlide,
-                        handler: function (slide) {
-                            var slide_template = _.template($('#slide-tpl').html());
-                            var element_body = slide_template(slide.attributes);
-                            return element_body;
-                        },
-                        after: function (target) {
-
-                            var text_span = target.find('.slide_text span');
-                            var background = target.find('img.slide_background');
-
-                            text_span.hide();
-                            background.load(function () {
-                                text_span.show();
-                                text_span.bigText();
-                            });
-                        }
-                    },
-                    {
-                        element: App.Model.BibleSlide,
-                        handler: function (slide) {
-                            var verse_template = _.template($('#verse-slide-tpl').html());
-                            var element_body = verse_template(slide.attributes);
-                            return element_body;
-                        },
-                        after: function (target) {
-                            var verse_text = target.find('.slide-verse-text');
-                            var background = target.find('img.slide_background');
-
-                            verse_text.hide();
-                            background.load(function () {
-                                verse_text.show();
-                                verse_text.boxfit({multiline: true});
-                            });
-                        }
-                    }
-                ];
 
 
                 /* TODO maybe more than 1 presentation monitor... */
@@ -161,9 +198,6 @@
 
                 App.vent.off("presentation:set_new_element");
                 App.vent.off("presentation:toggle_black_mode");
-
-
-                Presentation.Elements = [];
 
                 while (Presentation.Windows.length > 0) {
                     var openedPresentationWindow = Presentation.Windows.pop();

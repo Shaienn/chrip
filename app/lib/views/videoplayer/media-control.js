@@ -14,6 +14,7 @@ var renderer = require("wcjs-multiscreen-renderer");
         firstTime: true,
         seekDrag: false,
         volDrag: false,
+        contexts_ready: false,
         ui: {
             wrapper: '.wcp-wrapper',
             center: '.wcp-center',
@@ -38,34 +39,84 @@ var renderer = require("wcjs-multiscreen-renderer");
             var button = $(e.currentTarget);
 
             if (button.hasClass("wcp-pause")) {
-                if (App.vlc.playing) {
-                    button.removeClass("wcp-pause").addClass("wcp-play");
-                    App.vlc.pause();
-                }
+                that.mediaPause();
                 return;
             }
 
             if (button.hasClass("wcp-play")) {
-                if (!App.vlc.playing) {
-                    button.removeClass("wcp-play").addClass("wcp-pause");
-                    App.vlc.play(that.media_element.get('mrl'));
-                }
+                that.mediaPlay();
                 return;
             }
+        },
+        mediaPlay: function () {
+            var button = $(".wcp-button.wcp-play");
+            if (button.length > 0) {
 
+                win.log(App.vlc);
+
+                if (App.vlc.playing == false) {
+
+                    win.log("mediaPlay");
+
+                    if (this.contexts_ready == false && App.active_mode == true) {
+                        App.vent.trigger("presentation:set_new_element", this.media_element);
+                    }
+
+                    /* Stopped */
+
+                    if (App.vlc.state == 5 || App.vlc.state == 0) {
+                        win.log("stopped");
+                        App.vlc.play(that.media_element.get('mrl'));
+                    }
+
+                    /* Paused */
+
+                    else if (App.vlc.state == 4) {
+                        win.log("paused");
+                        App.vlc.play();
+                    }
+
+                    button.removeClass("wcp-play").addClass("wcp-pause");
+                }
+            }
+        },
+        mediaPause: function () {
+            var button = $(".wcp-button.wcp-pause");
+            if (button.length > 0) {
+                if (App.vlc.playing) {
+                    win.log("mediaPause");
+                    button.removeClass("wcp-pause").addClass("wcp-play");
+                    App.vlc.pause();
+                }
+            }
+        },
+        mediaStop: function () {
+            var button = $(".wcp-button.wcp-pause");
+            if (button.length > 0) {
+                if (App.vlc.playing) {
+                    win.log("mediaStop");
+                    button.removeClass("wcp-pause").addClass("wcp-play");
+                    App.vlc.stop();
+                    this.contexts_ready = false;
+                }
+            }
         },
         initialize: function (options) {
-
             that = this;
-
             if (options.media_element != "undefined") {
                 this.media_element = options.media_element;
             }
 
-            App.vent.on("presentation:changed", _.bind(this.presentationContextHandler, this));
-            App.ControlWindow.on("resize", this.onResize);
+//            this.listenTo(App.vent, "presentation:changed", _.bind(this.sendMediaToPresentation, this));
+            this.listenTo(App.vent, "mediaplayer:pause", _.bind(this.mediaPause, this));
+            this.listenTo(App.vent, "mediaplayer:play", _.bind(this.mediaPlay, this));
+            this.listenTo(App.vent, "mediaplayer:stop", _.bind(this.mediaStop, this));
 
-            this.presentationContextHandler();
+            this.listenTo(App.vent, "mediaplayer:add_video_context", _.bind(this.addVideoContext, this));
+            this.listenTo(App.vent, "resize", _.bind(this.onResize, this));
+            this.listenTo(App.vent, "active_mode_changed", _.bind(this.onResize, this));
+
+//            _.bind(this.sendMediaToPresentation, this)();
         },
         onShow: function () {
 
@@ -79,57 +130,49 @@ var renderer = require("wcjs-multiscreen-renderer");
                 id: "main",
                 window: App.ControlWindow.window,
                 canvas: this.ui.canvas[0],
-                wrapper: this.ui.wrapper[0],
             };
 
             renderer.setMainContext(App.vlc, main_context);
             renderer.init();
-
         },
         onDestroy: function () {
-
             App.vlc.stop();
-            renderer.clearCanvas();
+            renderer.deinit();
+        },
+        onActiveModeChanged: function (new_state) {
 
-            /* Turn off events */
+            /* If active mode changed while player was stopped */
 
-            App.ControlWindow.removeAllListeners("resize");
+            if (new_state == false && App.vlc.playing == false) {
 
-            for (var i = 0; i < App.PresentationWindows.length; i++) {
-                var currentPresWindow = App.PresentationWindows[i];
-                currentPresWindow.removeAllListeners("resize");
+                /* Remove additional context from vlc */
+
+                renderer.deinit(true);
+                this.contexts_ready = false;
+
             }
-
-            App.vent.off("presentation:changed");
         },
         onResize: function () {
 
             /* Get video aspect ratio from canvas.
              Renderer already set canvas to video dimension */
 
-            var sourceAspect = that.ui.canvas.width() / that.ui.canvas.height();
-            var destAspect = that.ui.wrapper.width() / that.ui.wrapper.height();
-            var canvasParent = that.ui.canvas.parent();
-
-            /*
-             console.log("src: " + that.ui.canvas.width() + " " + that.ui.canvas.height());
-             console.log("dest: " + that.ui.wrapper.width() + " " + that.ui.wrapper.height());
-             console.log("sourceAspect" + sourceAspect);
-             console.log("destAspect" + destAspect);
-             */
+            var sourceAspect = this.ui.canvas.width() / this.ui.canvas.height();
+            var destAspect = this.ui.wrapper.width() / this.ui.wrapper.height();
+            var canvasParent = this.ui.canvas.parent();
 
             if (destAspect > sourceAspect) {
 
                 canvasParent.css("height", "100%");
-                canvasParent.css("width", ((that.ui.wrapper.height() * sourceAspect) / that.ui.wrapper.width()) * 100 + "%");
+                canvasParent.css("width", ((this.ui.wrapper.height() * sourceAspect) / this.ui.wrapper.width()) * 100 + "%");
 
             } else {
 
                 canvasParent.css("width", "100%");
-                canvasParent.css("height", ((that.ui.wrapper.width() * sourceAspect) / that.ui.wrapper.height()) * 100 + "%");
+                canvasParent.css("height", ((this.ui.wrapper.width() * sourceAspect) / this.ui.wrapper.height()) * 100 + "%");
             }
 
-            that.ui.canvas.css("width", "100%");
+            this.ui.canvas.css("width", "100%");
         },
         onPresentationResize: function () {
 
@@ -162,41 +205,15 @@ var renderer = require("wcjs-multiscreen-renderer");
             }
 
         },
-        presentationContextHandler: function () {
-
-            for (var i = 0; i < App.PresentationWindows.length; i++) {
-                this.presentationWindowSetup(App.PresentationWindows[i], i);
-            }
-        },
-        presentationWindowSetup: function (presentationWindowObject, i) {
-
-            var currentPresWindow = presentationWindowObject.window;
-
-
-            if (App.presentation_state == true) {
-
-                /* New player context on each presentation window */
-
-                var newPlayerContext = {
-                    id: "presentation" + i,
-                    window: currentPresWindow,
-                    canvas: currentPresWindow.document.getElementById("media-canvas"),
-                    wrapper: currentPresWindow.document.getElementById("presentation-content"),
-                }
-
-                presentationWindowObject.context = newPlayerContext;
-                renderer.addAdditionalContext(presentationWindowObject.context);
-                presentationWindowObject.on("resize", _.bind(this.onPresentationResize, this));
-
-            } else {
-
-                if (presentationWindowObject.context != null)
-                    renderer.removeContext(presentationWindowObject.context);
-                presentationWindowObject.context = null;
-                presentationWindowObject.removeAllListeners("resize");
-            }
-
-
+//        sendMediaToPresentation: function () {
+//            if (App.active_mode == true) {
+//                App.vent.trigger("presentation:set_new_element", this.media_element);
+//            }
+//        },
+        addVideoContext: function (context) {
+            win.log(context);
+            renderer.addAdditionalContext(context);
+            this.contexts_ready = true;
         },
         playerInterfaceInit: function () {
 

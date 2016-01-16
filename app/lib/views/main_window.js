@@ -90,6 +90,7 @@
                     App.active_mode = App.active_mode == true ? false : true;
                     console.log("Freeze is " + App.active_mode);
                     App.vent.trigger("main_toolbar:set_freeze_mode_indication", App.active_mode);
+                    App.vent.trigger("active_mode_changed", App.active_mode);
                 }
 
                 /* CTRL + B => switch black screen mode */
