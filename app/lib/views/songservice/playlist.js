@@ -18,12 +18,6 @@
         template: '#playlist-itemview-tpl',
         tagName: 'li',
         className: 'item',
-        initialize: function () {
-
-        },
-        onShow: function () {
-
-        },
         overHandler: function (e) {
             if (e.pageX !== p_mover_prevX || e.pageY !== p_mover_prevY) {
                 $('.playlistItem').parents('.item.selected').removeClass('selected');
@@ -80,17 +74,27 @@
         show_context_menu: function (e) {
             e.stopPropagation();
 
+            var that = this;
             var gui = require('nw.gui');
             var menu = new gui.Menu();
-
-            var settings = new gui.MenuItem({
-                label: 'Settings',
+            var redraw = new gui.MenuItem({
+                label: 'Redraw',
                 click: function () {
-                    console.log("settings");
+
+                    /* Redraw slides */
+
+                    if (!that.model instanceof App.Model.Song)
+                        return;
+
+                    that.model.rebuild_slides().then(function () {
+                        console.log("redrawed");
+                        App.vent.trigger("songservice:control:song_slides_redraw", that.model);
+                    });
                 },
             });
 
-            menu.append(settings);
+
+            menu.append(redraw);
 
             /* Show menu */
 

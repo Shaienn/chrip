@@ -96,7 +96,7 @@
                 <span>
                     <div class="dropdown background">
                         <p>Фоновые изображения</p>
-                        <select id="backgroundImageSelector" name="background"></select>
+                        <select class="background-image-selector" name="background"></select>
                         <div class="dropdown-arrow"></div>
                     </div>
                 </span>
@@ -188,7 +188,7 @@
                 <span>
                     <div class="dropdown background">
                         <p>Фоновые изображения</p>
-                        <select id="backgroundImageSelector" name="background"></select>
+                        <select class="background-image-selector" name="background"></select>
                         <div class="dropdown-arrow"></div>
                     </div>
                 </span>

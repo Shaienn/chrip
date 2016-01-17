@@ -12,6 +12,7 @@
         template: '#churchservice-control-tpl',
         id: 'churchservice-control-contain',
         collection: null,
+        active_item: null,
         regions: {
             BottomToolbar_r: '#playlist_bottomtoolbar',
             List_r: '#playlist_list',
@@ -29,6 +30,9 @@
             this.listenTo(App.vent, 'songservice:control:onEvent', _.bind(this.onEvent, this));
             this.listenTo(App.vent, 'songservice:control:offEvent', _.bind(this.offEvent, this));
             this.listenTo(App.vent, 'songservice:control:showslide', _.bind(this.showSlide, this));
+            this.listenTo(App.vent, "songservice:control:song_slides_redraw", _.bind(this.onSongSlidesRedraw, this));
+
+
         },
         onShow: function () {
 
@@ -67,17 +71,21 @@
             }
 
         },
-        /* Modal window */
+        onSongSlidesRedraw: function (song) {
 
-        open_song_settings_modal: function (song) {
+            /* Redraw control regiong only if we redraw active song */
+
+            if (this.active_item.cid != song.cid)
+                return;
+
+            this.showPlaylistItemControl(song);
 
         },
         showPlaylistItemControl: function (item) {
 
-            win.log("Show playlist item request");
             if (item instanceof App.Model.Song) {
 
-                win.debug("item is song");
+                this.active_item = item;
 
                 /* Collection of itemviews */
 

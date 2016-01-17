@@ -31,7 +31,6 @@
 }
 
 
-
 #bible_low_half, #bible_high_half{
     width: 100%;
     float: left;
@@ -46,13 +45,13 @@
 }
 
 #bible_slidecontrol{
-    /*height: calc(100% - 58px);*/
     height: 100%;
     float: left;
     width: 50%;
     display: flex;
     align-items: center;
     text-align: center;
+    padding: 2%;
 }
 
 #bible_search{

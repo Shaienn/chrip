@@ -19,10 +19,13 @@
             text: "",
         },
         rebuild_slides: function () {
+            var d = Q.defer();
             var that = this;
             App.SlideGenerator.makeSlidesFromSong(this).then(function (slides) {
                 that.slides = slides;
+                d.resolve(true);
             });
+            return d.promise;
         }
 
     });

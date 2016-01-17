@@ -88,7 +88,6 @@
 
                 if (key == 32) {
                     App.active_mode = App.active_mode == true ? false : true;
-                    console.log("Freeze is " + App.active_mode);
                     App.vent.trigger("active_mode_changed", App.active_mode);
                 }
 
@@ -97,9 +96,13 @@
                 if (key == 66) {
                     App.vent.trigger("presentation:toggle_black_mode");
                 }
+            } else {
+
+                if (key == 116) {
+                    App.Presentation.toggle_presentation();
+                }
 
             }
-
         },
         switchTabTo: function (target) {
 

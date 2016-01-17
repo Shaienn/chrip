@@ -7,7 +7,7 @@ span.italic{
     font-style: italic;
 }
 
-.slide-item, .bible-slide-item {
+.slide-item  {
     display: flex;
     align-items: center;
     float: left;
@@ -20,7 +20,8 @@ span.italic{
     padding: 2%;
 }
 
-.inner-item {
+
+.inner-item, .bible-slide-item {
     display: flex;
     align-items: center;
     float: left;
@@ -64,7 +65,7 @@ span.italic{
     color: white !important;
 }
 
-.slide-item .slide-container, .bible-slide-item .slide-container{
+.slide-item .slide-container{
     -webkit-transform: scale3d(0.9,0.9,0.9) rotate( 0.0001deg);
     /*display: inline-block;*/
     /*max-height: 100%;*/
@@ -78,7 +79,7 @@ span.italic{
     transition: all 0.1s ease-out;
 }
 
-.slide-item.active .slide-container, .bible-slide-item.active .slide-container {
+.slide-item.active .slide-container {
     -webkit-transform: scale3d(1,1,1) rotate( 0.0001deg);
     -webkit-box-shadow: 1vw 1vh 5px 0px rgba(0, 0, 0, 0.75);
     -moz-box-shadow: 1vw 1vh 5px 0px rgba(0, 0, 0, 0.75);

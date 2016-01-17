@@ -75,16 +75,10 @@ _.extend(App, {
 App.ViewStack = [];
 
 var initTemplates = function () {
-
-    // Load in external templates
-
     win.info("Start init templates");
-
     var ts = [];
-
     _.each(document.querySelectorAll('[type="text/x-template"]'), function (el) {
         var d = Q.defer();
-
         $.get(el.src)
                 .done(
                         function (res) {
@@ -95,34 +89,26 @@ var initTemplates = function () {
                         function () {
                             d.reject(false);
                         });
-
         ts.push(d.promise);
     });
-
     return Q.all(ts);
 };
 
 var closeApp = function () {
-
     win.log("Application closed");
-
     win.close();
-
     if (App.presentation_state == true) {
 
         for (var i = 0; i < App.PresentationWindows.length; i++) {
             App.PresentationWindows[i].close();
         }
     }
-
     process.exit(0);
 };
 
 
 var getMac = function () {
-
     var d = Q.defer();
-
     require('getmac').getMac(
             function (err, macAddress) {
                 if (err)
@@ -132,9 +118,7 @@ var getMac = function () {
                 d.resolve(macAddress);
             }
     );
-
     return d.promise;
-
 };
 
 var initApp = function () {

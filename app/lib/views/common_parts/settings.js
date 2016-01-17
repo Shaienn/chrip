@@ -118,15 +118,23 @@
         },
         refreshBackgroundFiles: function () {
 
+            /* Songservice */
+
             var images = Settings.Utils.getBackgrounds(Settings.SongserviceSettings.backgrounds_path);
-
             var images_select = "";
-
             for (var i = 0; i < images.length; i++) {
                 images_select += "<option " + (Settings.SongserviceSettings.background == images[i].path ? "selected='selected'" : "") + " value='" + images[i].path + "'>" + images[i].name + "</option>";
             }
+            $("#SongserviceSettings .background-image-selector").html(images_select);
 
-            $("#backgroundImageSelector").html(images_select);
+            /* Bible */
+
+            var images = Settings.Utils.getBackgrounds(Settings.BibleSettings.backgrounds_path);
+            var images_select = "";
+            for (var i = 0; i < images.length; i++) {
+                images_select += "<option " + (Settings.BibleSettings.background == images[i].path ? "selected='selected'" : "") + " value='" + images[i].path + "'>" + images[i].name + "</option>";
+            }
+            $("#BibleSettings .background-image-selector").html(images_select);
 
         },
         saveSetting: function (e) {
