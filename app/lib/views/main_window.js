@@ -98,6 +98,8 @@
                 }
             } else {
 
+                /* F5 */
+
                 if (key == 116) {
                     App.Presentation.toggle_presentation();
                 }

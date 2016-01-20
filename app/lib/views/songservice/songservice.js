@@ -67,36 +67,25 @@
         onShow: function () {
             this.showControl();
         },
-        onDestroy: function () {
-
-        },
         /************ Regions part ************/
 
         showControl: function () {
-
             win.log("show control request");
             this.Control_r.show(new App.View.SongService.Control);
         },
         showSettings: function (settingsModel) {
-
             win.log("show settings request");
             this.Settings_r.show(new App.View.SongService.Settings({
                 model: settingsModel
             }));
-
         },
         showSongbase: function () {
-
-            win.log("show songbase request");
-            this.Control_r.currentView.doOnHide();
+            App.vent.trigger('songservice:control:offEvent');
             this.Songbase_r.show(new App.View.SongService.SongBase);
-
         },
         closeSongbase: function () {
-
             this.Songbase_r.destroy();
-            this.Control_r.currentView.doOnShow();
-
+            App.vent.trigger('songservice:control:onEvent');
         },
     });
 

@@ -77,6 +77,24 @@
             var that = this;
             var gui = require('nw.gui');
             var menu = new gui.Menu();
+
+            var edit = new gui.MenuItem({
+                label: 'Edit',
+                click: function () {
+
+                    /* Redraw slides */
+
+                    if (!that.model instanceof App.Model.Song)
+                        return;
+
+                    App.vent.trigger("songservice:control:context:edit_song", that.model);
+
+                },
+            });
+
+            menu.append(edit);
+
+
             var redraw = new gui.MenuItem({
                 label: 'Redraw',
                 click: function () {
@@ -88,10 +106,11 @@
 
                     that.model.rebuild_slides().then(function () {
                         console.log("redrawed");
-                        App.vent.trigger("songservice:control:song_slides_redraw", that.model);
+                        App.vent.trigger("songservice:control:context:song_slides_redraw", that.model);
                     });
                 },
             });
+
 
 
             menu.append(redraw);

@@ -15,8 +15,8 @@ var path = require("path");
     'use strict';
     gui.Screen.Init();
 
-    var common_background_path = process.env.PWD + "/backgrounds";
-    var common_bible_path = process.env.PWD + "/bible";
+    var common_background_path = path.dirname(process.execPath) + "/backgrounds";
+    var common_bible_path = path.dirname(process.execPath) + "/bible";
 
     /* User interface */
 

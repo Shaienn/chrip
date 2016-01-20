@@ -30,7 +30,11 @@
             this.listenTo(App.vent, 'songservice:control:onEvent', _.bind(this.onEvent, this));
             this.listenTo(App.vent, 'songservice:control:offEvent', _.bind(this.offEvent, this));
             this.listenTo(App.vent, 'songservice:control:showslide', _.bind(this.showSlide, this));
-            this.listenTo(App.vent, "songservice:control:song_slides_redraw", _.bind(this.onSongSlidesRedraw, this));
+            
+            /* Context menu */
+            
+            this.listenTo(App.vent, "songservice:control:context:song_slides_redraw", _.bind(this.onSongSlidesRedraw, this));
+            this.listenTo(App.vent, "songservice:control:context:edit_song", _.bind(this.onSongSlidesRedraw, this));
 
 
         },
@@ -60,6 +64,17 @@
             });
         },
         /**************************************/
+        openEditSongWindow: function () {
+            
+            var form = new App.View.SongEditForm({
+                song: this.selectedSong,
+                authors: this.loadedAuthors,
+                songbase: this
+            });
+
+            this.modals.show(form);
+
+        },
         showSlide: function (slide) {
 
             $('.control-panel-list .slide-item.active').removeClass('active');

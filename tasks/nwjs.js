@@ -14,5 +14,6 @@ module.exports = {
         '<%= settings.app %>/vendor/**/*',
         '<%= settings.app %>/images/**/*',
         '<%= settings.app %>/css/**/*',
+        '<%= settings.app %>/fonts/**/*',
     ]
 };

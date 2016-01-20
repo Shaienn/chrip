@@ -126,7 +126,7 @@ var initApp = function () {
     win.info("Start init app");
 
     var nwPath = process.execPath;
-    var nwDir = path.dirname(nwPath);
+    var nwDir = path.dirname(process.execPath);
     var nwCwd = process.env.PWD;
 
     console.log(nwPath);
@@ -134,7 +134,7 @@ var initApp = function () {
     console.log(nwCwd);
 
     App.Config.execDir = process.cwd();
-    App.Config.runDir = nwCwd;
+    App.Config.runDir = nwDir;
     App.ControlWindow = win;
 
     win.maximize();

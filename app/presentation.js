@@ -1,6 +1,5 @@
 (function (App) {
     'use strict';
-    var md5 = require('md5');
 
     var Presentation = {
         State: false,
@@ -15,10 +14,8 @@
                     return element_body;
                 },
                 after: function (target) {
-
                     var text_span = target.find('.slide_text span');
                     var background = target.find('img.slide_background');
-
                     text_span.hide();
                     background.load(function () {
                         text_span.show();
@@ -46,18 +43,15 @@
             },
             {
                 element: "Media",
-                handler: function (media) {
-
+                handler: function () {
                     return $("<canvas/>", {
                         id: 'media-canvas'
                     })[0];
-
                 },
                 after: function (target) {
                     App.vent.trigger("mediaplayer:add_video_context", target[0]);
                 }
             }
-
         ],
         toggle_black_mode: function () {
 
@@ -82,7 +76,6 @@
                     content.animate({opacity: 1.0}, {duration: Settings.GeneralSettings.transition_time});
                 }
             }
-
             App.vent.trigger("main_toolbar:set_black_mode_indication", Presentation.BlackMode);
         },
         set_new_element: function (new_element) {
@@ -167,7 +160,6 @@
                                 break;
                             }
                         }
-
                         Presentation.State = false;
                         App.vent.trigger("presentation:changed", false);
                     });
