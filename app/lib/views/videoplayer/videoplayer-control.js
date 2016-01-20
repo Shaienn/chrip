@@ -43,7 +43,7 @@
                     }));
                     break;
                 default:
-
+                    console.log(media.get('type'));
                     break;
             }
 

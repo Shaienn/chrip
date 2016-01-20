@@ -121,12 +121,14 @@
         onShow: function () {
 
             this.playerInterfaceInit();
-
             this.vlc.onTimeChanged = this.onTimeChanged;
             this.vlc.onPositionChanged = this.onPositionChanged;
             this.vlc.onPlaying = this.onPlaying;
 
             this.main_context = require("webgl-video-renderer").setupCanvas(this.ui.canvas[0]);
+            if (typeof this.main_context == "undefined") {
+                console.log("We can`t configure GL context. Sorry");
+            }
 
         },
         onDestroy: function () {

@@ -33,15 +33,12 @@
             var files =$(this.ui.Input)[0].files;
 
             for (var i = 0; i < files.length; i++){
-
                 var media = new App.Model.Media();
-                var mrl = "file://"+files[i].path;
+                var mrl = "file:///"+files[i].path;
                 media.set("mrl", mrl);
-                var type = files[i].type.split('/')[0];
+                var type = files[i].type.split('/')[0]; /* TODO in windows mkv files is not recognized as video type */
                 media.set("type", type);
                 media.set("name", files[i].name);
-
-
                 App.Model.MediaListCollection.add(media);
             }
         },
