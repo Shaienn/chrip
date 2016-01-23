@@ -167,9 +167,6 @@
 
                         that.switchTabTo("songservice");
 
-
-
-                        console.log("Ready");
                     });
                 });
             });

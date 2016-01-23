@@ -150,8 +150,8 @@
                 newPresentationWindow.window.onload = function () {
 
                     newPresentationWindow.x = Settings.Utils.getPresentationScreen().bounds.x;
-//                    newPresentationWindow.enterFullscreen();
-//                    newPresentationWindow.setAlwaysOnTop(true);
+                    newPresentationWindow.enterFullscreen();
+                    newPresentationWindow.setAlwaysOnTop(true);
                     newPresentationWindow.on("closed", function () {
 
                         for (var i = 0; i < Presentation.Windows.length; i++) {

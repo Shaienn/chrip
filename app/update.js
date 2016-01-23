@@ -1,6 +1,5 @@
 'use strict';
 (function (App) {
-    var Q = require('q');
     var fs = require('fs-extra');
     var http = require('http');
     var assert = require('assert');
