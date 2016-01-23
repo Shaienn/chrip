@@ -111,12 +111,12 @@
             var parts = [];
             var res;
 
-            while ((res = App.Config.slide_part.pattern.exec(text)) != null) {
+            while ((res = Settings.Config.slide_part.pattern.exec(text)) != null) {
 
                 var raw_text = res[1].trim();
-                for (var p in App.Config.song_parts_patterns) {
+                for (var p in Settings.Config.song_parts_patterns) {
 
-                    var part_pattern = App.Config.song_parts_patterns[p].pattern;
+                    var part_pattern = Settings.Config.song_parts_patterns[p].pattern;
                     var part = part_pattern.exec(raw_text);
 
                     if (part == null) {

@@ -20,6 +20,7 @@ var
         Q = require('q'),
         PEG = require("pegjs");
 
+//var intel = require('intel');
 var keypress = require('keypress');
 
 win.log = console.log.bind(console);
@@ -123,7 +124,11 @@ var getMac = function () {
 
 var initApp = function () {
 
-    win.info("Start init app");
+//    intel.setLevel(intel.WARN);
+//    intel.addHandler(new intel.handlers.File('test.log'));
+//    intel.info("Start init app");
+//    intel.warn('i made it!');
+//    intel.debug('nobody loves me');
 
     var nwPath = process.execPath;
     var nwDir = path.dirname(process.execPath);
