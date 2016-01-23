@@ -62,13 +62,8 @@
             }
 
         },
-        onDestroy: function () {
-            console.log('close');
-        },
         beforeCancel: function () {
-
             /* It prevents close modal when we click outside */
-
             return false;
         },
         deleteBtnHandler: function () {
@@ -135,46 +130,35 @@
                 this.authors = options.authors;
             }
 
-            console.log(this.song);
-
-            App.vent.on("modal:show_songpart", _.bind(this.showSongpartDetails, this));
-            App.vent.on("modal:remove_songpart", _.bind(this.removeSongpart, this));
-
+            this.listenTo(App.vent, "modal:show_songpart", _.bind(this.showSongpartDetails, this));
+            this.listenTo(App.vent, "modal:remove_songpart", _.bind(this.removeSongpart, this));
         },
         onShow: function () {
 
             var songPartCollection = this.getSongPartsCollection(this.song);
-
             this.collection_view = new App.View.SongPartCollection({
                 collection: songPartCollection,
                 childView: App.View.SongPart,
             });
-
             this.collection_view.render();
             $(this.ui.songPartsList).append(this.collection_view.el);
-
             var song_meta_template = _.template($('#song-meta-tpl').html());
             $(this.ui.songMeta).html(song_meta_template({
                 authors: this.authors,
                 song: this.song,
             }));
 
-
-        },
-        onDestroy: function () {
-            App.vent.off("modal:show_songpart");
-            App.vent.off("modal:remove_songpart");
         },
         /**********************************************/
 
         addSongPartHandler: function () {
-            console.log("Add song part handler");
+            win.log("Add song part handler");
             var new_part = new App.Model.SongPart();
             var default_type = "verse";
             var default_type_index = 0;
 
-            for (var i in App.Config.song_parts_patterns) {
-                if (App.Config.song_parts_patterns[i].name == default_type) {
+            for (var i in App.Settings.Config.song_parts_patterns) {
+                if (App.Settings.Config.song_parts_patterns[i].name == default_type) {
                     default_type_index = i;
                 }
             }
@@ -186,17 +170,16 @@
             $(this.ui.songPartDetails).html("");
         },
         removeSongpart: function (songpart) {
-            console.log("remove");
+            win.log("remove");
             this.collection_view.collection.remove(songpart);
-
             $(this.ui.songPartDetails).html("");
         },
         showSongpartDetails: function (songpart) {
-            console.log("show details");
+            win.log("show details");
             var details_template = _.template($('#songpart-details-tpl').html());
             var details = $(this.ui.songPartDetails);
             details.html(details_template({
-                types: App.Config.song_parts_patterns,
+                types: App.Settings.Config.song_parts_patterns,
                 songpart: songpart,
             }));
 
@@ -234,7 +217,7 @@
                 }
 
                 var preparedText = corrected_text.trim()
-                        .replace(App.Config.chord_pattern, "")
+                        .replace(App.Settings.Config.chord_pattern, "")
                         .replace(/\r\n|\n/g, "<br>");
                 songpart.set('text', corrected_text.trim());
                 songpart.set('text_visual', preparedText);
@@ -265,13 +248,13 @@
             var res;
             var songPartCollection = new App.Model.SongPartCollection();
 
-            while ((res = App.Config.slide_part.pattern.exec(song.get('text'))) != null) {
+            while ((res = App.Settings.Config.slide_part.pattern.exec(song.get('text'))) != null) {
 
                 var raw_text = res[1].trim();
 
-                for (var p in App.Config.song_parts_patterns) {
+                for (var p in App.Settings.Config.song_parts_patterns) {
 
-                    var part_pattern = App.Config.song_parts_patterns[p].pattern;
+                    var part_pattern = App.Settings.Config.song_parts_patterns[p].pattern;
                     var part = part_pattern.exec(raw_text);
 
                     if (part == null) {
@@ -282,10 +265,10 @@
                     var part_text = part[1].trim();
 
                     songPart.set('type', p);
-                    songPart.set('type_visual', App.Config.song_parts_patterns[p].name);
+                    songPart.set('type_visual', App.Settings.Config.song_parts_patterns[p].name);
                     songPart.set('text', part_text);
                     songPart.set('text_visual', part_text.
-                            replace(App.Config.chord_pattern, "").
+                            replace(App.Settings.Config.chord_pattern, "").
                             replace(/\r\n|\n/g, "<br>"));
 
                     /* Add to collection */
@@ -321,15 +304,15 @@
             for (var i = 0; i < this.collection_view.collection.length; i++) {
 
                 var part = this.collection_view.collection.at(i);
-                var part_wrapper = App.Config.song_parts_patterns[part.get('type')];
+                var part_wrapper = App.Settings.Config.song_parts_patterns[part.get('type')];
 
-                song_text += App.Config.slide_part.init;
+                song_text += App.Settings.Config.slide_part.init;
                 song_text += part_wrapper.init;
 
                 song_text += part.get('text');
 
                 song_text += part_wrapper.end;
-                song_text += App.Config.slide_part.end;
+                song_text += App.Settings.Config.slide_part.end;
             }
 
 

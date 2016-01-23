@@ -14,21 +14,14 @@
         /******************* Layout functions *******************/
 
         initialize: function () {
-
-
             this.listenTo(App.vent, "mediaplayer:control:media_selected", _.bind(this.mediaSelected, this));
-
         },
         onShow: function () {
-
-
             this.BottomToolBar_r.show(new App.View.Videoplayer.Control.BottomToolBar);
-
             this.MediaList_r.show(new App.View.MediaListCollection({
                 childView: App.View.MediaListControl,
                 collection: App.Model.MediaListCollection,
             }));
-
         },
         /**************************************/
 

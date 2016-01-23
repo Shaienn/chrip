@@ -51,6 +51,7 @@
 
                 if ((typeof obj != "undefined") && (typeof obj.version != "undefined")) {
                     if (obj.version != Settings.Config.version) {
+                        win.log("Server has: " + obj.version + " but application has: " + Settings.Config.version);
                         d.resolve(true);
                     } else {
                         d.resolve(false);
@@ -89,7 +90,12 @@
 
                                 App.Database.close().then(
                                         function () {
-                                            fs.copySync(dest, App.Config.execDir + Settings.GeneralSettings.global_db, {clobber: true});
+                                            win.log("Copying to " + App.Config.runDir + Settings.GeneralSettings.global_db);
+                                            try {
+                                                fs.copySync(dest, App.Config.runDir + Settings.GeneralSettings.global_db, {clobber: true});
+                                            } catch (err) {
+                                                console.error('Copying got an error: ' + err.message)
+                                            }
                                             App.Database.init().then(function () {
                                                 App.vent.trigger("main_toolbar:set_update_mode_indication", false);
                                                 that.runPeriodicalCheck();
@@ -115,7 +121,7 @@
                             var song = res[i];
                             song.mac = Settings.Config.mac;
                             that.client.post('/approve', song, function (err, req, res, obj) {
-                                
+
                                 if (err) {
                                     throw new Error(err);
                                 }

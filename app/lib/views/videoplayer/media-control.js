@@ -119,17 +119,16 @@
             }
         },
         onShow: function () {
+            this.main_context = require("webgl-video-renderer").setupCanvas(this.ui.canvas[0]);
+            if (typeof this.main_context == "undefined") {
+                console.log("We can`t configure GL context. Sorry");
+                return;
+            }
 
             this.playerInterfaceInit();
             this.vlc.onTimeChanged = this.onTimeChanged;
             this.vlc.onPositionChanged = this.onPositionChanged;
             this.vlc.onPlaying = this.onPlaying;
-
-            this.main_context = require("webgl-video-renderer").setupCanvas(this.ui.canvas[0]);
-            if (typeof this.main_context == "undefined") {
-                console.log("We can`t configure GL context. Sorry");
-            }
-
         },
         onDestroy: function () {
             this.vlc.stop();
@@ -169,7 +168,12 @@
             this.ui.canvas.css("width", "100%");
         },
         addVideoContext: function (context_canvas) {
-            this.contexts.push(require("webgl-video-renderer").setupCanvas(context_canvas));
+            var new_context = require("webgl-video-renderer").setupCanvas(context_canvas);
+            if (typeof new_context != "undefined") {
+                this.contexts.push(new_context);
+            } else {
+                console.log("We can`t configure GL context. Sorry");
+            }
         },
         playerInterfaceInit: function () {
 

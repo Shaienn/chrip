@@ -23,7 +23,7 @@ var path = require("path");
     Settings.GeneralSettings = {
         user_db: "/db/user.db",
         global_db: "/db/global.db",
-        updateServer: "http://127.0.0.1:8080",
+        updateServer: "http://185.46.9.150:8080",
         update_period: 300000,
         appMode: 'songservice',
         presentation_monitor: 0,
@@ -65,6 +65,32 @@ var path = require("path");
     Settings.Config = {
         version: 0,
         tmpPath: "./tmp",
+        chord_pattern: /\[[\w\W\s\S]+?\]/g,
+        slide_part: {
+            init: "{start_of_slide}",
+            end: "{end_of_slide}",
+            pattern: /\{(?:sos|start_of_slide)\}([\w\s\W\S]+?)\{(?:eos|end_of_slide)\}/g
+        },
+        song_parts_patterns: {
+            chorus: {
+                name: "chorus",
+                init: "{soc}",
+                end: "{eoc}",
+                pattern: /\{(?:soc|start_of_chorus)\}([\w\s\W\S]+?)\{(?:eoc|end_of_chorus)\}/
+            },
+            bridge: {
+                name: "bridge",
+                init: "{sob}",
+                end: "{eob}",
+                pattern: /\{(?:sob|start_of_bridge)\}([\w\s\W\S]+?)\{(?:eob|end_of_bridge)\}/
+            },
+            verse: {
+                name: "verse",
+                init: "",
+                end: "",
+                pattern: /([\w\s\W\S]+)/
+            }
+        }
     };
 
     Settings.Utils = {
