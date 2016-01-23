@@ -64,13 +64,13 @@
             var preview_text = "";
             var res;
 
-            while ((res = App.Settings.Config.slide_part.pattern.exec(song.get('text'))) != null) {
+            while ((res = Settings.Config.slide_part.pattern.exec(song.get('text'))) != null) {
 
                 var raw_text = res[1];
 
-                for (var p in App.Settings.Config.song_parts_patterns) {
+                for (var p in Settings.Config.song_parts_patterns) {
 
-                    var part_pattern = App.Settings.Config.song_parts_patterns[p].pattern;
+                    var part_pattern = Settings.Config.song_parts_patterns[p].pattern;
                     var part = part_pattern.exec(raw_text);
 
                     if (part == null) {
@@ -82,7 +82,7 @@
 
                     /* remove chords */
 
-                    var pure_text = part_text.replace(App.Settings.Config.chord_pattern, "");
+                    var pure_text = part_text.replace(Settings.Config.chord_pattern, "");
                     preview_text += pure_text;
 
                     break;
