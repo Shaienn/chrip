@@ -14,6 +14,8 @@
         global_db: {},
         user_db_check: function () {
 
+            App.SplashScreen.send_progress("Init user database", null);
+
             var d = Q.defer();
             /* Check user.db, create tables if not exists */
 
@@ -43,14 +45,21 @@
                 ];
 
                 var settings_promises = [];
+                App.SplashScreen.send_progress("Check user settings", null);
 
-                settings_table.forEach(function (settings_item) {
+
+                settings_table.forEach(function (settings_item, table_index, table_array) {
 
                     var sql = "INSERT OR IGNORE INTO " + settings_item + " (key, value) VALUES (?, ?)";
                     var stmt = App.Database.user_db.prepare(sql);
+                    var up_value = (100 / table_array.length) * table_index;
 
-                    Object.keys(Settings[settings_item]).forEach(function (key) {
+                    Object.keys(Settings[settings_item]).forEach(function (key, key_index, key_array) {
                         var s_d = Q.defer();
+
+                        var down_value = up_value + ((100 / table_array.length) / key_array.length) * key_index;
+                        App.SplashScreen.send_progress(null, Math.floor(down_value).toString());
+
                         stmt.run(key, Settings[settings_item][key], function (err) {
 
                             if (err)
@@ -67,6 +76,7 @@
 
                 Q.all(settings_promises).then(function () {
                     d.resolve(true);
+                    App.SplashScreen.send_progress(null, "Done");
                 });
             });
 
@@ -86,6 +96,8 @@
         },
         init: function () {
 
+            App.SplashScreen.send_progress("Init databases", null);
+
             var d = Q.defer();
             console.log(App.Config.runDir + Settings.GeneralSettings.global_db);
             App.Database.global_db = new sqlite3.Database(App.Config.runDir + Settings.GeneralSettings.global_db, function (err) {
@@ -101,6 +113,9 @@
                     App.Database.user_db_check().then(function () {
                         App.Database.getVersion().then(function () {
                             App.Database.db.serialize(function () {
+
+                                App.SplashScreen.send_progress("Init virtual database", null);
+
 
                                 App.Database.db.run("CREATE TABLE IF NOT EXISTS [Authors] ([memid] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,[uaid] INTEGER NOT NULL,[gaid] INTEGER,[name] TEXT NOT NULL,[db] TEXT NOT NULL)");
                                 App.Database.db.run("CREATE TABLE IF NOT EXISTS [Songs] ([memid] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,[usid] INTEGER NOT NULL,[uaid] INTEGER NOT NULL,[gsid] INTEGER,[gaid] INTEGER,[name] TEXT,[db] TEXT NOT NULL, [text] TEXT)");
@@ -134,13 +149,19 @@
 
                                 App.Database.db.exec("CREATE VIRTUAL TABLE Songslist USING fts4(memid, name, text)");
                                 App.Database.db.all("SELECT * FROM Songs", function (err, rows) {
+
+                                    App.SplashScreen.send_progress("Create songs search table...", null);
+
                                     if (err)
                                         d.reject(new Error(err));
 
                                     var stmt = App.Database.db.prepare("INSERT INTO Songslist (memid, name, text) VALUES (?, ?, ?)");
                                     var rows_ts = [];
 
-                                    rows.forEach(function (row) {
+                                    rows.forEach(function (row, i, arr) {
+
+                                        var up_value = (100 / arr.length) * i;
+                                        App.SplashScreen.send_progress(null, Math.floor(up_value).toString());
 
                                         if (row.text == null)
                                             return;
@@ -163,7 +184,6 @@
 
                                     stmt.finalize();
                                     Q.all(rows_ts).then(function (res) {
-                                        console.log("database init");
                                         d.resolve(true);
                                     });
                                 });
@@ -237,6 +257,9 @@
 //
 //        },
         getVersion: function () {
+
+            App.SplashScreen.send_progress("Get database version...", null);
+
             var d = Q.defer();
             App.Database.global_db.each("SELECT version FROM Version WHERE version_id = 1", function (err, row) {
 
@@ -251,6 +274,8 @@
             return d.promise;
         },
         loadSettings: function () {
+
+            App.SplashScreen.send_progress("Load application settings...", null);
 
             var settings_table = [
                 "GeneralSettings",

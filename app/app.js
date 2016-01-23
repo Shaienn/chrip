@@ -69,6 +69,7 @@ _.extend(App, {
     Settings: {},
     Localization: {},
     Database: {},
+    SplashScreen: {},
     presentation_state: false,
     active_mode: false,
 });
@@ -76,7 +77,7 @@ _.extend(App, {
 App.ViewStack = [];
 
 var initTemplates = function () {
-    win.info("Start init templates");
+    App.SplashScreen.send_progress("Init templates", null);
     var ts = [];
     _.each(document.querySelectorAll('[type="text/x-template"]'), function (el) {
         var d = Q.defer();
@@ -110,12 +111,14 @@ var closeApp = function () {
 
 var getMac = function () {
     var d = Q.defer();
+    App.SplashScreen.send_progress("Get MAC address", null);
     require('getmac').getMac(
             function (err, macAddress) {
                 if (err)
                     throw new Error(err);
 
                 Settings.Config.mac = macAddress;
+                App.SplashScreen.send_progress(null, "OK");
                 d.resolve(macAddress);
             }
     );
@@ -123,6 +126,7 @@ var getMac = function () {
 };
 
 var initApp = function () {
+
 
 //    intel.setLevel(intel.WARN);
 //    intel.addHandler(new intel.handlers.File('test.log'));
@@ -142,8 +146,7 @@ var initApp = function () {
     App.Config.runDir = nwDir;
     App.ControlWindow = win;
 
-    win.maximize();
-    win.show();
+
     win.on("close", closeApp);
 
 
@@ -161,8 +164,11 @@ App.addRegions({
 
 
 App.addInitializer(function (options) {
-    win.info("Start init");
-    initTemplates()
+    App.SplashScreen.open()
+            .then(function () {
+                App.SplashScreen.send_progress("Initializing", null);
+            })
+            .then(initTemplates)
             .then(getMac)
             .then(initApp);
 });

@@ -163,12 +163,12 @@
                         Presentation.State = false;
                         App.vent.trigger("presentation:changed", false);
                     });
+
+
+                    App.vent.trigger("presentation:changed", true);
+                    Presentation.State = true;
                 }
-
-                App.vent.trigger("presentation:changed", true);
-                Presentation.State = true;
                 Presentation.Windows.push(newPresentationWindow);
-
             } else {
 
                 win.log("Presentation window closing");

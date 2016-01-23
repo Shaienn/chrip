@@ -133,7 +133,6 @@
             this.Header.show(new App.View.TitleBar());
             this.nativeWindow.title = App.Config.title;
 
-
             App.Database.init().then(function () {
                 App.Database.loadSettings().then(function () {
                     App.Database.getVersion().then(function () {
@@ -161,7 +160,15 @@
                             $(tab.button).removeClass('active');
                         }
 
+                        App.SplashScreen.close();
+                        win.show();
+                        win.maximize();
+                        win.setResizable(false);
+
                         that.switchTabTo("songservice");
+
+
+
                         console.log("Ready");
                     });
                 });
