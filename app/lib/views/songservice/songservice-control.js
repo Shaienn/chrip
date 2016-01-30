@@ -17,11 +17,10 @@
             BottomToolbar_r: '#playlist_bottomtoolbar',
             List_r: '#playlist_list',
             ControlPanel_r: "#controlPanel",
-        },
-        modals: {
-            selector: '.modal_area',
-            regionClass: Backbone.Marionette.Modals
-
+            modals: {
+                selector: '#songServiceModal',
+                regionClass: Backbone.Marionette.Modals
+            }
         },
         /******************* Layout functions *******************/
 
@@ -30,11 +29,11 @@
             this.listenTo(App.vent, 'songservice:control:onEvent', _.bind(this.onEvent, this));
             this.listenTo(App.vent, 'songservice:control:offEvent', _.bind(this.offEvent, this));
             this.listenTo(App.vent, 'songservice:control:showslide', _.bind(this.showSlide, this));
-            
+
             /* Context menu */
-            
+
             this.listenTo(App.vent, "songservice:control:context:song_slides_redraw", _.bind(this.onSongSlidesRedraw, this));
-            this.listenTo(App.vent, "songservice:control:context:edit_song", _.bind(this.onSongSlidesRedraw, this));
+            this.listenTo(App.vent, "songservice:control:context:edit_song", _.bind(this.openEditSongWindow, this));
 
 
         },
@@ -64,16 +63,26 @@
             });
         },
         /**************************************/
-        openEditSongWindow: function () {
-            
-            var form = new App.View.SongEditForm({
-                song: this.selectedSong,
-                authors: this.loadedAuthors,
-                songbase: this
+        openEditSongWindow: function (song) {
+
+            var that = this;
+            console.log("authors loading");
+
+            /* get related info */
+
+            App.Database.loadAuthors().then(function (loadedAuthors) {
+
+                var authorCollection = new App.Model.AuthorCollection(loadedAuthors);
+                var form = new App.View.SongEditForm({
+                    song: song,
+                    authors: authorCollection,
+                    control: that
+                });
+                
+                /* Turn off keydown events while in modal */
+                
+                that.modals.show(form);
             });
-
-            this.modals.show(form);
-
         },
         showSlide: function (slide) {
 
@@ -101,7 +110,9 @@
             if (item instanceof App.Model.Song) {
 
                 this.active_item = item;
-
+                
+                console.log(item);
+                
                 /* Collection of itemviews */
 
                 var itemCollection = new App.Model.SongControlPanelCollection(item.slides);
@@ -130,7 +141,6 @@
         keyHandler: function (event) {
 
             event.preventDefault();
-
             var key = event.which;
 
             if (event.ctrlKey) {

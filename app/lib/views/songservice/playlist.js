@@ -105,7 +105,6 @@
                         return;
 
                     that.model.rebuild_slides().then(function () {
-                        console.log("redrawed");
                         App.vent.trigger("songservice:control:context:song_slides_redraw", that.model);
                     });
                 },

@@ -99,16 +99,20 @@
             App.SplashScreen.send_progress("Init databases", null);
 
             var d = Q.defer();
-            console.log(App.Config.runDir + Settings.GeneralSettings.global_db);
+         
             App.Database.global_db = new sqlite3.Database(App.Config.runDir + Settings.GeneralSettings.global_db, function (err) {
 
-                if (err)
+                if (err){
+                    App.SplashScreen.send_progress("Open global database", "FAILED");
                     d.reject(new Error(err));
+                }
 
                 App.Database.db = new sqlite3.Database(':memory:', function (err) {
 
-                    if (err)
+                    if (err){
                         d.reject(new Error(err));
+                        App.SplashScreen.send_progress("Create virtual database", "FAILED");
+                    }
 
                     App.Database.user_db_check().then(function () {
                         App.Database.getVersion().then(function () {

@@ -119,6 +119,8 @@
             }
         },
         onShow: function () {
+            console.log("onShow");
+            console.log(this.ui.canvas[0]);
             this.main_context = require("webgl-video-renderer").setupCanvas(this.ui.canvas[0]);
             if (typeof this.main_context == "undefined") {
                 console.log("We can`t configure GL context. Sorry");

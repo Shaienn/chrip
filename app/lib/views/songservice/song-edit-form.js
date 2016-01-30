@@ -13,7 +13,7 @@
         },
         initialize: function (options) {
 
-            if (options.song != "undefined") {
+            if (typeof options.song != "undefined") {
                 this.song = options.song;
             }
         },
@@ -49,17 +49,18 @@
         },
         initialize: function (options) {
 
-            if (options.song != "undefined") {
+            if (typeof options.song != "undefined") {
                 this.song = options.song;
             }
 
-            if (options.songbase != "undefined") {
+            if (typeof options.songbase != "undefined") {
                 this.songbase = options.songbase;
             }
 
-            if (options.author != "undefined") {
+            if (typeof options.author != "undefined") {
                 this.author = options.author;
             }
+
 
         },
         beforeCancel: function () {
@@ -81,9 +82,7 @@
             App.Database.close()
                     .then(function () {
                         App.Database.init().then(function () {
-
                             that.songbase.selectAuthor(that.author);
-
                         });
                     });
 
@@ -118,20 +117,33 @@
         },
         initialize: function (options) {
 
-            if (options.song != "undefined") {
+            if (typeof options.song != "undefined") {
                 this.song = options.song;
             }
 
-            if (options.songbase != "undefined") {
+            if (typeof options.songbase != "undefined") {
                 this.songbase = options.songbase;
             }
 
-            if (options.authors != "undefined") {
+            if (typeof options.control != "undefined") {
+                this.control = options.control;
+            }
+
+            if (typeof options.authors != "undefined") {
                 this.authors = options.authors;
             }
 
             this.listenTo(App.vent, "modal:show_songpart", _.bind(this.showSongpartDetails, this));
             this.listenTo(App.vent, "modal:remove_songpart", _.bind(this.removeSongpart, this));
+
+            if (typeof this.control != "undefined") {
+
+                /* Restore keydown events in parent window */
+
+                this.control.offEvent();
+            }
+
+
         },
         onShow: function () {
 
@@ -330,7 +342,16 @@
             this.song.set('aid', this.author.attributes.aid);
             this.song.set('gaid', this.author.attributes.gaid);
 
-            this.songbase.loadSongsLoader();
+
+            /* Start waiting animation */
+
+            if (typeof this.songbase !== "undefined") {
+                this.songbase.loadSongsLoader();
+            }
+
+            if (typeof this.control != "undefined") {
+            }
+
             App.Database.saveSong(this.song).then(_.bind(this.closeDatabase, this));
             this.cancel();
         },
@@ -338,17 +359,31 @@
             this.cancel();
         },
         cancel: function () {
+            if (typeof this.control != "undefined") {
+
+                /* Restore keydown events in parent window */
+                this.control.onEvent();
+            }
+
             this.destroy();
         },
         closeDatabase: function () {
             App.Database.close().then(_.bind(this.openDatabase, this));
         },
         openDatabase: function () {
-            App.Database.init().then(_.bind(this.selectSinger, this));
+            App.Database.init().then(_.bind(this.onReloadReady, this));
         },
-        selectSinger: function () {
-            this.songbase.selectAuthor(this.author);
-            this.songbase.hideSongsLoader();
+        onReloadReady: function () {
+            var that = this;
+            if (typeof this.songbase != "undefined") {
+                this.songbase.selectAuthor(this.author);
+                this.songbase.hideSongsLoader();
+            }
+            if (typeof this.control != "undefined") {
+                this.song.rebuild_slides().then(function () {
+                    that.control.onSongSlidesRedraw(that.song);
+                });
+            }
         }
     });
 

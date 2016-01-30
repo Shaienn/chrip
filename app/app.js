@@ -89,7 +89,7 @@ var initTemplates = function () {
                         })
                 .fail(
                         function () {
-                            d.reject(false);
+                            d.reject(el.src);
                         });
         ts.push(d.promise);
     });
@@ -169,6 +169,9 @@ App.addInitializer(function (options) {
                 App.SplashScreen.send_progress("Initializing", null);
             })
             .then(initTemplates)
+            .catch(function (err) {
+                App.SplashScreen.send_progress("Init templates", err.toString() + " failed");
+            })
             .then(getMac)
             .then(initApp);
 });

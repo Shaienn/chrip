@@ -25,14 +25,14 @@
     "mac_icon": "",
     "show_in_taskbar": true,
     "transparent": false,
-    "toolbar": false,
+    "toolbar": true,
     "icon": ""
   },
   "version": "1.0.0",
   "inject-js-start": "",
   "main": "./index.html",
   "homepage": "http://chrip.ru",
-  "chromium-args": "--enable-webgl --ignore-gpu-blacklist --enable-transparent-visuals --disable-gpu",
+  "chromium-args": "--enable-webgl --ignore-gpu-blacklist --enable-transparent-visuals",
   "description": "",
   "dependencies": {
     "font-manager-nw": "~0.2.1",

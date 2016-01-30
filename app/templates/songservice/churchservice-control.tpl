@@ -6,6 +6,7 @@
 
     </div>
     <div id="controlPanel"></div>
-    <div class="modal_area">
-    </div>
+    
+    <div id="songServiceModal"></div>
+
 </div>
