@@ -4,11 +4,7 @@
 
 (function (App) {
     'use strict';
-
-    var Q = require('q');
-
-
-    var Song = Backbone.Model.extend({
+    App.Model.Song = Backbone.Model.extend({
         defaults: {
             name: "",
             db: "0",
@@ -29,7 +25,6 @@
         }
 
     });
-    App.Model.Song = Song;
 
     var SongCollection = Backbone.Collection.extend({
         model: App.Model.Song,
@@ -38,6 +33,4 @@
 
 
     App.Model.SongCollection = SongCollection;
-
-
 })(window.App);

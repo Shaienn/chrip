@@ -61,8 +61,6 @@
             var $this = $(this);
             var $parent = $this.parent();
 
-//            console.log($this);
-//            console.log($parent);
             //hides the element to prevent "flashing"
             $this.css("visibility", "hidden");
 

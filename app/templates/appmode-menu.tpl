@@ -1,6 +1,6 @@
 <ul class="nav nav-hor left">
     <li>
-        <i id="appmode-menu-churchservice-btn" class="fa fa-eye appmode-menu-item" title="Презентация">Презентация</i>
+        <i id="appmode-menu-songservice-btn" class="fa fa-eye appmode-menu-item" title="Презентация">Презентация</i>
     </li>
 
     <li>
@@ -9,6 +9,10 @@
 
     <li>
         <i id="appmode-menu-videoplayer-btn" class="fa fa-video-camera appmode-menu-item" title="Медиа">Медиа</i>
+    </li>
+
+    <li>
+        <i id="appmode-menu-blockscreens-btn" class="fa fa-video-camera appmode-menu-item" title="Заставки">Заставки</i>
     </li>
 </ul>
 

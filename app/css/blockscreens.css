@@ -1,0 +1,446 @@
+#blockscreens-main-window{
+    height: calc(100vh - 102px);
+}
+
+
+#blockscreens-control{
+    height: calc(100% - 50px);
+}
+
+/* Edit modal window*/
+
+#bs-texts-container {
+    width: 30%;
+    float:left;
+    min-width: 420px;
+    height: 100%;
+}
+
+#bs-texts-header{
+    height: 10%;    
+}
+
+#bs-texts-list{
+    height: 80%;
+}
+
+#bs-work-area {
+    height: 90%;
+    width: 100%;
+    float: left;
+}
+
+#bs-toolbar{
+    height: 10%;
+    float: left;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#bs-editor-container {
+    width: 70%;
+    float:left;
+    min-width: 840px;
+    height: 100%;
+}
+
+#bs-editor-area, #bs-preview-area, #bs-preview-image-area, #bs-hidden-canvas {
+    width: 100%;
+    float:left;
+    height: 100%; /*70%;*/
+    position: relative;
+}
+
+#bs-text-editor-area {
+    width: 100%;
+    float:left;
+    height: calc ( 30% - 42px );
+}
+
+
+#bs-add-text-btn, #bs-set-background-color-btn, #bs-add-img-btn, #bs-save-to-image-btn{
+    width: 80%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5em;
+    background: green;
+    color: white;
+    border-radius: 5px;
+    padding: 1%;
+    margin: 1%;
+}
+
+#bs-texts-header, #bs-texts-list,#bs-texts-toolbar, #bs-editor-toolbar{
+    width: 100%;
+    float: left;
+} 
+
+.bs-ui-editor-item-container{
+    position: relative;
+    width: 100%;
+}
+
+*[class*='bs-ui-editor-container-'] {
+    padding: 2% 0;
+    display: block;
+    /*    justify-content: center;*/
+}
+
+.bs-editor-text{
+    /*white-space: normal !important;*/
+    height: inherit;
+    width: inherit;
+}
+
+
+.bs-ui-editor-item-remove{
+    display: flex;
+    position: absolute;
+    align-items: center;
+    width: 10%;
+    right: -11%;
+    height: 100%;
+    text-align: center;
+    background: #6b0f1a;
+}
+
+.bs-ui-editor-item-remove i{
+    width: 100%;
+}
+
+.bs-text-item {
+    float: left;
+    width: calc(98% - 10px);
+    font-size: 1em;
+    color: white;
+    background: #122b40;
+    cursor: pointer;
+    border-radius: 20px;
+    overflow: hidden;
+    margin: 1%;
+}
+
+.bs-ui-element-name{
+    width: 100%;
+    text-align: center;
+    margin: 0 auto;
+}
+
+.bs-text-item.active .bs-ui-element-settings{
+    display: flex;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    justify-content: space-around;
+}
+
+.bs-text-item .bs-ui-element-settings{
+    display: none;
+}
+
+.bs-ui-element-settings > div{
+    display: flex;
+    align-items: center;
+}
+
+.bs-text-item.passive {
+    background: #668586;
+    opacity: 0.5;
+}
+
+.bs-text-item.active {
+    background: #114c61;
+    -webkit-transition: background 0.5s;
+    transition: background 0.5s;
+    opacity: 1;
+}
+
+.bs-texts-list {
+    height: 100%;
+    width: 100%;
+    position: relative;
+    top: 0;
+    left: 0;
+    text-align: left;
+    overflow-x: hidden;
+    overflow-y: overlay;
+    -webkit-overflow-scrolling: touch;
+}
+
+.bs-texts-list::-webkit-scrollbar {
+    width: 10px;
+}
+
+.bs-texts-list::-webkit-scrollbar-track {
+    background-color: #30333c;
+    -webkit-border-radius: 2px;
+    border-radius: 2px;
+}
+
+.bs-texts-list::-webkit-scrollbar-thumb {
+    background-color: #83888c;
+    -webkit-border-radius: 2px;
+    border-radius: 2px;
+}
+
+.bs-texts-list::-webkit-scrollbar-thumb:hover {
+    background-color: #93989c;
+}
+
+.bs-texts-list::-webkit-resizer,
+.bs-texts-list::-webkit-scrollbar-corner,
+.bs-texts-list::-webkit-scrollbar-button,
+.bs-texts-list::-webkit-scrollbar-track-piece {
+    display: none;
+}
+
+.bs-texts-list::-webkit-scrollbar-track {
+    margin-top: 0;
+}
+
+/* Editor construction area */
+
+#bs-editor-construct-area, #showme, #canvas_me, #canvas_image{
+    height: 100%;
+    width: 100%;
+    background: gray;
+    position: relative;
+    float: left;
+}
+
+.bs-editable{
+    z-index: 999 !important;
+}
+
+*[id*='bs-element-']:not(.ui-resizable-disabled){
+    border: 1px solid black;
+}
+
+*[id*='bs-element-'].ui-resizable-disabled{
+    opacity: 0.5;
+}
+
+*[id*='bs-element-'].bs-inline-edit{
+    opacity: 1.0;
+    border: 2px dashed orange;
+}
+
+*[id*='grip-']{
+    width: 10px; 
+    height: 10px; 
+    background-color: #BBB; 
+    border: 1px solid #727272;
+    position: absolute;
+    font-size: 0.1px;
+    display: block;
+} 
+
+*[id^='nwgrip-'] {
+    cursor: nw-resize;
+    left: -5px; 
+    top: -5px; 
+} 
+*[id^='negrip-']{
+    cursor: ne-resize;
+    top: -5px; 
+    right: -5px; 
+} 
+*[id^='swgrip-']{
+    cursor: sw-resize;
+    bottom: -5px; 
+    left: -5px; 
+} 
+*[id^='segrip-']{
+    cursor: se-resize;
+    bottom: -5px; 
+    right:-5px; 
+} 
+*[id^='ngrip-']{
+    cursor: n-resize;
+    top: -5px; 
+    left: calc( 50% - 5px );
+} 
+*[id^='sgrip-']{
+    cursor: s-resize;
+    bottom: -5px; 
+    left: calc( 50% - 5px ); 
+} 
+*[id^='wgrip-']{ 
+    cursor: w-resize;
+    left:-5px; 
+    top:calc( 50% - 5px );
+} 
+*[id^='egrip-']{
+    cursor: e-resize;
+    right:-5px; 
+    top:calc( 50% - 5px );
+} 
+
+.ui-resizable-disabled > *[id*='grip-']{
+    display: none !important;
+}
+
+
+
+.Scp {
+    -moz-user-select: none;
+    position: relative;
+    float:left;
+}
+.Scp-saturation {
+    background: rgba(0, 0, 0, 0) linear-gradient(to right, #fff 0%, #f00 100%) repeat scroll 0 0;
+    float: left;
+    height: 100%;
+    margin-right: 5px;
+    position: relative;
+    width: calc(100% - 25px);
+}
+.Scp-brightness {
+    background: rgba(0, 0, 0, 0) linear-gradient(to top, #000 0%, rgba(255, 255, 255, 0) 100%) repeat scroll 0 0;
+    height: 100%;
+    width: 100%;
+}
+.Scp-sbSelector {
+    background: #fff none repeat scroll 0 0;
+    border: 2px solid #fff;
+    border-radius: 10px;
+    box-sizing: border-box;
+    height: 14px;
+    left: -7px;
+    position: absolute;
+    top: -7px;
+    width: 14px;
+    z-index: 10;
+}
+.Scp-hue {
+    background: rgba(0, 0, 0, 0) linear-gradient(to bottom, #f00 0%, #f0f 17%, #00f 34%, #0ff 50%, #0f0 67%, #ff0 84%, #f00 100%) repeat scroll 0 0;
+    float: left;
+    height: 100%;
+    position: relative;
+    width: 20px;
+}
+.Scp-hSelector {
+    background: #fff none repeat scroll 0 0;
+    border-bottom: 1px solid #000;
+    height: 2px;
+    position: absolute;
+    right: -3px;
+    width: 10px;
+}
+
+.blockscreens-list {
+    width: 100%;
+    height: 100%;
+}
+
+.bs-thumbnail-item  {
+    display: flex;
+    align-items: center;
+    float: left;
+    width: inherit;
+    height: inherit;
+    color: white;
+    cursor: pointer;
+    margin: 0;
+    text-align: center;
+    padding: 2%;
+}
+
+.bs-screen-area{
+    border: 1px solid black;
+    position: relative;
+    margin: 0 auto;
+}
+
+#bs-hidden-canvas{
+    display: none;
+    top:0;
+    left:0;
+    margin: 0;
+    padding: 0;
+}
+
+.remove{
+    display: flex;
+    position: absolute;
+    align-items: center;
+    width: 10%;
+    right: -11%;
+    height: 100%;
+    text-align: center;
+    background: #6b0f1a;
+    z-index: 100;
+}
+
+.remove i{
+    width: 100%;
+}
+
+i.button{
+    width: 50px;
+    height: 50px;
+    border-radius: 100%;
+    background-color: black;
+    line-height: 50px;
+    text-align: center;
+    border: 1px;
+    border-color: white;
+    border-style: dashed;
+    position: relative;
+    -webkit-transition: all 0.5s;
+    transition: all 0.5s;
+    top: 0px;
+}
+
+i.button:hover{
+    top: -5px;
+    -webkit-transition: all 0.5s;
+    transition: all 0.5s;
+    position: relative;
+}
+
+i.button:before {
+    margin-right: 0;
+}
+
+#bs-select-source span p {
+    min-width: 200px;
+    color: #c3c5c7;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 13px;
+    float: left;
+}
+
+#bs-select-source span input[type="text"]{
+    margin-left: 10px;
+    margin-top: -9px;
+    padding-left: 10px;
+    height: 30px;
+    border: 0 !important;
+    line-height: 15px;
+    background-color: #393b3d;
+    resize: none;
+    color: #c3c5c7;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 13px;
+    cursor: text;
+    outline: 0 !important;
+    width: 270px;
+}
+
+#change_blockscreens_dir{
+    font-size: 16px;
+    margin-left: 10px;
+    -webkit-transition: all 0.5s;
+    transition: all 0.5s;
+}
+
+#change_blockscreens_dir:hover {
+    cursor: pointer;
+    color: #2468cc;
+    -webkit-transition: all 0.5s;
+    transition: all 0.5s;
+}

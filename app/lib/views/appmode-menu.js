@@ -9,7 +9,7 @@
         template: '#appmode-menu-tpl',
         id: 'appmode-menu-container',
         events: {
-            'click #appmode-menu-churchservice-btn': 'presentationBtnHandler',
+            'click #appmode-menu-songservice-btn': 'presentationBtnHandler',
             'click #appmode-menu-bible-btn': 'bibleBtnHandler',
             'click #appmode-menu-videoplayer-btn': 'videoplayerBtnHandler',
             'click #appmode-menu-settings-btn': 'settingsBtnHandler',

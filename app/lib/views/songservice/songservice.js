@@ -10,12 +10,12 @@
 
     var _this;
     App.View.SongService.Root = Backbone.Marionette.LayoutView.extend({
-        template: '#churchservice-tpl',
-        id: 'churchservice-main-window',
+        template: '#songservice-tpl',
+        id: 'songservice-main-window',
         regions: {
-            Control_r: "#churchservice-control",
-            Settings_r: "#churchservice-settings",
-            Songbase_r: "#churchservice-songbase"
+            Control_r: "#songservice-control",
+            Settings_r: "#songservice-settings",
+            Songbase_r: "#songservice-songbase"
         },
         initialize: function () {
 
@@ -50,7 +50,7 @@
                     }
 
                     if (!App.ViewStack[0]) {
-                        App.ViewStack = ['churchservice-main-window'];
+                        App.ViewStack = ['songservice-main-window'];
                     }
                 });
 

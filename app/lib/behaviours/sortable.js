@@ -20,6 +20,7 @@ var Sortable = Marionette.Behavior.extend({
             handle: this.options.handle || false,
             revert: this.options.revert || false,
             update: function (event, ui) {
+
                 var model = collection.get(ui.item.data('backbone-cid'));
                 // Получаем привязанную модель
                 collection.remove(model, {silent: true});

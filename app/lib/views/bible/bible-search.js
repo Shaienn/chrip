@@ -81,7 +81,6 @@
                 for (var v = 0; v < result.length; v++) {
 
                     var verse = result[v];
-                    console.log(verse);
                     var verse_book = this.getBook(verse.bid);
                     var verse_chapter = this.getChapter(verse.bid, verse.cid);
 

@@ -4,20 +4,13 @@
 
 (function (App) {
     'use strict';
-
-    var Q = require('q');
-
-
     App.Model.Media = Backbone.Model.extend({
-
         defaults: {
-
             mrl: "",
             name: "",
             type: "",
             volume: null,
         },
-
     });
 
     App.Model.MediaCollection = Backbone.Collection.extend({

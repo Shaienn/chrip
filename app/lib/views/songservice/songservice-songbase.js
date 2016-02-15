@@ -6,8 +6,8 @@
     'use strict';
 
     App.View.SongService.SongBase = Backbone.Marionette.LayoutView.extend({
-        template: '#churchservice-songbase-tpl',
-        className: 'churchservice-songbase-contain',
+        template: '#songservice-songbase-tpl',
+        className: 'songservice-songbase-contain',
         ui: {
             A_Loader: '#songBaseAuthorsList .area .loader',
             S_Loader: '#songBaseSongsList .area .loader'
@@ -45,7 +45,7 @@
         },
         onDestroy: function () {
             win.log("songbase destroy request");
-            $('#churchservice-control').show();
+            $('#songservice-control').show();
             $('#appmode-menu').show();
             $('#main-window-toptoolbar').show();
             $('#header').removeClass('header-shadow');
@@ -302,7 +302,7 @@
 
             this.loadAuthors();
             $('#header').addClass('header-shadow');
-            $('#churchservice-control').hide();
+            $('#songservice-control').hide();
             $('#appmode-menu').hide();
             $('#main-window-toptoolbar').hide();
 

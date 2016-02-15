@@ -143,7 +143,7 @@
             var field = $(e.currentTarget);
             var background_path_changed = false;
             var bible_changed = false;
-
+            var valid = false;
             var section = field.closest("section");
 
             switch (field.attr('name')) {
@@ -151,11 +151,15 @@
                 case ('presentation_monitor'):
 
                     value = $('option:selected', field).val();
+                    valid = true;
+
                     break;
 
                 case ('font_family'):
 
                     value = $('option:selected', field).val();
+                    valid = true;
+
                     break;
 
                 case ('backgrounds_path'):
@@ -163,18 +167,21 @@
                     value = field.val();
                     $('#fakebackgroundsdir').attr('value', value);
                     background_path_changed = true;
+                    valid = true;
 
                     break;
 
                 case ('background_mode'):
 
                     value = $('option:selected', field).val();
+                    valid = true;
 
                     break;
 
                 case ('background'):
 
                     value = $('option:selected', field).val();
+                    valid = true;
 
                     break;
 
@@ -182,30 +189,46 @@
 
                     value = $('option:selected', field).val();
                     bible_changed = true;
+                    valid = true;
 
+                    break;
+                case ('show_time'):
+                    value = field.val();
+
+                    if (!isInteger(value)) {
+                        value = Settings.BlockScreensSettings.show_time;
+                        valid = false;
+                        break;
+                    }
+
+                    if (value < 1) {
+                        value = 1;
+                    }
+
+                    valid = true;
                     break;
             }
 
-            win.info(section.attr('id') + ' changed: ' + field.attr('name') + ' - ' + value);
 
-            Settings[section.attr('id')][field.attr('name')] = value;
+            if (valid == true) {
+                win.info(section.attr('id') + ' changed: ' + field.attr('name') + ' - ' + value);
+                Settings[section.attr('id')][field.attr('name')] = value;
+                App.Database.saveSetting(section.attr('id'), field.attr('name'), value);
 
-            /* Database save */
 
-            App.Database.saveSetting(section.attr('id'), field.attr('name'), value);
+                if (background_path_changed == true) {
+                    this.refreshBackgroundFiles();
+                }
 
-            if (background_path_changed == true) {
-                this.refreshBackgroundFiles();
+                if (bible_changed == true) {
+                    App.vent.trigger("bible:control:changeBibleXml", Settings.BibleSettings.bible_xml);
+                }
+
+                /* Redraw slide */
+
+                this.redrawPreview(section);
+
             }
-
-            if (bible_changed == true) {
-                App.vent.trigger("bible:control:changeBibleXml", Settings.BibleSettings.bible_xml);
-            }
-
-            /* Redraw slide */
-
-            this.redrawPreview(section);
-
         },
     });
 

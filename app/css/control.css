@@ -1,4 +1,4 @@
-#churchservice-control-contain .content {
+div[id$="_tab"] .content {
     height: calc(100vh - 102px);
     width: 100%;
     float: left;
@@ -7,7 +7,7 @@
 }
 
 
-#playList {
+.playListArea {
     width: 20%;
     float: left;
     position: relative;
@@ -15,19 +15,19 @@
     height: inherit;
 }
 
-#controlPanel {
+.control {
     float: right;
     width: 80%;
     height: inherit;
 }
 
-#churchservice-playlist {
+#songservice-playlist {
     height: inherit;
     position: relative;
     top: 0;
 }
 
-#playlist_list {
+.playList {
     background: inherit;
     height: calc(100% - 38px);
     width: 100%;
@@ -38,7 +38,7 @@
     border-right: 3px solid #17181b;
 }
 
-#playlist_bottomtoolbar {
+.bottomtoolbar {
     position: relative;
     background: inherit;
     height: 35px;

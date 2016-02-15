@@ -7,7 +7,7 @@
             <div id="song-parts-list" class="left"></div>
             <div id='song-parts-toolbar'>
                 <div id="add-slide-btn">
-                <i class="fa fa-plus-square"> Добавить слайд</i>
+                    <i class="fa fa-plus-square"> Добавить слайд</i>
                 </div>
             </div>
         </div>

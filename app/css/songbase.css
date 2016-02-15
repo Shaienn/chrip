@@ -1,4 +1,4 @@
-.churchservice-songbase-contain .songbase-container {
+.songservice-songbase-contain .songbase-container {
     z-index: 1;
     width: 100%;
     height: calc(100vh - 32px);
@@ -175,9 +175,6 @@
     max-width: 550px !important;
 }
 
-#song-modal .bbm-modal {
-    max-width: 90vw !important;
-}
 
 #switch_preview_content i.active {
 
@@ -185,10 +182,6 @@
 
 }
 
-#song-modal {
-    padding: 0;
-    overflow: hidden;
-}
 
 #songeditor_mainarea {
     height: 90vh;
@@ -199,8 +192,3 @@
     box-shadow: none;
 }
 
-
-.modal-90-percent{
-    height: 90vh;
-    width: 90vw;
-}

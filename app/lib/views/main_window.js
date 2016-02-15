@@ -1,5 +1,4 @@
 'use strict';
-
 (function (App) {
 
     var that;
@@ -13,6 +12,7 @@
             Song_Tab_r: '#song_tab',
             Bible_Tab_r: '#bible_tab',
             Media_Tab_r: '#media_tab',
+            BlockScreens_Tab_r: '#blockscreens_tab',
             Settings_Tab_r: '#settings_tab',
             Content: '#content',
             TopToolbar_r: '#main-window-toptoolbar',
@@ -22,7 +22,7 @@
             {
                 region: "Song_Tab_r",
                 startPoint: "SongService",
-                button: "#appmode-menu-churchservice-btn",
+                button: "#appmode-menu-songservice-btn",
                 setting: "songservice",
                 onEvent: "songservice:control:onEvent",
                 offEvent: "songservice:control:offEvent",
@@ -42,6 +42,14 @@
                 setting: "mediaplayer",
                 onEvent: "mediaplayer:control:assignKeys",
                 offEvent: "mediaplayer:control:freeKeys",
+            },
+            {
+                region: "BlockScreens_Tab_r",
+                startPoint: "BlockScreens",
+                button: "#appmode-menu-blockscreens-btn",
+                setting: "blockscreens",
+                onEvent: "blockscreens:control:onEvent",
+                offEvent: "blockscreens:control:offEvent",
             },
             {
                 region: "Settings_Tab_r",
@@ -135,39 +143,37 @@
 
             App.Database.init().then(function () {
                 App.Database.loadSettings().then(function () {
-                    App.Database.getVersion().then(function () {
 
-                        App.Update.init();
+                    App.Update.init();
 
-                        /* Menu */
+                    /* Menu */
 
-                        that.Menu.show(new App.View.AppModeMenu());
+                    that.Menu.show(new App.View.AppModeMenu());
 
-                        /* Top toolbar */
+                    /* Top toolbar */
 
-                        that.TopToolbar_r.show(new App.View.MainWindow.TopToolbar);
+                    that.TopToolbar_r.show(new App.View.MainWindow.TopToolbar);
 
-                        App.vent.trigger("active_mode_changed", App.active_mode);
-                        App.vent.trigger("main_toolbar:set_black_mode_indication", App.black_mode);
+                    App.vent.trigger("active_mode_changed", App.active_mode);
+                    App.vent.trigger("main_toolbar:set_black_mode_indication", App.black_mode);
 
-                        for (var i in that.tabs) {
-                            var tab = that.tabs[i];
-                            var region = that.getRegion(tab.region);
-                            var view = new App.View[tab.startPoint].Root;
-                            region.show(view);
-                            var tabContainer = $(that.getRegion(tab.region).el);
-                            tabContainer.hide();
-                            $(tab.button).removeClass('active');
-                        }
+                    for (var i in that.tabs) {
+                        var tab = that.tabs[i];
+                        var region = that.getRegion(tab.region);
+                        var view = new App.View[tab.startPoint].Root;
+                        region.show(view);
+                        var tabContainer = $(that.getRegion(tab.region).el);
+                        tabContainer.hide();
+                        $(tab.button).removeClass('active');
+                    }
 
-                        App.SplashScreen.close();
-                        win.show();
-                        win.maximize();
-                        win.setResizable(false);
+                    App.SplashScreen.close();
+                    //win.show();
+                    win.maximize();
+                    win.setResizable(false);
 
-                        that.switchTabTo("songservice");
+                    that.switchTabTo("songservice");
 
-                    });
                 });
             });
         }

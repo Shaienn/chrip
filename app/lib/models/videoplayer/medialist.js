@@ -7,22 +7,7 @@
 
     App.Model.MediaList = Backbone.Model.extend({});
 
-    var MediaListCollection = Backbone.Collection.extend({
-
-
-        initialize: function () {
-            this.on("add", _.bind(this.prepareObject, this));
-        },
-
-        onDestroy: function () {
-            this.off("add");
-        },
-
-        prepareObject: function (model) {
-
-        },
-
-    });
+    var MediaListCollection = Backbone.Collection.extend({});
 
     App.Model.MediaListCollection = new MediaListCollection({
         model: App.Model.Media

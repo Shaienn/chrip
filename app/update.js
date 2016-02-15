@@ -1,6 +1,6 @@
 'use strict';
 (function (App) {
-    var fs = require('fs-extra');
+    
     var http = require('http');
     var assert = require('assert');
     var restify = require('restify');

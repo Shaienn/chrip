@@ -23,8 +23,8 @@
                 collection: App.Model.MediaListCollection,
             }));
         },
+        
         /**************************************/
-
         mediaSelected: function (media) {
             console.log("media selected: " + media.get('type'));
 

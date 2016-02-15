@@ -27,8 +27,8 @@
             'click  @ui.search': 'focusSearch',
 
 
-            'click #churchservice-settings-btn': 'settingsBtnHandler',
-            'click #churchservice-presentation-btn': 'presentationBtnHandler',
+            'click #songservice-settings-btn': 'settingsBtnHandler',
+            'click #songservice-presentation-btn': 'presentationBtnHandler',
 
         },
 

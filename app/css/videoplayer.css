@@ -1,35 +1,11 @@
-#videoplayer-control-contain .content {
-    height: calc(100vh - 102px);
-    width: 100%;
-    float: left;
-    background-color: inherit;
-    background: rgba(0,0,0,0.5);
-}
-
-
-#videoList {
-    width: 20%;
-    float: left;
-    position: relative;
-    top: 0;
-    height: inherit;
-}
-
+/*
 #videoplayer_videocontrol {
     float: right;
     width: 80%;
     height: inherit;
-}
+}*/
 
-/*
-  #videoplayer_videolist {
-  height: inherit;
-  position: relative;
-  top: 0;
-  }
-  */
-
-#videoplayer_videolist {
+/*#videoplayer_videolist {
     background: inherit;
     height: calc(100% - 38px);
     width: 100%;
@@ -38,13 +14,13 @@
     top: 0;
     border-bottom: 3px solid #17181b;
     border-right: 3px solid #17181b;
-}
+}*/
 
-#videoplayer_bottomtoolbar {
+/*#videoplayer_bottomtoolbar {
     position: relative;
     background: inherit;
     height: 35px;
     width: 100%;
     right: 0;
     bottom: 0;
-}
+}*/

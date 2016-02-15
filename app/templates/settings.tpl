@@ -26,7 +26,7 @@
 
         <div class="title">Песни</div>
         <div class="content">
-            <div class="slide-settings-container">
+            <div class="slide-settings">
 
                 <span>
 
@@ -111,7 +111,7 @@
 
         <div class="title">Библия</div>
         <div class="content">
-            <div class="slide-settings-container">
+            <div class="slide-settings">
 
                 <span>
                     <div class="dropdown bibleFiles">
@@ -202,7 +202,26 @@
         </div>
     </section>
 
+    <section id="BlockScreensSettings">
+        <div class="title">Настройки заставок</div>
+        <div class="content">
 
+            <span>
+                <div class="show_time">
+                    <p>Время показа</p>
+                    <input type="text" name="show_time" value="<%= Settings.BlockScreensSettings.show_time %>"/>
+                </div>
+            </span>
+
+            <span>
+                <div class="transition_time">
+                    <p>Время перехода</p>
+                    <input type="text" name="transition_time" value="<%= Settings.BlockScreensSettings.transition_time %>"/>
+                </div>
+            </span>
+
+        </div>
+    </section>
 
 </div>
 

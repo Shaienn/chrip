@@ -9,8 +9,8 @@
     'use strict';
 
     App.View.SongService.Control = Backbone.Marionette.LayoutView.extend({
-        template: '#churchservice-control-tpl',
-        id: 'churchservice-control-contain',
+        template: '#songservice-control-tpl',
+        id: 'songservice-control-contain',
         collection: null,
         active_item: null,
         regions: {
@@ -110,12 +110,12 @@
             if (item instanceof App.Model.Song) {
 
                 this.active_item = item;
-                
-                console.log(item);
-                
+                                
                 /* Collection of itemviews */
 
                 var itemCollection = new App.Model.SongControlPanelCollection(item.slides);
+                
+                
                 var itemCollectionView = new App.View.SongControlPanelCollection({
                     collection: itemCollection,
                 });

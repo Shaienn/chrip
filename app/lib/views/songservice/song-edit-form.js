@@ -23,17 +23,12 @@
 
             return false;
         },
-        onShow: function () {
-
-        },
         cancelBtnHandler: function () {
             this.cancel();
         },
         cancel: function () {
             this.destroy();
         }
-
-
     });
 
     App.View.SongDeleteModal = Backbone.Modal.extend({
@@ -360,11 +355,9 @@
         },
         cancel: function () {
             if (typeof this.control != "undefined") {
-
                 /* Restore keydown events in parent window */
                 this.control.onEvent();
             }
-
             this.destroy();
         },
         closeDatabase: function () {
@@ -386,6 +379,4 @@
             }
         }
     });
-
-
 })(window.App);

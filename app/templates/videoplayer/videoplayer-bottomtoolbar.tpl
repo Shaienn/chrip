@@ -1,8 +1,8 @@
 <ul class="nav nav-hor right">
 
-<li>
-<i id="videoplayer-openfile-dialog-btn" class="fa fa-plus-square" title="Add song"></i>
-</li>
+    <li>
+        <i id="videoplayer-openfile-dialog-btn" class="fa fa-plus-square" title="Add song"></i>
+    </li>
 
 </ul>
 

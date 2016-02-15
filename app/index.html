@@ -26,6 +26,9 @@
         <link rel="stylesheet" type="text/css" href="css/videoplayer.css">
         <link rel="stylesheet" type="text/css" href="css/media-control.css">
         <link rel="stylesheet" type="text/css" href="css/songparts.css">
+        <link rel="stylesheet" type="text/css" href="css/blockscreens.css">
+        <link rel="stylesheet" type="text/css" href="css/modal.css">
+
 
     </head>
     <body>
@@ -37,11 +40,6 @@
                 src="templates/main-window.tpl"
                 type="text/x-template">
         </script>
-<!--
-        <script id="initializing-tpl"
-                src="templates/initializing.tpl"
-                type="text/x-template">
-        </script>-->
 
         <script id="main-window-toptoolbar-tpl"
                 src="templates/main-window-toptoolbar.tpl"
@@ -53,10 +51,60 @@
                 type="text/x-template">
         </script>
 
-        <script id="churchservice-tpl"
-                src="templates/songservice/churchservice.tpl"
+        <script id="songservice-tpl"
+                src="templates/songservice/songservice.tpl"
                 type="text/x-template">
         </script>
+
+        <!-- BlockScreens -->
+
+        <script id="blockscreens-tpl"
+                src="templates/blockscreens/blockscreens.tpl"
+                type="text/x-template">
+        </script>
+
+        <script id="bs-elements-control-tpl"
+                src="templates/blockscreens/bs-elements-control.tpl"
+                type="text/x-template">
+        </script>
+
+        <script id="bs-groups-toolbar-tpl"
+                src="templates/blockscreens/bs-groups-toolbar.tpl"
+                type="text/x-template">
+        </script>
+
+        <script id="blockscreens-edit-modal-tpl"
+                src="templates/blockscreens/blockscreens-edit-modal.tpl"
+                type="text/x-template">
+        </script>
+
+        <script id="bs-text-itemview-tpl"
+                src="templates/blockscreens/bs-text-itemview.tpl"
+                type="text/x-template">
+        </script>
+
+        <script id="bs-editor-tpl"
+                src="templates/blockscreens/bs-editor.tpl"
+                type="text/x-template">
+        </script>
+
+        <script id="bs-element-tpl"
+                src="templates/blockscreens/bs-element.tpl"
+                type="text/x-template">
+        </script>
+
+	<script id="bs-elements-toolbar"
+                src="templates/blockscreens/bs-elements-toolbar.tpl"
+                type="text/x-template">
+        </script>
+
+	<script id="bsg-edit-modal-tpl"
+                src="templates/blockscreens/bsg-edit-modal.tpl"
+                type="text/x-template">
+        </script>
+
+        <!-- EOF BlockScreens -->
+
 
         <script id="bible-tpl"
                 src="templates/bible/bible.tpl"
@@ -72,7 +120,6 @@
                 src="templates/bible/bible-search.tpl"
                 type="text/x-template">
         </script>
-
 
         <script id="videoplayer-tpl"
                 src="templates/videoplayer/videoplayer.tpl"
@@ -94,13 +141,13 @@
                 type="text/x-template">
         </script>
 
-        <script id="churchservice-control-tpl"
-                src="templates/songservice/churchservice-control.tpl"
+        <script id="songservice-control-tpl"
+                src="templates/songservice/songservice-control.tpl"
                 type="text/x-template">
         </script>
 
-        <script id="churchservice-songbase-tpl"
-                src="templates/songservice/churchservice-songbase.tpl"
+        <script id="songservice-songbase-tpl"
+                src="templates/songservice/songservice-songbase.tpl"
                 type="text/x-template">
         </script>
 
@@ -155,8 +202,8 @@
                 type="text/x-template">
         </script>
 
-        <script id="churchservice-playlist-bottomtoolbar-tpl"
-                src="templates/songservice/churchservice-playlist-bottomtoolbar.tpl"
+        <script id="songservice-playlist-bottomtoolbar-tpl"
+                src="templates/songservice/songservice-playlist-bottomtoolbar.tpl"
                 type="text/x-template">
         </script>
 
@@ -215,6 +262,9 @@
         <script src="vendor/backbone-modal/backbone.modal-bundled-min.js"></script>
         <script src="vendor/scripts/jquery-bigtext.js"></script>
         <script src="vendor/jquery.boxfit/dist/jquery.boxfit.min.js"></script>
+	<script src="vendor/scripts/jquery.textFit.js"></script>
+        <script src="vendor/scripts/rasterizeHTML.allinone.js"></script>
+	<script src="vendor/scripts/blob-util.js"></script>
 
         <script src="app.js"></script>
         <script src="splashscreen.js"></script>
@@ -242,6 +292,9 @@
 
         <script src="lib/models/videoplayer/medialist.js"></script>
         <script src="lib/models/videoplayer/media.js"></script>
+
+        <script src="lib/models/blockscreens/blockscreen.js"></script>
+
 
         <!-- Common -->
 
@@ -274,7 +327,6 @@
         <script src="lib/views/songservice/author-edit-form.js"></script>
         <script src="lib/views/songservice/song-edit-form.js"></script>
 
-
         <!-- Bible part -->
 
         <script src="lib/views/bible/bible.js"></script>
@@ -292,7 +344,15 @@
         <script src="lib/views/videoplayer/medialist.js"></script>
         <script src="lib/views/videoplayer/media-control.js"></script>
 
+        <!-- Blockscreens part -->
 
+        <script src="lib/views/blockscreens/blockscreens.js"></script>
+	<script src="lib/views/blockscreens/bs-groups-list.js"></script>
+	<script src="lib/views/blockscreens/bs-groups-toolbar.js"></script>
+	<script src="lib/views/blockscreens/bs-elements-control.js"></script>
+	<script src="lib/views/blockscreens/bs-elements-list.js"></script>
+	<script src="lib/views/blockscreens/bs-elements-toolbar.js"></script>
+	<script src="lib/views/blockscreens/bsg-edit-form.js"></script>
 
         <script src="bootstrap.js"></script>
     </body>

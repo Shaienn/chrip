@@ -36,7 +36,7 @@
                 'css': {
                     'position': 'absolute',
                     'height': $this.outerHeight(),
-                    'width': $this.outerWidth(),
+                    'width': $this.css("width"),
                     'top': $this.css('borderTopWidth'),
                     'left': $this.css('borderLeftWidth'),
                     'padding': $this.cssShortForAllSides('padding'),

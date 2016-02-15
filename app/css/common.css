@@ -1,3 +1,7 @@
+svg{ 
+    font-kerning: normal; 
+}
+
 h2, .h2{
     font-size: 3em !important;
 }
@@ -209,6 +213,6 @@ i:before{
 }
 
 .nav > li {
-  position: relative;
-  display: flex;
+    position: relative;
+    display: flex;
 }

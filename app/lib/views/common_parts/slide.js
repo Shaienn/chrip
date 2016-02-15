@@ -31,8 +31,6 @@
                     that.background_loaded = true;
                 });
             }
-        },
-        onDestroy: function () {
         }
     });
 

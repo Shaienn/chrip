@@ -6,22 +6,29 @@ console.log("Start");
 
 var
 // Load native UI library
-        gui = require('nw.gui'),
+	gui = require('nw.gui'),
 // browser window object
-        win = gui.Window.get(),
+	win = gui.Window.get(),
 // os object
-        os = require('os'),
+	os = require('os'),
 // path object
-        path = require('path'),
+	path = require('path'),
 // fs object
-        fs = require('fs'),
+//	fs = require('fs'),
 // url object
-        url = require('url'),
-        Q = require('q'),
-        PEG = require("pegjs");
+	url = require('url'),
+	Q = require('q'),
+	PEG = require("pegjs");
 
+
+var base64 = require('node-base64-image');
+var sizeOf = require('image-size');
 //var intel = require('intel');
 var keypress = require('keypress');
+var ColorPicker = require('simple-color-picker-jq');
+var fs = require('fs-extra');
+var FileReader = require('filereader');
+var xml2js = require('xml2js');
 
 win.log = console.log.bind(console);
 win.debug = function () {
@@ -52,17 +59,25 @@ var App = new Backbone.Marionette.Application();
 _.extend(App, {
     Controller: {},
     View: {
-        MainWindow: {},
-        SongService: {},
-        Bible: {},
-        Videoplayer: {},
-        Settings: {},
+	MainWindow: {},
+	SongService: {},
+	Bible: {},
+	Videoplayer: {},
+	Settings: {},
+	BlockScreens: {
+	    Elements: {},
+	    Groups: {},
+	},
     },
     Model: {
-        SongService: {},
-        SongEditor: {},
-        Bible: {},
-        Videoplayer: {},
+	SongService: {},
+	SongEditor: {},
+	Bible: {},
+	Videoplayer: {},
+	BlockScreens: {
+	    Elements: {},
+	    Groups: {},
+	},
     },
     ControlWindow: null,
     Presentation: {},
@@ -80,18 +95,18 @@ var initTemplates = function () {
     App.SplashScreen.send_progress("Init templates", null);
     var ts = [];
     _.each(document.querySelectorAll('[type="text/x-template"]'), function (el) {
-        var d = Q.defer();
-        $.get(el.src)
-                .done(
-                        function (res) {
-                            el.innerHTML = res;
-                            d.resolve(true);
-                        })
-                .fail(
-                        function () {
-                            d.reject(el.src);
-                        });
-        ts.push(d.promise);
+	var d = Q.defer();
+	$.get(el.src)
+		.done(
+			function (res) {
+			    el.innerHTML = res;
+			    d.resolve(true);
+			})
+		.fail(
+			function () {
+			    d.reject(el.src);
+			});
+	ts.push(d.promise);
     });
     return Q.all(ts);
 };
@@ -101,9 +116,9 @@ var closeApp = function () {
     win.close();
     if (App.presentation_state == true) {
 
-        for (var i = 0; i < App.PresentationWindows.length; i++) {
-            App.PresentationWindows[i].close();
-        }
+	for (var i = 0; i < App.PresentationWindows.length; i++) {
+	    App.PresentationWindows[i].close();
+	}
     }
     process.exit(0);
 };
@@ -113,14 +128,14 @@ var getMac = function () {
     var d = Q.defer();
     App.SplashScreen.send_progress("Get MAC address", null);
     require('getmac').getMac(
-            function (err, macAddress) {
-                if (err)
-                    throw new Error(err);
+	    function (err, macAddress) {
+		if (err)
+		    throw new Error(err);
 
-                Settings.Config.mac = macAddress;
-                App.SplashScreen.send_progress(null, "OK");
-                d.resolve(macAddress);
-            }
+		Settings.Config.mac = macAddress;
+		App.SplashScreen.send_progress(null, "OK");
+		d.resolve(macAddress);
+	    }
     );
     return d.promise;
 };
@@ -142,18 +157,18 @@ var initApp = function () {
     console.log(nwDir);
     console.log(nwCwd);
 
-    App.Config.execDir = process.cwd();
-    App.Config.runDir = nwDir;
+    App.Config.execDir = nwCwd;//process.cwd();
+    App.Config.runDir = nwCwd;//nwDir;
     App.ControlWindow = win;
 
-
+    win.show();
     win.on("close", closeApp);
 
 
     try {
-        App.Window.show(new App.View.MainWindow.Root());
+	App.Window.show(new App.View.MainWindow.Root());
     } catch (e) {
-        win.error('Couldn\'t start app: ', e, e.stack);
+	win.error('Couldn\'t start app: ', e, e.stack);
     }
 };
 
@@ -165,13 +180,13 @@ App.addRegions({
 
 App.addInitializer(function (options) {
     App.SplashScreen.open()
-            .then(function () {
-                App.SplashScreen.send_progress("Initializing", null);
-            })
-            .then(initTemplates)
-            .catch(function (err) {
-                App.SplashScreen.send_progress("Init templates", err.toString() + " failed");
-            })
-            .then(getMac)
-            .then(initApp);
+	    .then(function () {
+		App.SplashScreen.send_progress("Initializing", null);
+	    })
+	    .then(initTemplates)
+	    .catch(function (err) {
+		App.SplashScreen.send_progress("Init templates", err.toString() + " failed");
+	    })
+	    .then(getMac)
+	    .then(initApp);
 });
