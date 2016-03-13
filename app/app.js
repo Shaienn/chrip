@@ -5,21 +5,13 @@
 console.log("Start");
 
 var
-// Load native UI library
 	gui = require('nw.gui'),
-// browser window object
 	win = gui.Window.get(),
-// os object
 	os = require('os'),
-// path object
 	path = require('path'),
-// fs object
-//	fs = require('fs'),
-// url object
 	url = require('url'),
 	Q = require('q'),
 	PEG = require("pegjs");
-
 
 var base64 = require('node-base64-image');
 var sizeOf = require('image-size');
@@ -29,6 +21,7 @@ var ColorPicker = require('simple-color-picker-jq');
 var fs = require('fs-extra');
 var FileReader = require('filereader');
 var xml2js = require('xml2js');
+var klaw = require('klaw');
 
 win.log = console.log.bind(console);
 win.debug = function () {
@@ -92,23 +85,62 @@ _.extend(App, {
 App.ViewStack = [];
 
 var initTemplates = function () {
+
+    /* Read all files from /templates directory */
     App.SplashScreen.send_progress("Init templates", null);
-    var ts = [];
-    _.each(document.querySelectorAll('[type="text/x-template"]'), function (el) {
+
+    function get_tpl_files() {
 	var d = Q.defer();
-	$.get(el.src)
-		.done(
-			function (res) {
-			    el.innerHTML = res;
-			    d.resolve(true);
-			})
-		.fail(
-			function () {
-			    d.reject(el.src);
-			});
-	ts.push(d.promise);
+	var f = [];
+	klaw('./templates')
+		.on('data', function (item) {
+		    if (item.stats.isFile()) {
+			f.push(item.path);
+		    }
+		})
+		.on('error', function (err, item) {
+		    console.log(err.message);
+		    console.log(item.path); // the file the error occurred on
+		    d.reject(err);
+		})
+		.on('end', function () {
+		    d.resolve(f);
+		});
+
+	return d.promise;
+    }
+
+    function add_tpl_into_dom(items) {
+	var ts = []; // files, directories, symlinks, etc
+	var d = Q.defer();
+
+	items.forEach(function (item) {
+	    fs.readFile(item, function (err, data) {
+		if (err) {
+		    d.reject(err);
+		}
+
+		var tpl = document.createElement('script');
+		tpl.setAttribute('type', "text/x-template");
+		tpl.setAttribute('id', path.basename(item, '.tpl') + "-tpl");
+		tpl.innerHTML = data;
+		document.body.appendChild(tpl);
+		console.log(path.basename(item, '.tpl') + "-tpl");
+		d.resolve(true);
+	    });
+
+	    ts.push(d.promise);
+	});
+
+	return Q.all(ts);
+    }
+
+    var d = Q.defer();
+    get_tpl_files().then(add_tpl_into_dom).then(function () {
+	d.resolve(true);
     });
-    return Q.all(ts);
+
+    return d.promise;
 };
 
 var closeApp = function () {
@@ -179,14 +211,22 @@ App.addRegions({
 
 
 App.addInitializer(function (options) {
-    App.SplashScreen.open()
-	    .then(function () {
-		App.SplashScreen.send_progress("Initializing", null);
-	    })
-	    .then(initTemplates)
-	    .catch(function (err) {
-		App.SplashScreen.send_progress("Init templates", err.toString() + " failed");
-	    })
-	    .then(getMac)
-	    .then(initApp);
+
+    initTemplates().then(function () {
+	getMac().then(initApp);
+    })
+
+
+
+
+//    App.SplashScreen.open()
+//	    .then(function () {
+//		App.SplashScreen.send_progress("Initializing", null);
+//	    })
+//	    .then(initTemplates)
+//	    .catch(function (err) {
+//		App.SplashScreen.send_progress("Init templates", err.toString() + " failed");
+//	    })
+//	    .then(getMac)
+//	    .then(initApp);
 });
