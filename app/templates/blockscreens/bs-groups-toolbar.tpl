@@ -1,5 +1,7 @@
 <ul class="nav nav-hor right">
     <li>
-        <i id="bs-add-group-btn" class="fa fa-plus-square" title="Добавить">Создать группу</i>
+	<button id="bs-add-group-btn" type="button" class="btn btn-primary">
+	    <i class="fa fa-plus-square" title="Добавить"></i>
+	</button>
     </li>
 </ul>

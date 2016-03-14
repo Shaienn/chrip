@@ -1,18 +1,28 @@
-<div id="modal-contain">
+<div class="container-fluid">
 
-    <input id="bsg-name-input" type="text" placeholder="Please enter group`s name"></input>
+    <div class="row vert-offset-top-1 vert-offset-bottom-1">
+	<div class="col-lg-12">
+	    <h3>Группа заставок</h3>
+	</div>
 
-    <div class="toolbar">
+    </div>
 
-                <ul class="nav nav-hor right">
-                    <li>
-                           <i id="save-btn" class="fa fa-check-circle-o" title="Add"></i>
-                    </li>
-                    <li>
-                           <i id="cancel-btn" class="fa fa-ban" title="Cancel"></i>
-                    </li>
-                </ul>
+    <div class="row ">
+	<div class="col-lg-12">
 
+	    <input type="text" class="form-control" id="bsg-name-input" placeholder="Please enter group`s name">
+	</div>
+    </div>
+
+    <div class="row">	
+	<div class="col-lg-1 col-lg-offset-11 pull-right text-center vert-offset-top-1  vert-offset-bottom-1">
+	    <button type="button" class="btn btn-success">
+		<i id="save-btn" class="fa fa-2x    fa-check-circle-o" title="Add"></i>
+	    </button>
+	    <button type="button" class="btn btn-danger">
+		<i id="cancel-btn" class="fa fa-2x fa-ban" title="Cancel"></i>
+	    </button>
+	</div>
     </div>
 
 </div>

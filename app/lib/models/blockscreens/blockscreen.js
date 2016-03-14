@@ -7,14 +7,14 @@
 
     /* Model */
 
-    App.Model.BlockScreens.Groups.List = Backbone.Collection.extend({
-	model: App.Model.BlockScreensGroup,
-    });
-
     App.Model.BlockScreens.Groups.Group = Backbone.Model.extend({
 	defaults: {
 	    name: "",
 	}
+    });
+
+    App.Model.BlockScreens.Groups.List = Backbone.Collection.extend({
+	model: App.Model.BlockScreens.Groups.Group
     });
 
 
@@ -29,7 +29,7 @@
 
     /* Collection of lower elements */
     App.Model.BlockScreens.Elements.List = Backbone.Collection.extend({
-	model: App.Model.BlockScreenElement,
+	model: App.Model.BlockScreens.Elements.Element,
     });
 
 

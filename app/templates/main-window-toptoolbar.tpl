@@ -2,7 +2,6 @@
     <li>
         <i id="update-btn" class="fa fa-circle blink_element">Доступно обновление</i>
     </li>
-
 </ul>
 
 <ul id="app-mode-btn-container" class="nav nav-hor left width-60-percent ia-center">

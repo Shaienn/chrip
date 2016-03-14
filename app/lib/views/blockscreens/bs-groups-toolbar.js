@@ -9,7 +9,6 @@
 
     App.View.BlockScreens.Groups.ToolBar = Backbone.Marionette.ItemView.extend({
 	template: '#bs-groups-toolbar-tpl',
-	className: 'bs-groups-toolbar',
 	events: {
 	    'click #bs-add-group-btn': 'createGroupHandler',
 	},

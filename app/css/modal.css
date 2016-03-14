@@ -6,8 +6,10 @@
 *[id$='-modal'] {
     padding: 0;
     overflow: hidden;
+    font-size: 16px;
 }
 
 *[id$='-modal'] .bbm-modal {
     max-width: 90vw !important;
 }
+

@@ -331,7 +331,7 @@
 
 		rows.forEach(function (item) {
 
-		    var bsg = new App.Model.BlockScreensGroup();
+		    var bsg = new App.Model.BlockScreens.Groups.Group();
 		    bsg.set('id', item.id);
 		    bsg.set('name', item.name);
 

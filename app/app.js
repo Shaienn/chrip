@@ -212,21 +212,14 @@ App.addRegions({
 
 App.addInitializer(function (options) {
 
-    initTemplates().then(function () {
-	getMac().then(initApp);
-    })
-
-
-
-
-//    App.SplashScreen.open()
-//	    .then(function () {
-//		App.SplashScreen.send_progress("Initializing", null);
-//	    })
-//	    .then(initTemplates)
-//	    .catch(function (err) {
-//		App.SplashScreen.send_progress("Init templates", err.toString() + " failed");
-//	    })
-//	    .then(getMac)
-//	    .then(initApp);
+    App.SplashScreen.open()
+	    .then(function () {
+		App.SplashScreen.send_progress("Initializing", null);
+	    })
+	    .then(initTemplates)
+	    .catch(function (err) {
+		App.SplashScreen.send_progress("Init templates", err.toString() + " failed");
+	    })
+	    .then(getMac)
+	    .then(initApp);
 });

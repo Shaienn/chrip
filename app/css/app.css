@@ -62,7 +62,7 @@ td {
     font-weight: inherit;
     font-style: inherit;
     font-family: inherit;
-    font-size: 100%;
+    /*font-size: 100%;*/
     vertical-align: baseline;
 }
 
@@ -1641,12 +1641,12 @@ body,
     cursor: default;
 }
 
-#main-window button {
+/*#main-window button {
     background-color: transparent;
     border: none;
     cursor: pointer;
     outline: none;
-}
+}*/
 
 
 .drop-indicator {

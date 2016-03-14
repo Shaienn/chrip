@@ -36,6 +36,7 @@
     App.View.BlockScreens.Groups.List = Marionette.CollectionView.extend({
 	tagName: 'ul',
 	className: 'list',
+	childView: App.View.BlockScreens.Groups.Group,
 	behaviors: {
 	    Sortable: {
 		containment: 'parent'
