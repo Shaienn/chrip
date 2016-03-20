@@ -1,6 +1,6 @@
-#main-window-toptoolbar, #songBaseToolbar {
+/*#main-window-toptoolbar, #songBaseToolbar {
     float: left;
-}
+}*/
 
 #playlist_bottomtoolbar {
     position: relative !important;

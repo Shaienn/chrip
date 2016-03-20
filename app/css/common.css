@@ -83,18 +83,18 @@ h2, .h2{
     position: absolute;
 }
 
+.white-line{
+    border-bottom: 1px solid white;
+}
+/*
 #app-area {
     width: 100%;
     float: left;
 
-}
+}*/
 
 .close-icon {
-    top: 10px;
-    right: 20px;
     color: #ccc;
-    font-size: 25px;
-    line-height: 25px;
     cursor: pointer;
     z-index: 100;
     -webkit-transition: all 0.5s;
@@ -109,90 +109,6 @@ h2, .h2{
     -webkit-transition: all 0.5s;
     transition: all 0.5s;
 }
-
-.search form:before {
-    content: '\f002';
-    font-family: FontAwesome;
-    font-style: normal;
-    -webkit-transition: color 0.5s;
-    transition: color 0.5s;
-    color: #909498;
-    position: absolute;
-    top: 11px;
-    left: 7px;
-    z-index: 2;
-    font-size: 1.4em;
-}
-
-.search form.edited .clear {
-    display: block;
-    font-weight: bold;
-    -webkit-transition: color 0.5s;
-    transition: color 0.5s;
-    color: #909498;
-    position: absolute;
-    top: 8px;
-    right: 5px;
-    padding: 3px 5px;
-    font-size: 1.2em;
-}
-
-.search form.edited input,
-.search form input:focus {
-    width: 130px;
-    background-color: #0d0d0e;
-    color: #c3c5c7;
-}
-
-.search form.edited,
-.search form:hover {
-    cursor: pointer;
-}
-
-.search form.edited:before,
-.search form:hover:before {
-    color: #2468cc;
-}
-
-.search form input {
-    line-height: normal;
-    -webkit-app-region: no-drag;
-    outline: none;
-    cursor: text;
-    width: 0px;
-    height: 18px;
-    position: relative;
-    background: #17181b no-repeat right center;
-    background-position: right 3px center;
-    border: solid 0px;
-    margin: 8px 3px 0;
-    padding: 1px 2px 3px;
-    padding-left: 25px;
-    -webkit-border-radius: 10em;
-    border-radius: 10em;
-    -webkit-appearance: textfield;
-    -webkit-box-sizing: content-box;
-    -webkit-transition: width 0.5s;
-    transition: width 0.5s;
-}
-
-.search form input:focus {
-    cursor: auto;
-}
-
-.search form input:focus:before {
-    color: #2468cc;
-}
-
-.search form input::-moz-placeholder,
-.search form input::-webkit-input-placeholder {
-    color: transparent;
-}
-
-.search form input:focus::-webkit-input-placeholder {
-    color: rgba(195, 197, 199, 0.7);
-}
-
 
 @-webkit-keyframes blinker {  
     0% { opacity: 1.0; }
@@ -213,3 +129,20 @@ h2, .h2{
     position: relative;
     display: flex;
 }
+
+.main-row{
+    line-height: 39px;
+    height: 39px;
+    color: white;
+}
+
+.main-row h3, .main-row span, .main-row i{
+    line-height:inherit;
+    height: 39px;
+}
+
+.fill { 
+    min-height: 100%;
+    height: 100%;
+}
+

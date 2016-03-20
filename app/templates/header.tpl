@@ -1,13 +1,2 @@
-<nav class="btn-set <%= process.platform %>">
-    <% _.each(getButtons(), function(button) { %>
-    <button class="btn-os os-<%= button %>"></button>
-    <% }); %>
-</nav>
-
-<nav class="btn-set fs-<%= process.platform %>">
-    <button class="btn-os fullscreen tooltipped" data-toggle="tooltip" data-placement="<%= fsTooltipPos() %>" title="Toggle Fullscreen"></button>
-</nav>
-<h1>
-    Chrip
-    <div class="events img-<%= events() %>">
-</h1>
+<h3 class="pull-left">Chrip</h3>
+<span class="pull-right"><i class="fa fa-2x fa-times-circle-o"></i></span>

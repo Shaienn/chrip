@@ -1,4 +1,15 @@
-#header {
+#header{
+    font-size: 13px;
+    color: white;
+    height: 39px;
+    line-height: 39px;
+    overflow: hidden;
+    opacity: 0.97;
+    background-color: #17181b;
+}
+
+
+/*#header {
     z-index: 10;
     position: absolute;
     top: 0;
@@ -190,4 +201,4 @@
 .header-shadow {
     -webkit-box-shadow: 0px 6px 8px -4px rgba(0,0,0,0.9);
     box-shadow: 0px 6px 8px -4px rgba(0,0,0,0.9);
-}
+}*/

@@ -1,8 +1,5 @@
-<ul class="nav nav-hor right">
-
-<li>
-       <i id="songservice-openbase-btn" class="fa fa-plus-square" title="Add song"></i>
-</li>
-
-
-</ul>
+<div class="col-lg-12">
+    <button type="button" class="btn btn-success pull-right" id="songservice-openbase-btn">
+	<i class="fa fa-plus-square"></i>
+    </button>
+</div>

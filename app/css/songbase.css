@@ -1,10 +1,8 @@
-.songservice-songbase-contain .songbase-container {
+#songservice-songbase > .row {
     z-index: 1;
-    width: 100%;
-    height: calc(100vh - 32px);
+    height: calc(100vh - 80px);
     background-color: #17181b;
     -webkit-user-select: none;
-    float: left;
 }
 
 .songbase-container .content {
@@ -14,40 +12,19 @@
 }
 
 #songBaseAuthorsList {
-    width: 20%;
-    float: left;
-    position: relative;
-    top: 0;
-    height: inherit;
-    background: transparent;
-    margin: 0 auto;
+    height: calc(100% - 39px);
 }
 
 #songBasePlayList {
-    width: 20%;
-    float: left;
-    position: relative;
-    top: 0;
-    height: inherit;
-    background: #b2b2b2;
+    height: calc(100% - 39px);
 }
 
 #songBaseSongsList {
-    width: 20%;
-    float: left;
-    position: relative;
-    top: 0;
-    height: inherit;
-    background: #b2b2b2;
+    height: calc(100% - 39px);
 }
 
 #songBaseSongPreview {
-    width: 40%;
-    float: left;
-    position: relative;
-    top: 0;
-    height: inherit;
-    background: #b2b2b2;
+    height: calc(100% - 39px);
     padding: 1em;
 }
 
@@ -55,9 +32,8 @@
     width: 60%;
     float: left;
     position: relative;
-    top: 0;
     height: inherit;
-    background: #b2b2b2;
+    background: transparent;
 }
 
 /* Author list */
@@ -147,16 +123,20 @@
     position: relative;
 }
 
+.area {
+    height: calc(100% - 39px);
+}
+
 .area .loader {
     display: none;
 }
 
 .area .authors {
-    height: inherit;
+    height: 100%;
 }
 
 .area .songs {
-    height: inherit;
+    height: 100%;
 }
 
 .area .loader .overlay {

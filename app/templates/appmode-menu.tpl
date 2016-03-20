@@ -1,26 +1,27 @@
-<ul class="nav nav-hor left">
-    <li>
-        <i id="appmode-menu-songservice-btn" class="fa fa-eye appmode-menu-item" title="Презентация">Презентация</i>
-    </li>
-
-    <li>
-        <i id="appmode-menu-bible-btn" class="fa fa-book appmode-menu-item" title="Библия">Библия</i>
-    </li>
-
-    <li>
-        <i id="appmode-menu-videoplayer-btn" class="fa fa-video-camera appmode-menu-item" title="Медиа">Медиа</i>
-    </li>
-
-    <li>
-        <i id="appmode-menu-blockscreens-btn" class="fa fa-video-camera appmode-menu-item" title="Заставки">Заставки</i>
-    </li>
-</ul>
-
-
-<ul class="nav nav-hor right">
-    <li>
-        <i id="appmode-menu-settings-btn" class="fa fa-cogs" title="Settings">Настройки</i>
-    </li>
-</ul>
-
-
+<div class="btn-group btn-group-justified">
+    <div class="btn-group">
+	<button type="button" class="btn btn-primary" id="appmode-menu-songservice-btn">
+	    <i class="fa fa-eye" title="Презентация"><span>Песни</span></i>
+	</button>
+    </div>
+    <div class="btn-group">
+	<button type="button" class="btn btn-primary" id="appmode-menu-bible-btn">
+	    <i class="fa fa-book" title="Библия"><span>Библия</span></i>
+	</button>
+    </div>
+    <div class="btn-group">
+	<button type="button" class="btn btn-primary" id="appmode-menu-videoplayer-btn">
+	    <i class="fa fa-video-camera" title="Медиа"><span>Медиа</span></i>
+	</button>
+    </div>
+    <div class="btn-group">
+	<button type="button" class="btn btn-primary" id="appmode-menu-slides-btn">
+	    <i class="fa fa-video-camera" title="Заставки"><span>Слайды</span></i>
+	</button>
+    </div>
+    <div class="btn-group">
+	<button type="button" class="btn btn-primary" id="appmode-menu-settings-btn">
+	    <i  class="fa fa-cogs" title="Settings"><span>Настройки</span></i>
+	</button>
+    </div>
+</div>

@@ -1,5 +1,4 @@
 <div class="container-fluid">
-
     <div class="row vert-offset-top-1 vert-offset-bottom-1">
 	<div class="col-lg-12">
 	    <h3>Автор</h3>

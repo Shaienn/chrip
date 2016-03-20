@@ -6,316 +6,318 @@
     'use strict';
 
     App.View.SongService.SongBase = Backbone.Marionette.LayoutView.extend({
-        template: '#songservice-songbase-tpl',
-        className: 'songservice-songbase-contain',
-        ui: {
-            A_Loader: '#songBaseAuthorsList .area .loader',
-            S_Loader: '#songBaseSongsList .area .loader'
-        },
-        regions: {
-            TopToolbar_r: '#songBaseToolbar',
-            AuthorsList_r: '#songBaseAuthorsList .area .authors',
-            AuthorsListControl_r: '#songBaseAuthorsList .control',
-            SongList_r: '#songBaseSongsList .area .songs',
-            SongListControl_r: '#songBaseSongsList .control',
-            PlayList_r: '#songBasePlayList',
-            Preview_r: '#songBaseSongPreview',
-            modals: {
-                selector: '#songBaseModal',
-                regionClass: Backbone.Marionette.Modals
-            }
-        },
-        events: {
-            'click .close-icon': 'closeSongbase',
-            'click #authorslist-add-btn': 'openAddAuthorWindow',
-            'click #authorslist-remove-btn': 'openRemoveAuthorWindow',
-            'click #authorslist-edit-btn': 'openEditAuthorWindow',
-            'click #songslist-add-btn': 'openAddSongWindow',
-            'click #songslist-remove-btn': 'openRemoveSongWindow',
-            'click #songslist-edit-btn': 'openEditSongWindow'
-        },
-        loadedAuthors: [],
-        selectedAuthor: {},
-        selectedSong: {},
-        initialize: function () {
-            this.listenTo(App.vent, "songbase:loadsongs", _.bind(this.loadSongs, this));
-            this.listenTo(App.vent, "songbase:search", _.bind(this.search, this));
-            this.listenTo(App.vent, "songbase:selectAuthor", _.bind(this.selectAuthor, this));
-            this.listenTo(App.vent, "songbase:loadtext", _.bind(this.loadText, this));
-        },
-        onDestroy: function () {
-            win.log("songbase destroy request");
-            $('#songservice-control').show();
-            $('#appmode-menu').show();
-            $('#main-window-toptoolbar').show();
-            $('#header').removeClass('header-shadow');
-        },
-        loadText: function (song) {
-
-            if (!(song instanceof App.Model.Song)) {
-                win.error("Wrong song object");
-                return;
-            }
-
-            this.selectedSong = song;
-
-            /* Clear song text */
-
-            var preview_text = "";
-            var res;
-
-            while ((res = Settings.Config.slide_part.pattern.exec(song.get('text'))) != null) {
-
-                var raw_text = res[1];
-
-                for (var p in Settings.Config.song_parts_patterns) {
-
-                    var part_pattern = Settings.Config.song_parts_patterns[p].pattern;
-                    var part = part_pattern.exec(raw_text);
-
-                    if (part == null) {
-                        continue;
-                    }
-
-                    var songPart = new App.Model.SongPart();
-                    var part_text = part[1].trim();
-
-                    /* remove chords */
-
-                    var pure_text = part_text.replace(Settings.Config.chord_pattern, "");
-                    preview_text += pure_text;
-
-                    break;
-                }
-
-                preview_text += require('os').EOL + require('os').EOL;
-
-            }
-
-            var previewModel = new App.Model.Preview({
-                plaintext: preview_text
-            });
-
-            this.Preview_r.show(new App.View.Preview({
-                model: previewModel
-            }));
-
-        },
-        search: function (search_string) {
-
-            var that = this;
-
-            App.Database.search(search_string).then(function (loadedSongs) {
-
-                win.log(JSON.stringify(loadedSongs));
+	template: '#songservice-songbase-tpl',
+	className: 'row',
+	ui: {
+	    A_Loader: '#songBaseAuthorsList .area .loader',
+	    S_Loader: '#songBaseSongsList .area .loader',
+	    searchInput: '.search input',
+	    searchForm: '.search form',
+	},
+	regions: {
+	    AuthorsList_r: '#songBaseAuthorsList .area .authors',
+	    AuthorsListControl_r: '#songBaseAuthorsList .control',
+	    SongList_r: '#songBaseSongsList .area .songs',
+	    SongListControl_r: '#songBaseSongsList .control',
+	    PlayList_r: '#songBasePlayList',
+	    Preview_r: '#songBaseSongPreview',
+	    modals: {
+		selector: '#songBaseModal',
+		regionClass: Backbone.Marionette.Modals
+	    }
+	},
+	events: {
+	    'click .close-icon': 'closeSongbase',
+	    'click #authorslist-add-btn': 'openAddAuthorWindow',
+	    'click #authorslist-remove-btn': 'openRemoveAuthorWindow',
+	    'click #authorslist-edit-btn': 'openEditAuthorWindow',
+	    'click #songslist-add-btn': 'openAddSongWindow',
+	    'click #songslist-remove-btn': 'openRemoveSongWindow',
+	    'click #songslist-edit-btn': 'openEditSongWindow',
+	    'submit @ui.searchForm': 'search',
+	},
+	loadedAuthors: [],
+	selectedAuthor: {},
+	selectedSong: {},
+	initialize: function () {
+	    this.listenTo(App.vent, "songbase:loadsongs", _.bind(this.loadSongs, this));
+	    this.listenTo(App.vent, "songbase:search", _.bind(this.search, this));
+	    this.listenTo(App.vent, "songbase:selectAuthor", _.bind(this.selectAuthor, this));
+	    this.listenTo(App.vent, "songbase:loadtext", _.bind(this.loadText, this));
+	},
+	onDestroy: function () {
+	    win.log("songbase destroy request");
+	    $('#songservice-control').show();
+	    $('#appmode-menu').show();
+	    $('#main-window-toptoolbar').show();
+	    $('#header').removeClass('header-shadow');
+	},
+	loadText: function (song) {
+
+	    if (!(song instanceof App.Model.Song)) {
+		win.error("Wrong song object");
+		return;
+	    }
+
+	    this.selectedSong = song;
+
+	    /* Clear song text */
+
+	    var preview_text = "";
+	    var res;
+
+	    while ((res = Settings.Config.slide_part.pattern.exec(song.get('text'))) != null) {
+
+		var raw_text = res[1];
+
+		for (var p in Settings.Config.song_parts_patterns) {
+
+		    var part_pattern = Settings.Config.song_parts_patterns[p].pattern;
+		    var part = part_pattern.exec(raw_text);
+
+		    if (part == null) {
+			continue;
+		    }
+
+		    var songPart = new App.Model.SongPart();
+		    var part_text = part[1].trim();
+
+		    /* remove chords */
+
+		    var pure_text = part_text.replace(Settings.Config.chord_pattern, "");
+		    preview_text += pure_text;
+
+		    break;
+		}
+
+		preview_text += require('os').EOL + require('os').EOL;
+
+	    }
+
+	    var previewModel = new App.Model.Preview({
+		plaintext: preview_text
+	    });
+
+	    this.Preview_r.show(new App.View.Preview({
+		model: previewModel
+	    }));
+
+	},
+	search: function (e) {
+	    e.preventDefault();
+	    var that = this;
+	    var search_string = this.ui.searchInput.val();
+	    this.ui.searchInput.blur();
+	    App.Database.search(search_string).then(function (loadedSongs) {
 
-                var songCollection = new App.Model.SongCollection(loadedSongs);
+		win.log(JSON.stringify(loadedSongs));
 
-                var songCollectionView = new App.View.SongCollection({
-                    collection: songCollection,
-                    childView: App.View.SongService.Song,
-                });
+		var songCollection = new App.Model.SongCollection(loadedSongs);
 
-                that.SongList_r.show(songCollectionView);
+		var songCollectionView = new App.View.SongCollection({
+		    collection: songCollection,
+		    childView: App.View.SongService.Song,
+		});
 
-            });
+		that.SongList_r.show(songCollectionView);
 
-        },
-        openAddAuthorWindow: function () {
+	    });
 
-            var form = new App.View.AuthorEditForm({
-                author: new App.Model.Author(),
-                songbase: this
-            });
+	},
+	openAddAuthorWindow: function () {
 
-            this.modals.show(form);
+	    var form = new App.View.AuthorEditForm({
+		author: new App.Model.Author(),
+		songbase: this
+	    });
 
-        },
-        openEditAuthorWindow: function () {
+	    this.modals.show(form);
 
-            if ($('#authorslist-edit-btn').hasClass('passive')) {
-                return;
-            }
+	},
+	openEditAuthorWindow: function () {
 
-            /* Get selected author */
+	    if ($('#authorslist-edit-btn').hasClass('passive')) {
+		return;
+	    }
 
-            if (this.selectedAuthor == "undefined") {
-                win.log("Select author first");
-                return;
-            }
+	    /* Get selected author */
 
+	    if (this.selectedAuthor == "undefined") {
+		win.log("Select author first");
+		return;
+	    }
 
-            var form = new App.View.AuthorEditForm({
-                author: this.selectedAuthor,
-                songbase: this
-            });
 
-            this.modals.show(form);
+	    var form = new App.View.AuthorEditForm({
+		author: this.selectedAuthor,
+		songbase: this
+	    });
 
-        },
-        openRemoveAuthorWindow: function () {
+	    this.modals.show(form);
 
-            if ($('#authorslist-remove-btn').hasClass('passive')) {
-                return;
-            }
+	},
+	openRemoveAuthorWindow: function () {
 
-            var form = new App.View.AuthorDeleteModal({
-                author: this.selectedAuthor,
-                songbase: this
-            });
+	    if ($('#authorslist-remove-btn').hasClass('passive')) {
+		return;
+	    }
 
-            this.modals.show(form);
-        },
-        openAddSongWindow: function () {
+	    var form = new App.View.AuthorDeleteModal({
+		author: this.selectedAuthor,
+		songbase: this
+	    });
 
-            var form = new App.View.SongEditForm({
-                song: new App.Model.Song(),
-                authors: this.loadedAuthors,
-                songbase: this
-            });
+	    this.modals.show(form);
+	},
+	openAddSongWindow: function () {
 
-            this.modals.show(form);
+	    var form = new App.View.SongEditForm({
+		song: new App.Model.Song(),
+		authors: this.loadedAuthors,
+		songbase: this
+	    });
 
-        },
-        openEditSongWindow: function () {
+	    this.modals.show(form);
 
-            var form = new App.View.SongEditForm({
-                song: this.selectedSong,
-                authors: this.loadedAuthors,
-                songbase: this
-            });
+	},
+	openEditSongWindow: function () {
 
-            this.modals.show(form);
+	    var form = new App.View.SongEditForm({
+		song: this.selectedSong,
+		authors: this.loadedAuthors,
+		songbase: this
+	    });
 
-        },
-        openRemoveSongWindow: function () {
+	    this.modals.show(form);
 
-            if ($('#songslist-remove-btn').hasClass('passive')) {
-                return;
-            }
+	},
+	openRemoveSongWindow: function () {
 
-            var form = new App.View.SongDeleteModal({
-                author: this.selectedAuthor,
-                song: this.selectedSong,
-                songbase: this
-            });
+	    if ($('#songslist-remove-btn').hasClass('passive')) {
+		return;
+	    }
 
-            this.modals.show(form);
-        },
-        loadSongsLoader: function () {
-            this.ui.S_Loader.show();
-        },
-        hideSongsLoader: function () {
-            this.ui.S_Loader.hide();
-        },
-        loadSongs: function (author) {
+	    var form = new App.View.SongDeleteModal({
+		author: this.selectedAuthor,
+		song: this.selectedSong,
+		songbase: this
+	    });
 
-            this.loadSongsLoader();
+	    this.modals.show(form);
+	},
+	loadSongsLoader: function () {
+	    this.ui.S_Loader.show();
+	},
+	hideSongsLoader: function () {
+	    this.ui.S_Loader.hide();
+	},
+	loadSongs: function (author) {
 
-            /* Assign buttons */
+	    this.loadSongsLoader();
 
-            switch (author.get('db')) {
+	    /* Assign buttons */
 
-                case('1'):
+	    switch (author.get('db')) {
 
-                    console.log("Global");
-                    $('#authorslist-edit-btn').addClass('passive');
-                    $('#authorslist-remove-btn').addClass('passive');
+		case('1'):
 
-                    break;
-                case('2'):
+		    console.log("Global");
+		    $('#authorslist-edit-btn').addClass('passive');
+		    $('#authorslist-remove-btn').addClass('passive');
 
-                    console.log("Local");
-                    $('#authorslist-edit-btn').removeClass('passive');
-                    $('#authorslist-remove-btn').removeClass('passive');
+		    break;
+		case('2'):
 
-                    break;
-                default:
+		    console.log("Local");
+		    $('#authorslist-edit-btn').removeClass('passive');
+		    $('#authorslist-remove-btn').removeClass('passive');
 
-                    console.log("Undefined");
-                    $('#authorslist-edit-btn').addClass('passive');
-                    $('#authorslist-remove-btn').addClass('passive');
-            }
+		    break;
+		default:
 
-            /* Save selected author */
+		    console.log("Undefined");
+		    $('#authorslist-edit-btn').addClass('passive');
+		    $('#authorslist-remove-btn').addClass('passive');
+	    }
 
-            this.selectedAuthor = author;
+	    /* Save selected author */
 
-            var that = this;
+	    this.selectedAuthor = author;
 
-            author.getSongs().then(function (loadedSongs) {
+	    var that = this;
 
-                //win.log(JSON.stringify(loadedSongs));
+	    author.getSongs().then(function (loadedSongs) {
 
-                var songCollection = new App.Model.SongCollection(loadedSongs);
+		//win.log(JSON.stringify(loadedSongs));
 
-                var songCollectionView = new App.View.SongCollection({
-                    collection: songCollection,
-                    childView: App.View.SongService.Song,
-                });
+		var songCollection = new App.Model.SongCollection(loadedSongs);
 
-                that.SongList_r.show(songCollectionView);
-                that.hideSongsLoader();
-            });
+		var songCollectionView = new App.View.SongCollection({
+		    collection: songCollection,
+		    childView: App.View.SongService.Song,
+		});
 
-        },
-        loadAuthorsLoader: function () {
-            this.ui.A_Loader.show();
-        },
-        hideAuthorsLoader: function () {
-            this.ui.A_Loader.hide();
-        },
-        selectAuthor: function (author) {
+		that.SongList_r.show(songCollectionView);
+		that.hideSongsLoader();
+	    });
 
-            var aid = author.get('aid');
-            var gaid = author.get('gaid');
+	},
+	loadAuthorsLoader: function () {
+	    this.ui.A_Loader.show();
+	},
+	hideAuthorsLoader: function () {
+	    this.ui.A_Loader.hide();
+	},
+	selectAuthor: function (author) {
 
-            if (aid == "undefined" || gaid == "undefined") {
-                return;
-            }
+	    var aid = author.get('aid');
+	    var gaid = author.get('gaid');
 
-            var authors_list = $('.authors ul');
-            authors_list.find('li').removeClass('active');
-            var item = authors_list.find('.authorItem[aid=' + aid + '][gaid=' + gaid + ']');
-            item.trigger('click');
-            item.parents('.item').addClass('active');
-            authors_list.scrollTop(0).scrollTop(item.position().top);
-        },
-        loadAuthors: function () {
+	    if (aid == "undefined" || gaid == "undefined") {
+		return;
+	    }
 
-            this.loadAuthorsLoader();
-            var that = this;
+	    var authors_list = $('.authors ul');
+	    authors_list.find('li').removeClass('active');
+	    var item = authors_list.find('.authorItem[aid=' + aid + '][gaid=' + gaid + ']');
+	    item.trigger('click');
+	    item.parents('.item').addClass('active');
+	    authors_list.scrollTop(0).scrollTop(item.position().top);
+	},
+	loadAuthors: function () {
 
-            App.Database.loadAuthors().then(function (loadedAuthors) {
-                var authorCollection = new App.Model.AuthorCollection(loadedAuthors);
-                var authorCollectionView = new App.View.AuthorCollection({
-                    collection: authorCollection,
-                });
+	    this.loadAuthorsLoader();
+	    var that = this;
 
-                that.loadedAuthors = authorCollection;
-                that.AuthorsList_r.show(authorCollectionView);
-                that.hideAuthorsLoader();
-            });
-        },
-        onShow: function () {
-            win.log("show songbase");
+	    App.Database.loadAuthors().then(function (loadedAuthors) {
+		var authorCollection = new App.Model.AuthorCollection(loadedAuthors);
+		var authorCollectionView = new App.View.AuthorCollection({
+		    collection: authorCollection,
+		});
 
-            this.loadAuthors();
-            $('#header').addClass('header-shadow');
-            $('#songservice-control').hide();
-            $('#appmode-menu').hide();
-            $('#main-window-toptoolbar').hide();
+		that.loadedAuthors = authorCollection;
+		that.AuthorsList_r.show(authorCollectionView);
+		that.hideAuthorsLoader();
+	    });
+	},
+	onShow: function () {
+	    win.log("show songbase");
 
-            this.PlayList_r.show(new App.View.PlayListCollection({
-                childView: App.View.PlayListSongBase,
-                collection: App.Model.PlayListCollection,
-            }));
+	    this.loadAuthors();
+	    $('#header').addClass('header-shadow');
+	    $('#songservice-control').hide();
+	    $('#appmode-menu').hide();
+	    $('#main-window-toptoolbar').hide();
 
-            this.TopToolbar_r.show(new App.View.SongService.SongBaseToolbar());
-        },
-        closeSongbase: function () {
-            App.vent.trigger('songservice:close_songbase');
-        },
+	    this.PlayList_r.show(new App.View.PlayListCollection({
+		childView: App.View.PlayListSongBase,
+		collection: App.Model.PlayListCollection,
+	    }));
+
+	},
+	closeSongbase: function () {
+	    App.vent.trigger('songservice:close_songbase');
+	},
     });
 
 

@@ -15,7 +15,7 @@
 	    BlockScreens_Tab_r: '#blockscreens_tab',
 	    Settings_Tab_r: '#settings_tab',
 	    Content: '#content',
-	    TopToolbar_r: '#main-window-toptoolbar',
+	    BottomBar_r: '#main-window-bottom-bar',
 	    InitModal: '#initializing',
 	},
 	tabs: [
@@ -154,7 +154,7 @@
 		    console.log("menu show");
 		    /* Top toolbar */
 
-		    that.TopToolbar_r.show(new App.View.MainWindow.TopToolbar);
+		    that.BottomBar_r.show(new App.View.MainWindow.BottomBar);
 
 		    App.vent.trigger("active_mode_changed", App.active_mode);
 		    App.vent.trigger("main_toolbar:set_black_mode_indication", App.black_mode);
