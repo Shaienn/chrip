@@ -5,12 +5,12 @@
 
 /* Edit modal window*/
 
-#bs-texts-container {
+/*#bs-texts-container {
     width: 30%;
     float:left;
     min-width: 420px;
     height: 100%;
-}
+}*/
 
 #bs-texts-header{
     height: 10%;    
@@ -18,12 +18,6 @@
 
 #bs-texts-list{
     height: 80%;
-}
-
-#bs-work-area {
-    height: 90%;
-    width: 100%;
-    float: left;
 }
 
 #bs-toolbar{
@@ -35,12 +29,9 @@
     justify-content: center;
 }
 
-#bs-editor-container {
-    width: 70%;
-    float:left;
+/*#bs-editor-container {
     min-width: 840px;
-    height: 100%;
-}
+}*/
 
 #bs-editor-area, #bs-preview-area, #bs-preview-image-area, #bs-hidden-canvas {
     width: 100%;
@@ -55,7 +46,7 @@
     height: calc ( 30% - 42px );
 }
 
-
+/*
 #bs-add-text-btn, #bs-set-background-color-btn, #bs-add-img-btn, #bs-save-to-image-btn{
     width: 80%;
     display: flex;
@@ -67,7 +58,7 @@
     border-radius: 5px;
     padding: 1%;
     margin: 1%;
-}
+}*/
 
 #bs-texts-header, #bs-texts-list,#bs-texts-toolbar, #bs-editor-toolbar{
     width: 100%;
@@ -439,4 +430,8 @@ i.button:before {
     color: #2468cc;
     -webkit-transition: all 0.5s;
     transition: all 0.5s;
+}
+
+#bsg-content{
+    height: calc(100% - 67px);
 }

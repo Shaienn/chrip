@@ -35,7 +35,7 @@
 
     /* Editor elements */
 
-    App.Model.BlockScreenEditorElement = Backbone.Model.extend({
+    App.Model.BlockScreens.Editor.Element = Backbone.Model.extend({
 	defaults: {
 	    name: "element",
 	    type: "",
@@ -45,8 +45,8 @@
     });
 
 
-    App.Model.BlockScreenEditorElementsCollection = Backbone.Collection.extend({
-	model: App.Model.BlockScreenEditorElement,
+    App.Model.BlockScreens.Editor.List = Backbone.Collection.extend({
+	model: App.Model.BlockScreens.Editor.Element,
     });
 
 

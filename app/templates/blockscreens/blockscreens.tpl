@@ -12,6 +12,13 @@
 	</div>
         <div id="blockscreens-toolbar"></div>
     </div>
-    <div id="blockscreens-control" class="col-lg-9 fill"></div>
+    <div  class="col-lg-9 fill">
+	<div id="bsg-content" class="col-lg-12">
+
+	</div>
+	<div id="bsg-control" class="col-lg-12 text-right">
+
+	</div>
+    </div>
 </div>
 <div id="bsModal"></div>

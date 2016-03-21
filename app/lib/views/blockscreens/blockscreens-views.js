@@ -12,7 +12,7 @@
     var s_mout_prevX = 0;
     var s_mout_prevY = 0;
     var that = this;
-    App.View.BlockScreenEditorElement = Backbone.Marionette.ItemView.extend({
+    App.View.BlockScreens.Editor.Element = Backbone.Marionette.ItemView.extend({
 	tagName: 'li',
 	className: 'bs-text-item',
 	template: '#bs-text-itemview-tpl',
@@ -176,7 +176,8 @@
 	}
 
     });
-    App.View.BlockScreenEditorElementsCollection = Backbone.Marionette.CollectionView.extend({
+
+    App.View.BlockScreens.Editor.List = Backbone.Marionette.CollectionView.extend({
 	tagName: 'ul',
 	className: 'bs_elements list',
 	selectedElement: null,

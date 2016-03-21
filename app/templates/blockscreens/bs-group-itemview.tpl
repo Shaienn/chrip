@@ -1,2 +1,4 @@
-<%= name %>
+<div class="bsgItem">
+    <%= name %>
+</div>
 

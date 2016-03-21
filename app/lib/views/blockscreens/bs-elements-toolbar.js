@@ -9,16 +9,16 @@
 
     App.View.BlockScreens.Elements.ToolBar = Backbone.Marionette.ItemView.extend({
 	template: '#bs-elements-toolbar-tpl',
-	className: 'bs-elements-toolbar',
+	className: 'row',
 	events: {
-	    'click #bs-open-bs-element-btn': 'openBsElementFile',
-	    'click #bs-add-bs-element-btn': 'createBsElement'
+	    'click #bs-open-element-btn': 'openBsElementFile',
+	    'click #bs-add-element-btn': 'createBsElement'
 	},
 	openBsElementFile: function () {
-	    App.vent.trigger('blockscreens:elements:openElement');
+	    App.vent.trigger('blockscreens:openElement');
 	},
 	createBsElement: function () {
-	    App.vent.trigger('blockscreens:elements:addElement');
+	    App.vent.trigger('blockscreens:createElement');
 	}
     });
 

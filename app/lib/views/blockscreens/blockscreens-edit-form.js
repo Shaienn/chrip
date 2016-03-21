@@ -60,7 +60,7 @@
 	}
 
     });
-    App.View.BlockScreensEditForm = Backbone.Modal.extend({
+    App.View.BlockScreens.Elements.EditForm = Backbone.Modal.extend({
 	id: 'blockscreens-modal',
 	template: '#blockscreens-edit-modal-tpl',
 	lock: false,
@@ -74,14 +74,16 @@
 	    bsPreviewArea: '#bs-preview-area',
 	    bsPreviewImage: '#bs-preview-image-area',
 	    bsImgInput: '#img-input',
+	    bsSaveInput: '#bs-save-file',
 	    bsCanvas: '#bs-hidden-canvas'
 	},
 	events: {
 	    'click #bs-add-text-btn': 'addTextHandler',
 	    'click #bs-add-img-btn': 'openImgDialog',
 	    'click #save-btn': 'saveBtnHandler',
-//            'click #cancel-btn': 'cancelBtnHandler',
-	    'change :file': 'addImgHandler',
+	    'click #cancel-btn': 'cancelBtnHandler',
+	    'change #img-input': 'addImgHandler',
+	    'change #bs-save-file': 'saveBsHandler',
 	},
 	initialize: function (options) {
 
@@ -97,16 +99,16 @@
 	    this.listenTo(App.vent, "blockscreens:modal:remove_item", _.bind(this.removeElement, this));
 	    this.listenTo(App.vent, "blockscreens:modal:edit_item:set_text_align", _.bind(this.setTextAlign, this));
 	    this.listenTo(App.vent, "blockscreens:modal:edit_item:set_color", _.bind(this.setColor, this));
-//            this.listenTo(App.vent, "modal:remove_songpart", _.bind(this.removeSongpart, this));
 	},
 	onShow: function () {
-
 	    var that = this;
 	    var bsElementsCollection = this.getBlockScreenItems(this.blockscreen);
-	    this.elements_collection = new App.View.BlockScreenEditorElementsCollection({
+	    this.elements_collection = new App.View.BlockScreens.Editor.List({
 		collection: bsElementsCollection,
-		childView: App.View.BlockScreenEditorElement
+		childView: App.View.BlockScreens.Editor.Element
 	    });
+	    console.log(this.elements_collection.collection);
+
 	    this.screen_bounds = Settings.Utils.getPresentationScreen().bounds;
 	    var editor = $(this.ui.bsEditorArea);
 	    this.scale = Math.min(
@@ -147,7 +149,7 @@
 	    var container = $('<div/>', {
 		html: bs.get('html')
 	    });
-	    var bsElements = new App.Model.BlockScreenEditorElementsCollection();
+	    var bsElements = new App.Model.BlockScreens.Editor.List();
 	    /* iterate */
 
 	    container.children().each(function (index) {
@@ -160,7 +162,7 @@
 
 		if ($(element).is('[class*="bs-html-img-container-"]')) {
 
-		    var element = new App.Model.BlockScreenEditorElement({
+		    var element = new App.Model.BlockScreens.Editor.Element({
 			name: name,
 			type: "img",
 			html: $(element).prop('outerHTML'),
@@ -171,7 +173,7 @@
 
 		if ($(element).is('[class*="bs-html-text-container-"]')) {
 
-		    var element = new App.Model.BlockScreenEditorElement({
+		    var element = new App.Model.BlockScreens.Editor.Element({
 			name: name,
 			type: "text",
 			html: $(element).prop('outerHTML'),
@@ -182,7 +184,7 @@
 
 		if ($(element).is('[class*="bs-html-background-container-"]')) {
 
-		    var element = new App.Model.BlockScreenEditorElement({
+		    var element = new App.Model.BlockScreens.Editor.Element({
 			name: name,
 			type: "background",
 			html: $(element).prop('outerHTML'),
@@ -197,6 +199,27 @@
 
 	openImgDialog: function () {
 	    $(this.ui.bsImgInput).trigger('click');
+	},
+	openSaveBsDialog: function () {
+	    $(this.ui.bsSaveInput).trigger('click');
+	},
+	saveBsHandler: function () {
+	    var files = $(this.ui.bsSaveInput)[0].files;
+	    var path = files[0].path
+	    path.replace(/\.[^/.]+$/, "");
+	    this.saveBsFile(path);
+	},
+	saveBsFile: function (path) {
+	    var that = this;
+	    fs.writeFile(path + '.bs', this.xml, function (err) {
+		if (err) {
+		    console.log(err);
+		}
+
+		/* add this file to group */
+
+		that.cancel();
+	    });
 	},
 	convertImageToBase64: function (path) {
 	    var d = Q.defer();
@@ -244,7 +267,7 @@
 			    position: "absolute",
 			}
 		    });
-		    var new_img = new App.Model.BlockScreenEditorElement({
+		    var new_img = new App.Model.BlockScreens.Editor.Element({
 			type: "img",
 			name: "image " + that.elements_collection.collection.length,
 			id: "bs-element-" + that.elements_collection.collection.length,
@@ -278,7 +301,7 @@
 		}
 	    });
 	    element.append(text_span);
-	    var new_text = new App.Model.BlockScreenEditorElement({
+	    var new_text = new App.Model.BlockScreens.Editor.Element({
 		type: "text",
 		name: "text " + this.elements_collection.collection.length,
 		id: "bs-element-" + this.elements_collection.collection.length,
@@ -681,7 +704,6 @@
 			height: editor.outerHeight()
 		    })
 		    .then(function (renderResult) {
-
 			var ctx = canvas.getContext('2d');
 			ctx.clearRect(0, 0, canvas.width, canvas.height);
 			var hRatio = canvas.width / renderResult.image.width;
@@ -698,19 +720,14 @@
 			that.blockscreen.set('preview', imgStr);
 
 			var obj = JSON.stringify(that.blockscreen);
-
 			var builder = new xml2js.Builder();
-			var xml = builder.buildObject(obj.root);
+			that.xml = builder.buildObject(obj);
 
-//			console.log(xml);
-
-			fs.writeFile(that.file_path + that.blockscreen.get('name') + '.bs', xml, function (err) {
-			    if (err) {
-				console.log(err);
-			    }
-
-			    that.cancel();
-			});
+			if (typeof (that.file_path) === "undefined") {
+			    that.openSaveBsDialog();
+			} else {
+			    that.saveBsFile(that.file_path);
+			}
 		    });
 	},
 	cancelBtnHandler: function () {

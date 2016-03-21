@@ -58,6 +58,7 @@ _.extend(App, {
 	Videoplayer: {},
 	Settings: {},
 	BlockScreens: {
+	    Editor: {},
 	    Elements: {},
 	    Groups: {},
 	},
@@ -68,6 +69,7 @@ _.extend(App, {
 	Bible: {},
 	Videoplayer: {},
 	BlockScreens: {
+	    Editor: {},
 	    Elements: {},
 	    Groups: {},
 	},

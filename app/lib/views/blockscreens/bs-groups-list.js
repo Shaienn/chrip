@@ -17,6 +17,17 @@
 	template: '#bs-group-itemview-tpl',
 	tagName: 'li',
 	className: 'item',
+	events: {
+	    'click .bsgItem': 'selectHandler',
+	    'mouseover .bsgItem': 'overHandler',
+	    'mouseout .bsgItem': 'outHandler',
+	},
+	selectHandler: function (e) {
+	    var elem = $(this.el);
+	    $('.bsgItem').parents('.item.active').removeClass('active');
+	    elem.addClass('active');
+	    App.vent.trigger("blockscreens:selectBsGroup", this.model);
+	},
 	overHandler: function (e) {
 	    if (e.pageX !== p_mover_prevX || e.pageY !== p_mover_prevY) {
 		$(this.el).addClass('selected');

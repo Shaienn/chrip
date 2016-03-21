@@ -86,12 +86,12 @@ h2, .h2{
 .white-line{
     border-bottom: 1px solid white;
 }
-/*
-#app-area {
-    width: 100%;
-    float: left;
 
-}*/
+.authorItem, .songItem, .playlistItem, .bsgItem {
+    border-top: 1px solid #17181b;
+    border-bottom: 1px solid #17181b;
+    padding: 10px;
+}
 
 .close-icon {
     color: #ccc;

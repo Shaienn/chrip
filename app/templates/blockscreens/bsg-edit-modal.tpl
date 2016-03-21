@@ -4,7 +4,6 @@
 	<div class="col-lg-12">
 	    <h3>Группа заставок</h3>
 	</div>
-
     </div>
 
     <div class="row ">

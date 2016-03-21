@@ -83,11 +83,7 @@
 
 /* Author item */
 
-.authorItem, .songItem, .playlistItem {
-    border-top: 1px solid #17181b;
-    border-bottom: 1px solid #17181b;
-    padding: 10px;
-}
+
 
 .item {
     display: inline-block;
