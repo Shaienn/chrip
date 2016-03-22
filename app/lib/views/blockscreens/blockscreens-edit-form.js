@@ -87,11 +87,11 @@
 	},
 	initialize: function (options) {
 
-	    if (typeof options.blockscreen != "undefined") {
+	    if (typeof options.blockscreen !== "undefined") {
 		this.blockscreen = options.blockscreen;
 	    }
 
-	    if (typeof options.file_path != "undefined") {
+	    if (typeof options.file_path !== "undefined") {
 		this.file_path = options.file_path;
 	    }
 
@@ -205,27 +205,30 @@
 	},
 	saveBsHandler: function () {
 	    var files = $(this.ui.bsSaveInput)[0].files;
-	    var path = files[0].path
-	    path.replace(/\.[^/.]+$/, "");
+	    var path = files[0].path.replace(/\.[^/.]+$/, "");
 	    this.saveBsFile(path);
 	},
 	saveBsFile: function (path) {
+	    console.log(path);
 	    var that = this;
 	    fs.writeFile(path + '.bs', this.xml, function (err) {
 		if (err) {
 		    console.log(err);
 		}
 
-		/* add this file to group */
+		that.blockscreen.set('file', path + '.bs');
 
-		that.cancel();
+		/* add this file to group */
+		App.Database.addFileToBlockScreenGroup(that.blockscreen)
+			.then(function () {
+			    that.cancel();
+			});
 	    });
 	},
 	convertImageToBase64: function (path) {
 	    var d = Q.defer();
 	    var options = {localFile: true, string: true};
 	    base64.base64encoder(path, options, function (err, image) {
-
 		if (err) {
 		    d.reject(err);
 		}
@@ -722,6 +725,8 @@
 			var obj = JSON.stringify(that.blockscreen);
 			var builder = new xml2js.Builder();
 			that.xml = builder.buildObject(obj);
+			console.log(that.xml);
+
 
 			if (typeof (that.file_path) === "undefined") {
 			    that.openSaveBsDialog();

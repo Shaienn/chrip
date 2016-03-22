@@ -10,11 +10,6 @@
 	collection: null,
 	regions: {
 	    List_r: '#bs-elements-list',
-	    ToolBar_r: "#bs-elements-toolbar",
-	    modals: {
-		selector: '#bsElementsModal',
-		regionClass: Backbone.Marionette.Modals
-	    }
 	},
 	initialize: function (options) {
 
@@ -25,7 +20,6 @@
 	},
 	onShow: function () {
 	    this.List_r.show(this.collection);
-	    this.ToolBar_r.show(new App.View.BlockScreens.Elements.ToolBar());
 	},
     });
 

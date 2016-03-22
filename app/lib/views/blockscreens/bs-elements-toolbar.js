@@ -14,11 +14,16 @@
 	    'click #bs-open-element-btn': 'openBsElementFile',
 	    'click #bs-add-element-btn': 'createBsElement'
 	},
+	initialize: function (options) {
+	    if (typeof options.group !== "undefined") {
+		this.group = options.group;
+	    }
+	},
 	openBsElementFile: function () {
 	    App.vent.trigger('blockscreens:openElement');
 	},
 	createBsElement: function () {
-	    App.vent.trigger('blockscreens:createElement');
+	    App.vent.trigger('blockscreens:createElement', this.group);
 	}
     });
 

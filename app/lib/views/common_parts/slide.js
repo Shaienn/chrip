@@ -2,60 +2,78 @@
     'use strict';
     var sl_prevX = 0;
     var sl_prevY = 0;
-    var SongServiceSlideGeneral = Backbone.Marionette.ItemView.extend({
-        className: 'slide-item',
-        template: "#slide-tpl",
-        background_loaded: false,
-        ui: {
-            background: ".slide_background",
-            text_span: ".slide_text span",
-        },
-        initialize: function () {
-            this.listenTo(App.vent, "resize", _.bind(this.onShow, this));
-        },
-        onShow: function () {
-            var that = this;
-            this.bindUIElements();
 
-            /* We wait first time until loading background image, 
-             * cause container dimensions for bigText() depends on it */
+    App.View.Common.Slides.Slide = Backbone.Marionette.ItemView.extend({
+	template: "#slide-tpl",
+	tagName: 'li',
+	className: 'slide-preview-item',
+	image_loaded: false,
+	ui: {
+	    image: ".slide_image",
+	    text_span: ".slide_text span",
+	},
+	events: {
+	    'click .slide-container': 'clickHandler',
+	},
+	initialize: function () {
+	    this.listenTo(App.vent, "resize", _.bind(this.onShow, this));
+	},
+	onShow: function () {
+	    var that = this;
+	    this.bindUIElements();
 
-            if (this.background_loaded) {
-                this.ui.text_span.bigText();
-                return;
-            } else {
-                this.ui.text_span.hide();
-                this.ui.background.load(function () {
-                    that.ui.text_span.show();
-                    that.ui.text_span.bigText();
-                    that.background_loaded = true;
-                });
-            }
-        }
+	    /* We wait first time until loading background image, 
+	     * cause container dimensions for bigText() depends on it */
+
+	    if (this.image_loaded) {
+		this.ui.text_span.bigText();
+		return;
+	    } else {
+		this.ui.text_span.hide();
+		this.ui.image.load(function () {
+		    that.ui.text_span.show();
+		    that.ui.text_span.bigText();
+		    that.image_loaded = true;
+		});
+	    }
+	},
+	clickHandler: function (e) {
+
+	    var elem = $(this.el);
+
+	    if (e.pageX !== sl_prevX || e.pageY !== sl_prevY) {
+		$('.' + this.className + '.active').removeClass('active');
+		elem.addClass('active');
+		sl_prevX = e.pageX;
+		sl_prevY = e.pageY;
+	    }
+
+	    this.showSlideReport();
+	},
+	showSlideReport: function () {},
     });
 
-    App.View.SongService.SingleSlide = SongServiceSlideGeneral.extend({});
-
-    App.View.SongService.GroupSlide = SongServiceSlideGeneral.extend({
-        tagName: 'li',
-        events: {
-            'click .slide-container': 'showSlide',
-        },
-        showSlide: function (e) {
-
-            var elem = $(this.el);
-
-            if (e.pageX !== sl_prevX || e.pageY !== sl_prevY) {
-                $('.slide-item.active').removeClass('active');
-                elem.addClass('active');
-                sl_prevX = e.pageX;
-                sl_prevY = e.pageY;
-            }
-
-            App.vent.trigger("songservice:control:showslide", this.model);
-
-        }
+    App.View.Common.Slides.List = Marionette.CollectionView.extend({
+	tagName: 'ul',
+	className: 'slide-preview-list',
+	slideSelector: '',
+	initialize: function () {
+	    this.listenTo(App.vent, "resize", _.bind(this.redrawSlides, this));
+	    this.slideSelector = '.' + this.className + ' .' + this.childView.prototype.className;
+	},
+	redrawSlides: function () {
+	    var gridSize = 100 / Math.ceil(Math.sqrt(this.collection.length));
+	    $(this.slideSelector)
+		    .css("width", gridSize + "%")
+		    .css("height", gridSize + "%");
+	},
+	onShow: function () {
+	    this.redrawSlides();
+	    App.vent.trigger("songservice:control:showslide", this.collection.at(0));
+	},
     });
+
+
 
 })(window.App);
 

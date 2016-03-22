@@ -18,11 +18,11 @@
 	tagName: 'li',
 	className: 'item',
 	events: {
-	    'click .bsgItem': 'selectHandler',
+	    'click .bsgItem': 'clickHandler',
 	    'mouseover .bsgItem': 'overHandler',
 	    'mouseout .bsgItem': 'outHandler',
 	},
-	selectHandler: function (e) {
+	clickHandler: function (e) {
 	    var elem = $(this.el);
 	    $('.bsgItem').parents('.item.active').removeClass('active');
 	    elem.addClass('active');

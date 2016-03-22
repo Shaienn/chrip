@@ -77,7 +77,7 @@
             var verse_template = _.template($('#verse-slide-tpl').html());
             target.html(verse_template(slide.attributes));
             var verse_text = target.find('.slide-verse-text');
-            var background = target.find('img.slide_background');
+            var background = target.find('img.slide_image');
 
             verse_text.hide();
             background.load(function () {
@@ -93,7 +93,7 @@
             var slide_template = _.template($('#slide-tpl').html());
             target.html(slide_template(slide.attributes));
             var text_span = target.find('.slide_text span');
-            var background = target.find('img.slide_background');
+            var background = target.find('img.slide_image');
 
             text_span.hide();
             background.load(function () {

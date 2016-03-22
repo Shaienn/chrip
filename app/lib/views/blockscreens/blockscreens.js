@@ -25,9 +25,11 @@
 	    this.listenTo(App.vent, "blockscreens:selectBsGroup", _.bind(this.selectBlockscreenGroupHandler, this));
 	    this.listenTo(App.vent, "blockscreens:createElement", _.bind(this.createElementHandler, this));
 	},
-	createElementHandler: function () {
+	createElementHandler: function (group) {
 	    var bse = new App.View.BlockScreens.Elements.EditForm({
-		blockscreen: new App.Model.BlockScreens.Elements.Element(),
+		blockscreen: new App.Model.BlockScreens.Elements.Element({
+		    gid: group.get('id')
+		})
 	    });
 	    this.modals.show(bse);
 	},
@@ -51,36 +53,40 @@
 
 	    App.Database.getBlockScreenFiles(group).then(function (files) {
 
+		console.log(files);
+
 		/* parse each file and get JSON objects  */
 
 		that.parseBlockscreensFiles(files).then(function (objects) {
 
+		    console.log(objects);
 
-		    var elements = new App.Model.BlockScreen.Elements.List();
+		    var elements = new App.Model.BlockScreens.Elements.List();
 
 		    /* Create bsElements */
 
+
+
 		    objects.forEach(function (item) {
 
-			var element = new App.Model.BlockScreen.Elements.Element();
-			element.set('html', item.html);
-			element.set('preview', item.preview);
-			element.set('name', item.name);
+			var element = new App.Model.BlockScreens.Elements.Element();
+			element.set('html', item.value.html);
+			element.set('preview', item.value.preview);
+			element.set('name', item.value.name);
 			elements.add(element);
 
 		    });
+
+		    console.log(elements);
 
 		    var elements_view = new App.View.BlockScreens.Elements.List({
 			childView: App.View.BlockScreens.Elements.Element,
 			collection: elements,
 		    });
 
-		    that.BSGContent_r.show(new App.View.BlockScreens.Elements.Control({
-			collection: elements_view
-		    }));
+		    console.log(elements_view);
 
-
-
+		    that.BSGContent_r.show(elements_view);
 		});
 
 	    });
@@ -94,32 +100,57 @@
 
 	    var files = [];
 	    blockscreens_files.forEach(function (item) {
-
 		var d = Q.defer();
-		var timeout = setTimeout(function () {
-		    d.reject('timeout');
-		}, 5000);
-		fs.readSync(item.path, function (err, data) {
+
+		fs.readFile(item.file, function (err, res) {
 
 		    if (err) {
-			d.reject(err);
-			clearTimeout(timeout);
+			throw err;
 		    }
 
 		    var parser = new xml2js.Parser();
-		    parser.parseString(data, function (err, result) {
+		    parser.parseString(res, function (err, res) {
 			if (err) {
-			    d.reject(err);
-			    clearTimeout(timeout);
+			    throw err;
 			}
 
-			d.resolve(result);
-			clearTimeout(timeout);
+			var object = JSON.parse(res.root);
+			d.resolve(object);
 		    });
-		    files.push(d.promise);
+
 		});
+
+		files.push(d.promise);
 	    });
 	    return Q.allSettled(files);
+//	    var files = [];
+//	    blockscreens_files.forEach(function (item) {
+//
+//		var d = Q.defer();
+//		var timeout = setTimeout(function () {
+//		    d.reject('timeout');
+//		}, 5000);
+//		fs.readSync(item.path, function (err, data) {
+//
+//		    if (err) {
+//			d.reject(err);
+//			clearTimeout(timeout);
+//		    }
+//
+//		    var parser = new xml2js.Parser();
+//		    parser.parseString(data, function (err, result) {
+//			if (err) {
+//			    d.reject(err);
+//			    clearTimeout(timeout);
+//			}
+//
+//			d.resolve(result);
+//			clearTimeout(timeout);
+//		    });
+//		    files.push(d.promise);
+//		});
+//	    });
+//	    return Q.allSettled(files);
 	},
 	onShow: function () {
 	    console.log("show");

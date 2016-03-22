@@ -62,7 +62,7 @@
 
 	    /* Select verse */
 
-	    var verse_list = $('#bible_verselist ul');
+	    var verse_list = this.VerseList_r.$el.find('ul');
 	    var currentVerse = verse_list.find('li div[verse=' + verse_number + ']');
 	    currentVerse.parent().trigger('click');
 	    currentVerse.parent().addClass('active');

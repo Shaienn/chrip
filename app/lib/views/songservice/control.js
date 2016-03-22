@@ -4,32 +4,23 @@
 
 (function (App) {
     'use strict';
-    var ControlPanelCollection = Marionette.CollectionView.extend({
-        tagName: 'ul',
-        className: 'control-panel-list',
-        childView: App.View.SongService.GroupSlide,
-        initialize: function () {
-            this.listenTo(App.vent, "resize", _.bind(this.redrawSlides, this));
-            this.listenTo(App.vent, "control:showActiveSlide", _.bind(this.showActiveSlide, this));
-        },
-        showActiveSlide: function () {
-            var controlPanel = $('#controlPanel ul');
-            var currentSlide = controlPanel.find('li.active');
-            currentSlide.find('.slide-container').trigger('click');
-        },
-        redrawSlides: function () {
-            var gridSize = 100 / Math.ceil(Math.sqrt(this.collection.length));
-            var slideItem = $('.control-panel-list .slide-item');
-            slideItem.css("width", gridSize + "%");
-            slideItem.css("height", gridSize + "%");
-        },
-        onShow: function () {
-            this.redrawSlides();
-            App.vent.trigger("songservice:control:showslide", this.collection.at(0));
-        },
+
+
+    App.View.SongService.Slides.SingleSlide = App.View.Common.Slides.Slide.extend({
+	className: 'song-element-' + App.View.Common.Slides.Slide.prototype.className,
     });
 
-    App.View.SongControlPanelCollection = ControlPanelCollection;
+    App.View.SongService.Slides.GroupSlide = App.View.Common.Slides.Slide.extend({
+	className: 'song-element-' + App.View.Common.Slides.Slide.prototype.className,
+	showSlideReport: function () {
+	    App.vent.trigger("songservice:control:showslide", this.model);
+	}
+    });
+
+    App.View.SongService.Slides.List = App.View.Common.Slides.List.extend({
+	className: 'song-elements-' + App.View.Common.Slides.List.prototype.className,
+	childView: App.View.SongService.Slides.GroupSlide,
+    });
 
 
 })(window.App);

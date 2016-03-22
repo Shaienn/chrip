@@ -9,328 +9,332 @@
     'use strict';
 
     App.View.SongService.Control = Backbone.Marionette.LayoutView.extend({
-        template: '#songservice-control-tpl',
-        id: 'songservice-control-contain',
-        collection: null,
-        active_item: null,
-        regions: {
-            BottomToolbar_r: '#playlist_bottomtoolbar',
-            List_r: '#playlist_list',
-            ControlPanel_r: "#controlPanel",
-            modals: {
-                selector: '#songServiceModal',
-                regionClass: Backbone.Marionette.Modals
-            }
-        },
-        /******************* Layout functions *******************/
-
-        initialize: function () {
-            this.listenTo(App.vent, 'songservice:playlist:item_selected', _.bind(this.showPlaylistItemControl, this));
-            this.listenTo(App.vent, 'songservice:control:onEvent', _.bind(this.onEvent, this));
-            this.listenTo(App.vent, 'songservice:control:offEvent', _.bind(this.offEvent, this));
-            this.listenTo(App.vent, 'songservice:control:showslide', _.bind(this.showSlide, this));
+	template: '#songservice-control-tpl',
+	id: 'songservice-control-contain',
+	collection: null,
+	active_item: null,
+	regions: {
+	    BottomToolbar_r: '#playlist_bottomtoolbar',
+	    List_r: '#playlist_list',
+	    ControlPanel_r: "#controlPanel",
+	    modals: {
+		selector: '#songServiceModal',
+		regionClass: Backbone.Marionette.Modals
+	    }
+	},
+	/******************* Layout functions *******************/
 
-            /* Context menu */
-
-            this.listenTo(App.vent, "songservice:control:context:song_slides_redraw", _.bind(this.onSongSlidesRedraw, this));
-            this.listenTo(App.vent, "songservice:control:context:edit_song", _.bind(this.openEditSongWindow, this));
-
-
-        },
-        onShow: function () {
-
-            var that = this;
-            this.BottomToolbar_r.show(new App.View.SongService.Control.BottomToolBar);
+	initialize: function () {
+	    this.listenTo(App.vent, 'songservice:playlist:item_selected', _.bind(this.show_song_slides, this));
+	    this.listenTo(App.vent, 'songservice:control:onEvent', _.bind(this.onEvent, this));
+	    this.listenTo(App.vent, 'songservice:control:offEvent', _.bind(this.offEvent, this));
+	    this.listenTo(App.vent, 'songservice:control:showslide', _.bind(this.showSlide, this));
 
-            /* Add last songs */
+	    /* Context menu */
 
-            App.Database.getLastSongs().then(function (lastSongs) {
+	    this.listenTo(App.vent, "songservice:control:context:song_slides_redraw", _.bind(this.song_slides_redraw, this));
+	    this.listenTo(App.vent, "songservice:control:context:edit_song", _.bind(this.openEditSongWindow, this));
 
-                win.log(lastSongs);
 
-                for (var i = 0; i < lastSongs.length; i++) {
-                    lastSongs[i].rebuild_slides();
-                    App.Model.PlayListCollection.add(lastSongs[i], {silent: true});
-                }
+	},
+	onShow: function () {
 
-                that.collection = new App.View.PlayListCollection({
-                    childView: App.View.PlayListControl,
-                    collection: App.Model.PlayListCollection,
-                });
+	    var that = this;
+	    this.BottomToolbar_r.show(new App.View.SongService.Control.BottomToolBar);
 
-                that.List_r.show(that.collection);
-                _.bind(that.doOnShow, that)();
-            });
-        },
-        /**************************************/
-        openEditSongWindow: function (song) {
+	    /* Add last songs */
 
-            var that = this;
-            console.log("authors loading");
+	    App.Database.getLastSongs().then(function (lastSongs) {
 
-            /* get related info */
+		win.log(lastSongs);
 
-            App.Database.loadAuthors().then(function (loadedAuthors) {
+		for (var i = 0; i < lastSongs.length; i++) {
+		    lastSongs[i].rebuild_slides();
+		    App.Model.PlayListCollection.add(lastSongs[i], {silent: true});
+		}
 
-                var authorCollection = new App.Model.AuthorCollection(loadedAuthors);
-                var form = new App.View.SongEditForm({
-                    song: song,
-                    authors: authorCollection,
-                    control: that
-                });
-                
-                /* Turn off keydown events while in modal */
-                
-                that.modals.show(form);
-            });
-        },
-        showSlide: function (slide) {
+		that.collection = new App.View.SongService.PlayList.List({
+		    childView: App.View.PlayListControl,
+		    collection: App.Model.PlayListCollection,
+		});
 
-            $('.control-panel-list .slide-item.active').removeClass('active');
-            $('.control-panel-list .slide-item div[number=' + slide.get('number') + ']')
-                    .parent().addClass("active");
+		that.List_r.show(that.collection);
+		_.bind(that.doOnShow, that)();
+	    });
+	},
+	/**************************************/
+	openEditSongWindow: function (song) {
 
-            if (App.active_mode == true) {
-                App.vent.trigger("presentation:set_new_element", slide);
-            }
+	    var that = this;
+	    console.log("authors loading");
 
-        },
-        onSongSlidesRedraw: function (song) {
+	    /* get related info */
 
-            /* Redraw control regiong only if we redraw active song */
+	    App.Database.loadAuthors().then(function (loadedAuthors) {
 
-            if (this.active_item.cid != song.cid)
-                return;
+		var authorCollection = new App.Model.AuthorCollection(loadedAuthors);
+		var form = new App.View.SongEditForm({
+		    song: song,
+		    authors: authorCollection,
+		    control: that
+		});
 
-            this.showPlaylistItemControl(song);
+		/* Turn off keydown events while in modal */
 
-        },
-        showPlaylistItemControl: function (item) {
+		that.modals.show(form);
+	    });
+	},
+	showSlide: function (slide) {
 
-            if (item instanceof App.Model.Song) {
+	    var slides_panel = this.ControlPanel_r.$el;
 
-                this.active_item = item;
-                                
-                /* Collection of itemviews */
+	    if (slides_panel.length !== 0) {
+		slides_panel.find('.active').removeClass('active');
+		slides_panel.find('div[number=' + slide.get('number') + ']')
+			.parent().addClass("active");
+	    }
 
-                var itemCollection = new App.Model.SongControlPanelCollection(item.slides);
-                
-                
-                var itemCollectionView = new App.View.SongControlPanelCollection({
-                    collection: itemCollection,
-                });
+	    if (App.active_mode == true) {
+		App.vent.trigger("presentation:set_new_element", slide);
+	    }
 
-                this.keyAssign(item.slides.length);
+	},
+	song_slides_redraw: function (song) {
 
-            }
+	    /* Redraw control regiong only if we redraw active song */
 
-            this.ControlPanel_r.show(itemCollectionView);
+	    if (this.active_item.cid != song.cid)
+		return;
 
-        },
-        onEvent: function () {
-            this.offEvent();
-            $(App.ControlWindow.window.document).on('keydown', this.keyHandler);
-            this.List_r.currentView.render();
-            App.vent.trigger("resize");
-        },
-        offEvent: function () {
+	    this.show_song_slides(song);
 
-            $(App.ControlWindow.window.document).off('keydown', this.keyHandler);
+	},
+	show_song_slides: function (item) {
 
-        },
-        keyHandler: function (event) {
+	    if (item instanceof App.Model.Song) {
 
-            event.preventDefault();
-            var key = event.which;
+		this.active_item = item;
 
-            if (event.ctrlKey) {
+		/* Collection of itemviews */
 
-                /* CTRL + O opens songbase */
+		var itemCollection = new App.Model.SongControlPanelCollection(item.slides);
 
-                if (key == 79) {
-                    win.log("Open songbase request");
-                    App.vent.trigger("songservice:show_songbase");
-                }
-            }
 
-            if ((key >= 97) && (key <= 105)) {
+		var itemCollectionView = new App.View.SongService.Slides.List({
+		    collection: itemCollection,
+		});
 
-                this.keys.forEach(function (item) {
+		this.keyAssign(item.slides.length);
 
-                    if (item.key == key) {
+	    }
 
-                        var controlPanel = $('#controlPanel ul');
-                        controlPanel.find('.slide-item').removeClass('active');
-                        var item = controlPanel.find('.slide-container[number=' + item.c + ']');
-                        item.trigger('click');
-                        item.parents('.slide-item').addClass('active');
-                        return;
+	    this.ControlPanel_r.show(itemCollectionView);
 
-                    }
-                });
-            }
+	},
+	onEvent: function () {
+	    this.offEvent();
+	    $(App.ControlWindow.window.document).on('keydown', this.keyHandler);
+	    this.List_r.currentView.render();
+	    App.vent.trigger("resize");
+	},
+	offEvent: function () {
 
+	    $(App.ControlWindow.window.document).off('keydown', this.keyHandler);
 
-            if ((key >= 37) && (key <= 40)) {
+	},
+	keyHandler: function (event) {
 
-                switch (key) {
+	    event.preventDefault();
+	    var key = event.which;
 
-                    case (37):
+	    if (event.ctrlKey) {
 
-                        /* Select previous slide */
+		/* CTRL + O opens songbase */
 
-                        var controlPanel = $('#controlPanel ul');
-                        var currentSlide = controlPanel.find('li.active');
-                        var prevSlide = currentSlide.prev('#controlPanel ul li');
-                        if (prevSlide.length > 0) {
+		if (key == 79) {
+		    win.log("Open songbase request");
+		    App.vent.trigger("songservice:show_songbase");
+		}
+	    }
 
-                            currentSlide.removeClass('active');
-                            prevSlide.find('.slide-container').trigger('click');
-                            prevSlide.addClass('active');
+	    if ((key >= 97) && (key <= 105)) {
 
-                        }
-                        break;
+		this.keys.forEach(function (item) {
 
-                    case (39):
+		    if (item.key == key) {
 
-                        /* Select next slide */
+			var controlPanel = $('#controlPanel ul');
+			controlPanel.find('.song-element-slide-preview-item').removeClass('active');
+			var item = controlPanel.find('.slide-container[number=' + item.c + ']');
+			item.trigger('click');
+			item.parents('.song-element-slide-preview-item').addClass('active');
+			return;
 
-                        var controlPanel = $('#controlPanel ul');
-                        var currentSlide = controlPanel.find('li.active');
-                        var nextSlide = currentSlide.next('#controlPanel ul li');
-                        if (nextSlide.length > 0) {
+		    }
+		});
+	    }
 
-                            currentSlide.removeClass('active');
-                            nextSlide.find('.slide-container').trigger('click');
-                            nextSlide.addClass('active');
 
-                        }
-                        break;
+	    if ((key >= 37) && (key <= 40)) {
 
-                    case (38):
+		switch (key) {
 
-                        /* Select previous song */
+		    case (37):
 
-                        var playlist_list = $('#playlist_list ul');
-                        var currentSong = playlist_list.find('li.active');
-                        var prevSong = currentSong.prev('#playlist_list ul li');
-                        if (prevSong.length > 0) {
+			/* Select previous slide */
 
-                            currentSong.removeClass('active');
-                            prevSong.find('.playlistItem').trigger('click');
-                            prevSong.addClass('active');
+			var controlPanel = $('#controlPanel ul');
+			var currentSlide = controlPanel.find('li.active');
+			var prevSlide = currentSlide.prev('#controlPanel ul li');
+			if (prevSlide.length > 0) {
 
-                        }
-                        break;
+			    currentSlide.removeClass('active');
+			    prevSlide.find('.slide-container').trigger('click');
+			    prevSlide.addClass('active');
 
-                    case (40):
+			}
+			break;
 
-                        /* Select next song */
+		    case (39):
 
-                        var playlist_list = $('#playlist_list ul');
-                        var currentSong = playlist_list.find('li.active');
-                        var nextSong = currentSong.next('#playlist_list ul li');
-                        if (nextSong.length > 0) {
+			/* Select next slide */
 
-                            currentSong.removeClass('active');
-                            nextSong.find('.playlistItem').trigger('click');
-                            nextSong.addClass('active');
+			var controlPanel = $('#controlPanel ul');
+			var currentSlide = controlPanel.find('li.active');
+			var nextSlide = currentSlide.next('#controlPanel ul li');
+			if (nextSlide.length > 0) {
 
-                        }
-                        break;
+			    currentSlide.removeClass('active');
+			    nextSlide.find('.slide-container').trigger('click');
+			    nextSlide.addClass('active');
 
-                }
-            }
-        },
-        keyAssign: function (slides_count) {
+			}
+			break;
 
-            this.keys = [];
+		    case (38):
 
-            if (slides_count > 0) {
+			/* Select previous song */
 
-                /* 7 or Home is it */
+			var playlist_list = $('#playlist_list ul');
+			var currentSong = playlist_list.find('li.active');
+			var prevSong = currentSong.prev('#playlist_list ul li');
+			if (prevSong.length > 0) {
 
-                this.keys.push({key: 103, c: 0});
+			    currentSong.removeClass('active');
+			    prevSong.find('.playlistItem').trigger('click');
+			    prevSong.addClass('active');
 
-                if (slides_count > 1) {
+			}
+			break;
 
-                    /* 8 or Up is it */
+		    case (40):
 
-                    this.keys.push({key: 104, c: 1});
+			/* Select next song */
 
-                    if (slides_count > 2) {
+			var playlist_list = $('#playlist_list ul');
+			var currentSong = playlist_list.find('li.active');
+			var nextSong = currentSong.next('#playlist_list ul li');
+			if (nextSong.length > 0) {
 
-                        if (slides_count > 4) {
+			    currentSong.removeClass('active');
+			    nextSong.find('.playlistItem').trigger('click');
+			    nextSong.addClass('active');
 
-                            /* 9 or PgUp is it */
+			}
+			break;
 
-                            this.keys.push({key: 105, c: 2});
+		}
+	    }
+	},
+	keyAssign: function (slides_count) {
 
-                        } else {
+	    this.keys = [];
 
-                            /* 4 or Left is it */
+	    if (slides_count > 0) {
 
-                            this.keys.push({key: 100, c: 2});
+		/* 7 or Home is it */
 
-                        }
+		this.keys.push({key: 103, c: 0});
 
-                        if (slides_count > 3) {
+		if (slides_count > 1) {
 
-                            if (slides_count > 4) {
+		    /* 8 or Up is it */
 
-                                /* 4 or Left is it */
+		    this.keys.push({key: 104, c: 1});
 
-                                this.keys.push({key: 100, c: 3});
+		    if (slides_count > 2) {
 
-                            } else {
+			if (slides_count > 4) {
 
-                                /* 5 or Left is it */
+			    /* 9 or PgUp is it */
 
-                                this.keys.push({key: 101, c: 3});
+			    this.keys.push({key: 105, c: 2});
 
-                            }
+			} else {
 
-                            if (slides_count > 4) {
+			    /* 4 or Left is it */
 
-                                /* 5 or Left is it */
+			    this.keys.push({key: 100, c: 2});
 
-                                this.keys.push({key: 101, c: 4});
+			}
 
-                                if (slides_count > 5) {
+			if (slides_count > 3) {
 
-                                    /* 6 or Right is it */
+			    if (slides_count > 4) {
 
-                                    this.keys.push({key: 102, c: 5});
+				/* 4 or Left is it */
 
+				this.keys.push({key: 100, c: 3});
 
-                                    if (slides_count > 6) {
+			    } else {
 
-                                        /* 1 or End is it */
+				/* 5 or Left is it */
 
-                                        this.keys.push({key: 97, c: 6});
+				this.keys.push({key: 101, c: 3});
 
-                                        if (slides_count > 7) {
+			    }
 
-                                            /* 2 or Down is it */
+			    if (slides_count > 4) {
 
-                                            this.keys.push({key: 98, c: 7});
+				/* 5 or Left is it */
 
-                                            if (slides_count > 8) {
+				this.keys.push({key: 101, c: 4});
 
-                                                /* 3 or PgDn is it */
+				if (slides_count > 5) {
 
-                                                this.keys.push({key: 99, c: 8});
+				    /* 6 or Right is it */
 
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
+				    this.keys.push({key: 102, c: 5});
+
+
+				    if (slides_count > 6) {
+
+					/* 1 or End is it */
+
+					this.keys.push({key: 97, c: 6});
+
+					if (slides_count > 7) {
+
+					    /* 2 or Down is it */
+
+					    this.keys.push({key: 98, c: 7});
+
+					    if (slides_count > 8) {
+
+						/* 3 or PgDn is it */
+
+						this.keys.push({key: 99, c: 8});
+
+					    }
+					}
+				    }
+				}
+			    }
+			}
+		    }
+		}
+	    }
+	},
     });
 
 })(window.App);

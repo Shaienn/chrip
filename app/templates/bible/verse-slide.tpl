@@ -1,7 +1,7 @@
 <div class="slide-container" number=<%= number %>>
      <div class="inner-item">
         <div class="inner-slide-container">
-            <img class="slide_background" src="<%= background %>" height="<%= height %>px" width="<%= width %>px" />
+            <img class="slide_image" src="<%= background %>" height="<%= height %>px" width="<%= width %>px" />
             <div class="slide-verse-text"><%= text %></div>
             <div class="slide-verse-link"><%= link %></div>
         </div>

@@ -114,9 +114,8 @@
 
 		var songCollection = new App.Model.SongCollection(loadedSongs);
 
-		var songCollectionView = new App.View.SongCollection({
+		var songCollectionView = App.View.SongService.Songs.List({
 		    collection: songCollection,
-		    childView: App.View.SongService.Song,
 		});
 
 		that.SongList_r.show(songCollectionView);
@@ -252,9 +251,8 @@
 
 		var songCollection = new App.Model.SongCollection(loadedSongs);
 
-		var songCollectionView = new App.View.SongCollection({
+		var songCollectionView = new App.View.SongService.Songs.List({
 		    collection: songCollection,
-		    childView: App.View.SongService.Song,
 		});
 
 		that.SongList_r.show(songCollectionView);
@@ -291,7 +289,7 @@
 
 	    App.Database.loadAuthors().then(function (loadedAuthors) {
 		var authorCollection = new App.Model.AuthorCollection(loadedAuthors);
-		var authorCollectionView = new App.View.AuthorCollection({
+		var authorCollectionView = new App.View.SongService.Authors.List({
 		    collection: authorCollection,
 		});
 
@@ -309,7 +307,7 @@
 	    $('#appmode-menu').hide();
 	    $('#main-window-toptoolbar').hide();
 
-	    this.PlayList_r.show(new App.View.PlayListCollection({
+	    this.PlayList_r.show(new App.View.SongService.PlayList.List({
 		childView: App.View.PlayListSongBase,
 		collection: App.Model.PlayListCollection,
 	    }));

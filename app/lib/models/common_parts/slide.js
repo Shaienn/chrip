@@ -5,27 +5,17 @@
 (function (App) {
     'use strict';
 
-    var Q = require('q');
-
-
-    var SlideModel = Backbone.Model.extend({
-        background: null,
-        width: null,
-        height: null,
+    App.Model.Common.Slides.Slide = Backbone.Model.extend({
     });
 
-    App.Model.BibleSlide = SlideModel.extend({
-        text: "",
-        link: "",
+    App.Model.BibleSlide = App.Model.Common.Slides.Slide.extend({
+	text: "",
+	link: "",
     });
 
-    App.Model.SongSlide = SlideModel.extend({
-        text: "",
-        number: 0,
+    App.Model.SongSlide = App.Model.Common.Slides.Slide.extend({
+	text: "",
+	number: 0,
     });
-
-
-    //App.Model.Slide = SlideModel;
-
 
 })(window.App);

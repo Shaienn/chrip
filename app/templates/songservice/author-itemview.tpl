@@ -1,3 +1,3 @@
-<div class="authorItem" aid=<%= aid %> gaid=<%= gaid %> >
+<div class="item-container" aid=<%= aid %> gaid=<%= gaid %> >
     <%= name %>
 </div>

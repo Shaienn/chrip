@@ -53,10 +53,19 @@ _.extend(App, {
     Controller: {},
     View: {
 	MainWindow: {},
-	SongService: {},
+	SongService: {
+	    Authors: {},
+	    PlayList: {},
+	    Songs: {},
+	    Slides: {}
+	},
 	Bible: {},
 	Videoplayer: {},
 	Settings: {},
+	Common: {
+	    Slides: {},
+	    ItemList: {}
+	},
 	BlockScreens: {
 	    Editor: {},
 	    Elements: {},
@@ -64,10 +73,19 @@ _.extend(App, {
 	},
     },
     Model: {
-	SongService: {},
+	SongService: {
+	    Authors: {},
+	    PlayList: {},
+	    Songs: {},
+	    Slides: {}
+	},
 	SongEditor: {},
 	Bible: {},
 	Videoplayer: {},
+	Common: {
+	    Slides: {},
+	    ItemList: {}
+	},
 	BlockScreens: {
 	    Editor: {},
 	    Elements: {},

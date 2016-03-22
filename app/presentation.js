@@ -15,7 +15,7 @@
                 },
                 after: function (target) {
                     var text_span = target.find('.slide_text span');
-                    var background = target.find('img.slide_background');
+                    var background = target.find('img.slide_image');
                     text_span.hide();
                     background.load(function () {
                         text_span.show();
@@ -32,7 +32,7 @@
                 },
                 after: function (target) {
                     var verse_text = target.find('.slide-verse-text');
-                    var background = target.find('img.slide_background');
+                    var background = target.find('img.slide_image');
 
                     verse_text.hide();
                     background.load(function () {

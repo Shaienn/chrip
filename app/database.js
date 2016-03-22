@@ -36,7 +36,7 @@
 
 
 		App.Database.user_db.run("CREATE TABLE IF NOT EXISTS [BlockScreensGroups] ([id] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, [name] TEXT NOT NULL) ");
-		App.Database.user_db.run("CREATE TABLE IF NOT EXISTS [BlockScreensFiles] ([gid] INTEGER NOT NULL, [filepath] TEXT NOT NULL) ");
+		App.Database.user_db.run("CREATE TABLE IF NOT EXISTS [BlockScreensFiles] ([gid] INTEGER NOT NULL, [file] TEXT NOT NULL) ");
 
 		/* If we have no settings inside database files, just add its defaults */
 
@@ -264,6 +264,20 @@
 //
 //        },directory_path
 
+	addFileToBlockScreenGroup: function (blockscreen) {
+
+	    assert.ok(blockscreen instanceof App.Model.BlockScreens.Elements.Element);
+	    var d = Q.defer();
+	    var stmt = App.Database.user_db.prepare("INSERT INTO BlockScreensFiles (gid, file) VALUES (?,?)");
+	    stmt.run(
+		    blockscreen.get('gid'), blockscreen.get('file'), function (err) {
+		if (err)
+		    d.reject(new Error(err));
+		d.resolve(true);
+	    });
+
+	    return d.promise;
+	},
 	saveBlockScreenGroup: function (group) {
 	    var d = Q.defer();
 
@@ -307,11 +321,10 @@
 		}
 
 		rows.forEach(function (item) {
-		    loadedBlockScreensFiles.push(item.filepath);
+		    loadedBlockScreensFiles.push(item);
 		});
 
 		d.resolve(loadedBlockScreensFiles);
-
 	    });
 
 	    return d.promise;

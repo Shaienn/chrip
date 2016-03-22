@@ -1,7 +1,6 @@
-<div class="bs-thumbnail-container">
-    <div class="bs-name">
-	<img src="<%= preview %>">
-    </div>
+<div class="slide-container">
+    <img class="slide_image" src="<%= preview %>">
+
     <div class="bs-name">
         <span><%= name %></span>
     </div>
