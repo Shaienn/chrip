@@ -5,7 +5,8 @@
     App.View.BlockScreens.Root = Backbone.Marionette.LayoutView.extend({
 	template: '#blockscreens-tpl',
 	id: 'blockscreens-main-window',
-	collection: null,
+	elements_collection: null,
+	selected_group: null,
 	ui: {
 	    bsg_loader: '#blockscreens-list .area .loader',
 	},
@@ -20,15 +21,23 @@
 	    }
 	},
 	initialize: function () {
-	    console.log("init");
 	    this.listenTo(App.vent, "blockscreens:addNewBsGroup", _.bind(this.createBlockscreenGroup, this));
 	    this.listenTo(App.vent, "blockscreens:selectBsGroup", _.bind(this.selectBlockscreenGroupHandler, this));
 	    this.listenTo(App.vent, "blockscreens:createElement", _.bind(this.createElementHandler, this));
+	    this.listenTo(App.vent, "blockscreens:editElement", _.bind(this.editElementHandler, this));
+	    this.listenTo(App.vent, "blockscreens:selectElement", _.bind(this.selectElementHandler, this));
 	},
-	createElementHandler: function (group) {
+	selectElementHandler: function (element) {
+	    console.log(element);
+	    this.elements_collection.selectedElement = this.elements_collection.collection.indexOf(element);
+	},
+	editElementHandler: function () {
+
+	},
+	createElementHandler: function () {
 	    var bse = new App.View.BlockScreens.Elements.EditForm({
 		blockscreen: new App.Model.BlockScreens.Elements.Element({
-		    gid: group.get('id')
+		    gid: this.group.get('id')
 		})
 	    });
 	    this.modals.show(bse);
@@ -49,6 +58,8 @@
 		return;
 	    }
 
+	    this.selected_group = group;
+
 	    /* Get files associated with this group */
 
 	    App.Database.getBlockScreenFiles(group).then(function (files) {
@@ -64,8 +75,6 @@
 		    var elements = new App.Model.BlockScreens.Elements.List();
 
 		    /* Create bsElements */
-
-
 
 		    objects.forEach(function (item) {
 
@@ -91,9 +100,7 @@
 
 	    });
 
-	    this.BSGControl_r.show(new App.View.BlockScreens.Elements.ToolBar({
-		group: group
-	    }));
+	    this.BSGControl_r.show(new App.View.BlockScreens.Elements.ToolBar({}));
 
 	},
 	parseBlockscreensFiles: function (blockscreens_files) {
@@ -182,7 +189,7 @@
 		    collection: bsg_collection,
 		});
 
-		that.collection = bsg_collection;
+		that.elements_collection = bsg_collection_view;
 		console.log(that.collection);
 
 

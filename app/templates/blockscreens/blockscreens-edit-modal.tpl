@@ -16,7 +16,7 @@
     </div>
 
     <div class="col-lg-12 vert-offset-top-1 vert-offset-bottom-1">	
-	<div class="col-lg-10 text-left">
+	<div class="col-lg-8 text-left">
 	    <button type="button" class="btn btn-success" id="bs-add-text-btn">
 		<i class="fa fa-plus-square">
 		    <span>
@@ -32,12 +32,15 @@
 		</i>
 	    </button>
 	</div>
-	<div class="col-lg-2  text-right">
-	    <button type="button" class="btn btn-success">
-		<i id="save-btn" class="fa fa-2x fa-check-circle-o" title="Add"></i>
+	<div class="col-lg-4  text-right">
+	    <button type="button" class="btn btn-success" id="save-btn">
+		<span class="glyphicon glyphicon-save-file"></span> Сохранить
 	    </button>
-	    <button type="button" class="btn btn-danger">
-		<i id="cancel-btn" class="fa fa-2x fa-ban" title="Cancel"></i>
+	    <button type="button" class="btn btn-primary" id="save-as-btn">
+		<span class="glyphicon glyphicon-save-file"></span> Сохранить как...
+	    </button>
+	    <button type="button" class="btn btn-danger" id="cancel-btn">
+		<span class="glyphicon glyphicon-ban-circle"></span> Отмена
 	    </button>
 	</div>
     </div>

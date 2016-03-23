@@ -48,9 +48,9 @@
 		sl_prevY = e.pageY;
 	    }
 
-	    this.showSlideReport();
+	    this.clickReport();
 	},
-	showSlideReport: function () {},
+	clickReport: function () {},
     });
 
     App.View.Common.Slides.List = Marionette.CollectionView.extend({

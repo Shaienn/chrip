@@ -10,7 +10,7 @@
 	</button>
     </div>
     <div class="btn-group">
-	<button type="button" class="btn btn-primary" id="appmode-menu-videoplayer-btn">
+	<button type="button" class="btn btn-primary" id="appmode-menu-media-btn">
 	    <i class="fa fa-video-camera" title="Медиа"><span>Медиа</span></i>
 	</button>
     </div>

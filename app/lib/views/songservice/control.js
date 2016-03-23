@@ -12,7 +12,7 @@
 
     App.View.SongService.Slides.GroupSlide = App.View.Common.Slides.Slide.extend({
 	className: 'song-element-' + App.View.Common.Slides.Slide.prototype.className,
-	showSlideReport: function () {
+	clickReport: function () {
 	    App.vent.trigger("songservice:control:showslide", this.model);
 	}
     });

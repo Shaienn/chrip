@@ -60,7 +60,9 @@ _.extend(App, {
 	    Slides: {}
 	},
 	Bible: {},
-	Videoplayer: {},
+	Media: {
+	    Elements: {},
+	},
 	Settings: {},
 	Common: {
 	    Slides: {},
@@ -81,7 +83,9 @@ _.extend(App, {
 	},
 	SongEditor: {},
 	Bible: {},
-	Videoplayer: {},
+	Media: {
+	    Elements: {},
+	},
 	Common: {
 	    Slides: {},
 	    ItemList: {}

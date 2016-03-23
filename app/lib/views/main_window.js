@@ -37,11 +37,11 @@
 	    },
 	    {
 		region: "Media_Tab_r",
-		startPoint: "Videoplayer",
-		button: "#appmode-menu-videoplayer-btn",
-		setting: "mediaplayer",
-		onEvent: "mediaplayer:control:assignKeys",
-		offEvent: "mediaplayer:control:freeKeys",
+		startPoint: "Media",
+		button: "#appmode-menu-media-btn",
+		setting: "media",
+		onEvent: "media:control:assignKeys",
+		offEvent: "media:control:freeKeys",
 	    },
 	    {
 		region: "BlockScreens_Tab_r",

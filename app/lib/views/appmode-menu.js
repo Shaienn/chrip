@@ -12,7 +12,7 @@
 	events: {
 	    'click #appmode-menu-songservice-btn': 'songsBtnHandler',
 	    'click #appmode-menu-bible-btn': 'bibleBtnHandler',
-	    'click #appmode-menu-videoplayer-btn': 'videoplayerBtnHandler',
+	    'click #appmode-menu-media-btn': 'mediaBtnHandler',
 	    'click #appmode-menu-slides-btn': 'slidesBtnHandler',
 	    'click #appmode-menu-settings-btn': 'settingsBtnHandler',
 	},
@@ -26,10 +26,10 @@
 	    App.vent.trigger("appmode:switch_tab_to", "bible");
 	    //App.vent.trigger("appmode:bible:show");
 	},
-	videoplayerBtnHandler: function () {
+	mediaBtnHandler: function () {
 
-	    win.log("videoplayer button click");
-	    App.vent.trigger("appmode:switch_tab_to", "mediaplayer");
+	    win.log("media button click");
+	    App.vent.trigger("appmode:switch_tab_to", "media");
 	    //App.vent.trigger("appmode:videoplayer:show");
 
 	},
