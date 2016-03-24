@@ -102,6 +102,7 @@
 	},
 	onShow: function () {
 	    var that = this;
+	    console.log(this.blockscreen);
 	    var bsElementsCollection = this.getBlockScreenItems(this.blockscreen);
 	    this.elements_collection = new App.View.BlockScreens.Editor.List({
 		collection: bsElementsCollection,
@@ -152,6 +153,8 @@
 	    var bsElements = new App.Model.BlockScreens.Editor.List();
 	    /* iterate */
 
+	    console.log(container.children());
+
 	    container.children().each(function (index) {
 
 		var element = this;
@@ -193,6 +196,8 @@
 		    bsElements.add(element);
 		}
 	    });
+
+	    console.log(bsElements);
 	    return bsElements;
 	},
 	/* Buttons handlers */
@@ -205,24 +210,28 @@
 	},
 	saveBsHandler: function () {
 	    var files = $(this.ui.bsSaveInput)[0].files;
-	    var path = files[0].path.replace(/\.[^/.]+$/, "");
-	    this.saveBsFile(path);
+	    var path = files[0].path.replace(/\.[^/.]+$/, "") + '.bs';
+	    this.saveBsFile(path, false);
 	},
-	saveBsFile: function (path) {
-	    console.log(path);
+	saveBsFile: function (path, is_existed) {
 	    var that = this;
-	    fs.writeFile(path + '.bs', this.xml, function (err) {
+	    fs.writeFile(path, this.xml, function (err) {
 		if (err) {
 		    console.log(err);
 		}
 
-		that.blockscreen.set('file', path + '.bs');
 
-		/* add this file to group */
-		App.Database.addFileToBlockScreenGroup(that.blockscreen)
-			.then(function () {
-			    that.cancel();
-			});
+		if (is_existed !== true) {
+		    that.blockscreen.set('file', path + '.bs');
+
+		    /* add this file to group */
+		    App.Database.addFileToBlockScreenGroup(that.blockscreen)
+			    .then(function () {
+				that.cancel();
+			    });
+		} else {
+		    that.cancel();
+		}
 	    });
 	},
 	convertImageToBase64: function (path) {
@@ -295,7 +304,7 @@
 
 	    });
 	    var text_span = $('<div/>', {
-		class: "bs-editor-text",
+		class: "bs-text",
 		text: "initial text",
 		css: {
 		    textAlign: "center",
@@ -338,7 +347,7 @@
 	    var element = this.elements_collection.collection.at(this.elements_collection.selectedElement);
 	    var id = element.get('id');
 	    var editor = $(this.ui.bsEditorArea).children('.bs-screen-area');
-	    var jquery_element = editor.find("#" + id).find('.bs-editor-text');
+	    var jquery_element = editor.find("#" + id).find('.bs-text');
 	    if (jquery_element.length === 1) {
 		jquery_element.css('text-align', align);
 	    }
@@ -356,7 +365,7 @@
 	    switch (type) {
 
 		case ('text'):
-		    editor.find("#" + id).find('.bs-editor-text').css('color', color);
+		    editor.find("#" + id).find('.bs-text').css('color', color);
 		    break;
 		case ('background'):
 		    editor.find("#" + id).css('background-color', color);
@@ -381,12 +390,20 @@
 		var element = this.elements_collection.collection.at(i);
 		var id = element.get('id');
 		var jquery_element = editor.find("#" + id);
-		if (jquery_element.length == 0) {
+		if (jquery_element.length === 0) {
 		    var html = element.get('html');
 		    jquery_element = $($.parseHTML(html));
 		    this.append_resize_control(jquery_element, i, element.get("type"));
 		    editor.append(jquery_element);
+		    switch (element.get('type')) {
+			case ('text'):
+			    jquery_element.children('.bs-text').textFit({
+				multiline: true,
+			    });
+		    }
 		}
+//		var jquery_element = editor.find("#" + id);
+//		console.log(jquery_element);
 
 		jquery_element.css("z-index", i);
 		if (this.elements_collection.selectedElement === i) {
@@ -400,7 +417,7 @@
 			jquery_element.dblclick(function (e) {
 			    e.stopPropagation();
 			    e.preventDefault();
-			    var jquery_text_container = $(this).children('.bs-editor-text');
+			    var jquery_text_container = $(this).children('.bs-text');
 			    jquery_text_container.attr("contenteditable", "false");
 			    jquery_text_container.off();
 			    if ($(this).hasClass('bs-inline-edit')) {
@@ -455,76 +472,76 @@
 		    jquery_element.unbind('dblclick');
 		    jquery_element.removeClass("bs-editable");
 		    jquery_element.removeClass('bs-inline-edit');
-		    jquery_element.children('.bs-editor-text').children('span.textfitted').attr("contenteditable", "false");
-		    jquery_element.children('.bs-editor-text').off();
+		    jquery_element.children('.bs-text').children('span.textfitted').attr("contenteditable", "false");
+		    jquery_element.children('.bs-text').off();
 		}
 	    }
 	},
-	append_text_control: function (jquery_element, num) {
-
-	    var jquery_text_element = jquery_element.find('.bs-editor-text');
-	    var toolbar_width = 224;
-	    /* Append buttons */
-
-	    var align_left = $('<div/>', {
-		id: "bs-text-align-left-btn-" + num,
-		html: '<i class="fa fa-align-left"></i>',
-		css: {
-		    float: "left"
-		}
-	    });
-	    var align_center = $('<div/>', {
-		id: "bs-text-align-center-btn-" + num,
-		html: '<i class="fa fa-align-center"></i>',
-		css: {
-		    float: "left"
-		}
-	    });
-	    var align_right = $('<div/>', {
-		id: "bs-text-align-right-btn-" + num,
-		html: '<i class="fa fa-align-right"></i>',
-		css: {
-		    float: "left"
-		}
-	    });
-	    var toolbar = $('<div/>', {
-		id: "bs-text-toolbar-" + num,
-		class: "bs-text-toolbar",
-		css: {
-		    display: "none",
-		    position: "absolute",
-		    top: "calc( 100% + 10px )",
-		    color: "white",
-		    height: "auto",
-		    width: toolbar_width + "px",
-		}
-	    });
-	    toolbar.append(align_left);
-	    toolbar.append(align_center);
-	    toolbar.append(align_right);
-	    /* Handlers */
-
-	    align_left.click(function () {
-		jquery_text_element.css('text-align', 'left');
-	    });
-	    align_center.click(function () {
-		jquery_text_element.css('text-align', 'center');
-	    });
-	    align_right.click(function () {
-		jquery_text_element.css('text-align', 'right');
-	    });
-	    var colorPicker = new ColorPicker({
-		width: 100,
-		height: 100
-	    });
-	    colorPicker.setColor(jquery_text_element.css('color'));
-	    colorPicker.onChange(function () {
-		var newColor = colorPicker.getHexString();
-		jquery_text_element.css('color', newColor);
-	    });
-	    colorPicker.appendTo(toolbar);
-	    jquery_element.append(toolbar);
-	},
+//	append_text_control: function (jquery_element, num) {
+//
+//	    var jquery_text_element = jquery_element.find('.bs-text');
+//	    var toolbar_width = 224;
+//	    /* Append buttons */
+//
+//	    var align_left = $('<div/>', {
+//		id: "bs-text-align-left-btn-" + num,
+//		html: '<i class="fa fa-align-left"></i>',
+//		css: {
+//		    float: "left"
+//		}
+//	    });
+//	    var align_center = $('<div/>', {
+//		id: "bs-text-align-center-btn-" + num,
+//		html: '<i class="fa fa-align-center"></i>',
+//		css: {
+//		    float: "left"
+//		}
+//	    });
+//	    var align_right = $('<div/>', {
+//		id: "bs-text-align-right-btn-" + num,
+//		html: '<i class="fa fa-align-right"></i>',
+//		css: {
+//		    float: "left"
+//		}
+//	    });
+//	    var toolbar = $('<div/>', {
+//		id: "bs-text-toolbar-" + num,
+//		class: "bs-text-toolbar",
+//		css: {
+//		    display: "none",
+//		    position: "absolute",
+//		    top: "calc( 100% + 10px )",
+//		    color: "white",
+//		    height: "auto",
+//		    width: toolbar_width + "px",
+//		}
+//	    });
+//	    toolbar.append(align_left);
+//	    toolbar.append(align_center);
+//	    toolbar.append(align_right);
+//	    /* Handlers */
+//
+//	    align_left.click(function () {
+//		jquery_text_element.css('text-align', 'left');
+//	    });
+//	    align_center.click(function () {
+//		jquery_text_element.css('text-align', 'center');
+//	    });
+//	    align_right.click(function () {
+//		jquery_text_element.css('text-align', 'right');
+//	    });
+//	    var colorPicker = new ColorPicker({
+//		width: 100,
+//		height: 100
+//	    });
+//	    colorPicker.setColor(jquery_text_element.css('color'));
+//	    colorPicker.onChange(function () {
+//		var newColor = colorPicker.getHexString();
+//		jquery_text_element.css('color', newColor);
+//	    });
+//	    colorPicker.appendTo(toolbar);
+//	    jquery_element.append(toolbar);
+//	},
 	append_resize_control: function (elem, num, type) {
 	    $('<div/>', {
 		id: "nwgrip-" + num,
@@ -566,7 +583,7 @@
 	    if (type == "text") {
 		elem.resizable({
 		    resize: function (event, ui) {
-			var jquery_text_element = elem.find(".bs-editor-text");
+			var jquery_text_element = elem.find(".bs-text");
 			jquery_text_element.textFit({
 			    multiline: true,
 			});
@@ -589,7 +606,7 @@
 	    win.log("save");
 	    if (this.lock == true)
 		return;
-//	    this.lock = true;
+	    this.lock = true;
 	    var that = this;
 	    /* Collect all slides contents */
 
@@ -602,7 +619,7 @@
 		if (container.length != 0) {
 		    if ($(container).is('[class*="bs-html-text-container-"]')) {
 
-			var text_element = $(container).children('.bs-editor-text');
+			var text_element = $(container).children('.bs-text');
 			if (text_element.children('span.textfitted').length === 1) {
 			    text_element = text_element.children('span.textfitted');
 			}
@@ -614,6 +631,7 @@
 			var simplified_element = $('<div/>', {
 			    class: "bs-html-text-container-" + i,
 			    name: $(container).attr('name'),
+			    id: $(container).attr('id'),
 			    css: {
 				width: width + "%",
 				height: height + "%",
@@ -645,6 +663,7 @@
 			var simplified_element = $('<div/>', {
 			    class: "bs-html-img-container-" + i,
 			    name: $(container).attr('name'),
+			    id: $(container).attr('id'),
 			    css: {
 				width: width + "%",
 				height: height + "%",
@@ -662,6 +681,7 @@
 		    if ($(container).is('[class*="bs-html-background-container-"]')) {
 			var simplified_element = $('<div/>', {
 			    class: "bs-html-background-container-" + i,
+			    id: $(container).attr('id'),
 			    css: {
 				width: '100%',
 				height: '100%',
@@ -728,10 +748,10 @@
 			console.log(that.xml);
 
 
-			if (typeof (that.file_path) === "undefined") {
+			if (typeof (that.blockscreen.get('file')) === "undefined") {
 			    that.openSaveBsDialog();
 			} else {
-			    that.saveBsFile(that.file_path);
+			    that.saveBsFile(that.blockscreen.get('file'), true);
 			}
 		    });
 	},
@@ -753,11 +773,11 @@
 	},
 	onReloadReady: function () {
 	    var that = this;
-	    if (typeof this.songbase != "undefined") {
+	    if (typeof this.songbase !== "undefined") {
 		this.songbase.selectAuthor(this.author);
 		this.songbase.hideSongsLoader();
 	    }
-	    if (typeof this.control != "undefined") {
+	    if (typeof this.control !== "undefined") {
 		this.song.rebuild_slides().then(function () {
 		    that.control.onSongSlidesRedraw(that.song);
 		});

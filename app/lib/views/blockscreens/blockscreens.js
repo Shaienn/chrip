@@ -5,6 +5,7 @@
     App.View.BlockScreens.Root = Backbone.Marionette.LayoutView.extend({
 	template: '#blockscreens-tpl',
 	id: 'blockscreens-main-window',
+	groups_collection: null,
 	elements_collection: null,
 	selected_group: null,
 	ui: {
@@ -28,16 +29,19 @@
 	    this.listenTo(App.vent, "blockscreens:selectElement", _.bind(this.selectElementHandler, this));
 	},
 	selectElementHandler: function (element) {
-	    console.log(element);
-	    this.elements_collection.selectedElement = this.elements_collection.collection.indexOf(element);
+	    this.elements_collection.selected_index = this.elements_collection.collection.indexOf(element);
 	},
 	editElementHandler: function () {
-
+	    var selected_element = this.elements_collection.collection.at(this.elements_collection.selected_index);
+	    var bse = new App.View.BlockScreens.Elements.EditForm({
+		blockscreen: selected_element
+	    });
+	    this.modals.show(bse);
 	},
 	createElementHandler: function () {
 	    var bse = new App.View.BlockScreens.Elements.EditForm({
 		blockscreen: new App.Model.BlockScreens.Elements.Element({
-		    gid: this.group.get('id')
+		    gid: this.selected_group.get('id')
 		})
 	    });
 	    this.modals.show(bse);
@@ -64,13 +68,9 @@
 
 	    App.Database.getBlockScreenFiles(group).then(function (files) {
 
-		console.log(files);
-
 		/* parse each file and get JSON objects  */
 
 		that.parseBlockscreensFiles(files).then(function (objects) {
-
-		    console.log(objects);
 
 		    var elements = new App.Model.BlockScreens.Elements.List();
 
@@ -82,18 +82,17 @@
 			element.set('html', item.value.html);
 			element.set('preview', item.value.preview);
 			element.set('name', item.value.name);
+			element.set('file', item.value.file);
 			elements.add(element);
 
 		    });
-
-		    console.log(elements);
 
 		    var elements_view = new App.View.BlockScreens.Elements.List({
 			childView: App.View.BlockScreens.Elements.Element,
 			collection: elements,
 		    });
 
-		    console.log(elements_view);
+		    that.elements_collection = elements_view;
 
 		    that.BSGContent_r.show(elements_view);
 		});
@@ -122,6 +121,8 @@
 			}
 
 			var object = JSON.parse(res.root);
+			object.file = item.file;
+
 			d.resolve(object);
 		    });
 
@@ -160,7 +161,6 @@
 //	    return Q.allSettled(files);
 	},
 	onShow: function () {
-	    console.log("show");
 	    this.ToolBar_r.show(new App.View.BlockScreens.Groups.ToolBar());
 
 	    /* Load stored blockscreens groups from DB and construct list */
@@ -179,18 +179,15 @@
 
 	    App.Database.getBlockScreensGroups().then(function (loadedBlockScreensGroups) {
 
-		console.log(loadedBlockScreensGroups);
 		/* Construct control with loaded blockscreens */
 
 		var bsg_collection = new App.Model.BlockScreens.Groups.List(loadedBlockScreensGroups);
-		console.log(bsg_collection);
 
 		var bsg_collection_view = new App.View.BlockScreens.Groups.List({
 		    collection: bsg_collection,
 		});
 
-		that.elements_collection = bsg_collection_view;
-		console.log(that.collection);
+		that.groups_collection = bsg_collection_view;
 
 
 		that.List_r.show(bsg_collection_view);
