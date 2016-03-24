@@ -7,7 +7,7 @@
 
     App.View.BlockScreens.Elements.Element = App.View.Common.Slides.Slide.extend({
 	template: "#bs-element-tpl",
-	className: 'bs-element-' + App.View.Common.Slides.Slide.prototype.className,
+	className: 'bs-element-' + App.View.Common.Slides.Slide.prototype.className ,
 	clickReport: function () {
 	    App.vent.trigger("blockscreens:selectElement", this.model);
 	}
@@ -15,6 +15,11 @@
     App.View.BlockScreens.Elements.List = App.View.Common.Slides.List.extend({
 	className: 'bs-element-' + App.View.Common.Slides.List.prototype.className,
 	childView: App.View.BlockScreens.Elements.Element,
+	behaviors: {
+	    Sortable: {
+		containment: 'parent'
+	    }
+	},
     });
 
 

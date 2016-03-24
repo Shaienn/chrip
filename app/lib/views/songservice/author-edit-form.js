@@ -5,163 +5,108 @@
 (function (App) {
     'use strict';
 
-    App.View.AuthorDeleteModal = Backbone.Modal.extend({
+    App.View.AuthorDeleteModal = App.View.Common.Forms.RemoveForm.extend({
+	initial: function (options) {
 
-        id: 'author-modal',
-        template: '#author-delete-modal-tpl',
+	    if (typeof options.songbase !== "undefined") {
+		this.songbase = options.songbase;
+	    }
 
-        events: {
-            'click #delete-btn': 'deleteBtnHandler',
-            'click #cancel-btn': 'cancelBtnHandler',
-        },
+	    if (typeof options.author !== "undefined") {
+		this.author = options.author;
+	    }
 
-        serializeData: function () {
-            return {
-                "name": this.author.get('name')
-            }
-        },
+	    this.text = "Вы уверены что хотите удалить автора: " + this.author.get('name');
+	},
+	deleteActions: function () {
+	    this.songbase.loadAuthorsLoader(true);
+	    var that = this;
 
-        initialize: function (options) {
-
-            if (options.author != "undefined") {
-                this.author = options.author;
-            }
-
-            if (options.songbase != "undefined") {
-                this.songbase = options.songbase;
-            }
-
-        },
-
-        onDestroy: function () {
-            console.log('close');
-        },
-
-        beforeCancel: function () {
-
-            /* It prevents close modal when we click outside */
-
-            return false;
-        },
-
-        deleteBtnHandler: function () {
-
-            win.log("delete");
-
-            /* Delete authorname to db */
-
-            App.Database.deleteAuthor(this.author);
-
-            var that = this;
-
-            that.songbase.loadAuthorsLoader(true);
-
-            App.Database.close()
-                .then(function () {
-                    App.Database.init().then(function () {
-                        that.songbase.loadAuthors();
-                    });
-                });
-
-            this.cancel();
-        },
-
-        cancelBtnHandler: function () {
-            this.cancel();
-        },
-
-        cancel: function () {
-            win.log("cancel");
-            this.destroy();
-        }
-
+	    App.Database.deleteAuthor(this.author).then(
+		    function () {
+			App.Database.close().then(
+				function () {
+				    App.Database.init().then(
+					    function () {
+						that.songbase.loadAuthors();
+					    });
+				});
+		    });
+	},
     });
 
     var AuthorEditForm = Backbone.Modal.extend({
+	id: 'author-modal',
+	template: '#author-edit-modal-tpl',
+	ui: {
+	    Input: '#author-name-input',
+	},
+	events: {
+	    'click #save-btn': 'saveBtnHandler',
+	    'click #cancel-btn': 'cancelBtnHandler',
+	},
+	initialize: function (options) {
 
-        id: 'author-modal',
-        template: '#author-edit-modal-tpl',
+	    if (options.author != "undefined") {
+		this.author = options.author;
+	    }
 
+	    if (options.songbase != "undefined") {
+		this.songbase = options.songbase;
+	    }
 
-        ui: {
+	},
+	onShow: function () {
+	    if (this.author != "undefined") {
+		var name = this.author.get('name');
+		$(this.ui.Input).val(name);
+	    }
+	},
+	onDestroy: function () {
+	    console.log('close');
+	},
+	beforeCancel: function () {
 
-            Input: '#author-name-input',
+	    /* It prevents close modal when we click outside */
 
-        },
+	    return false;
+	},
+	saveBtnHandler: function () {
 
-        events: {
-            'click #save-btn': 'saveBtnHandler',
-            'click #cancel-btn': 'cancelBtnHandler',
-        },
+	    win.log("save");
 
-        initialize: function (options) {
+	    var name = $(this.ui.Input).val();
 
-            if (options.author != "undefined") {
-                this.author = options.author;
-            }
+	    if (name == "") {
+		return;
+	    }
 
-            if (options.songbase != "undefined") {
-                this.songbase = options.songbase;
-            }
+	    this.author.set('name', name);
 
-        },
+	    /* Save authorname to db */
 
-        onShow: function () {
-            if (this.author != "undefined") {
-                var name = this.author.get('name');
-                $(this.ui.Input).val(name);
-            }
-        },
+	    App.Database.saveAuthor(this.author);
 
-        onDestroy: function () {
-            console.log('close');
-        },
+	    var that = this;
 
-        beforeCancel: function () {
+	    that.songbase.loadAuthorsLoader(true);
 
-            /* It prevents close modal when we click outside */
+	    App.Database.close()
+		    .then(function () {
+			App.Database.init().then(function () {
+			    that.songbase.loadAuthors();
+			});
+		    });
 
-            return false;
-        },
-
-        saveBtnHandler: function () {
-
-            win.log("save");
-
-            var name = $(this.ui.Input).val();
-
-            if (name == "") {
-                return;
-            }
-
-            this.author.set('name', name);
-
-            /* Save authorname to db */
-
-            App.Database.saveAuthor(this.author);
-
-            var that = this;
-
-            that.songbase.loadAuthorsLoader(true);
-
-            App.Database.close()
-                .then(function () {
-                    App.Database.init().then(function () {
-                        that.songbase.loadAuthors();
-                    });
-                });
-
-            this.cancel();
-        },
-
-        cancelBtnHandler: function () {
-            this.cancel();
-        },
-
-        cancel: function () {
-            win.log("cancel");
-            this.destroy();
-        }
+	    this.cancel();
+	},
+	cancelBtnHandler: function () {
+	    this.cancel();
+	},
+	cancel: function () {
+	    win.log("cancel");
+	    this.destroy();
+	}
 
     });
 

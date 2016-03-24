@@ -26,10 +26,22 @@
 	    this.listenTo(App.vent, "blockscreens:selectBsGroup", _.bind(this.selectBlockscreenGroupHandler, this));
 	    this.listenTo(App.vent, "blockscreens:createElement", _.bind(this.createElementHandler, this));
 	    this.listenTo(App.vent, "blockscreens:editElement", _.bind(this.editElementHandler, this));
+	    this.listenTo(App.vent, "blockscreens:removeElement", _.bind(this.removeElementHandler, this));
 	    this.listenTo(App.vent, "blockscreens:selectElement", _.bind(this.selectElementHandler, this));
+
+
 	},
 	selectElementHandler: function (element) {
 	    this.elements_collection.selected_index = this.elements_collection.collection.indexOf(element);
+	},
+	removeElementHandler: function () {
+	    var selected_element = this.elements_collection.collection.at(this.elements_collection.selected_index);
+
+	    var remove_form = new App.View.BlockScreens.Elements.RemoveForm({
+		blockscreen: selected_element,
+		collection: this.elements_collection.collection
+	    });
+	    this.modals.show(remove_form);
 	},
 	editElementHandler: function () {
 	    var selected_element = this.elements_collection.collection.at(this.elements_collection.selected_index);
@@ -49,7 +61,7 @@
 	createBlockscreenGroup: function () {
 
 	    var bsg = new App.View.BlockScreens.Groups.EditForm({
-		bsg: new App.Model.BlockScreens.Groups.Group(),
+		bsg: new App.Model.BlockScreens.Groups.Element,
 	    });
 	    this.modals.show(bsg);
 	},
@@ -57,8 +69,8 @@
 
 	    var that = this;
 
-	    var gaid = group.get('id');
-	    if (typeof (gaid) === "undefined") {
+	    var gid = group.get('id');
+	    if (typeof (gid) === "undefined") {
 		return;
 	    }
 
@@ -83,6 +95,7 @@
 			element.set('preview', item.value.preview);
 			element.set('name', item.value.name);
 			element.set('file', item.value.file);
+			element.set('gid', gid);
 			elements.add(element);
 
 		    });
@@ -131,34 +144,7 @@
 		files.push(d.promise);
 	    });
 	    return Q.allSettled(files);
-//	    var files = [];
-//	    blockscreens_files.forEach(function (item) {
-//
-//		var d = Q.defer();
-//		var timeout = setTimeout(function () {
-//		    d.reject('timeout');
-//		}, 5000);
-//		fs.readSync(item.path, function (err, data) {
-//
-//		    if (err) {
-//			d.reject(err);
-//			clearTimeout(timeout);
-//		    }
-//
-//		    var parser = new xml2js.Parser();
-//		    parser.parseString(data, function (err, result) {
-//			if (err) {
-//			    d.reject(err);
-//			    clearTimeout(timeout);
-//			}
-//
-//			d.resolve(result);
-//			clearTimeout(timeout);
-//		    });
-//		    files.push(d.promise);
-//		});
-//	    });
-//	    return Q.allSettled(files);
+
 	},
 	onShow: function () {
 	    this.ToolBar_r.show(new App.View.BlockScreens.Groups.ToolBar());

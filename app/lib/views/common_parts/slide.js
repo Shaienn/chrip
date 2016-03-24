@@ -2,7 +2,6 @@
     'use strict';
     var sl_prevX = 0;
     var sl_prevY = 0;
-
     App.View.Common.Slides.Slide = Backbone.Marionette.ItemView.extend({
 	template: "#slide-tpl",
 	tagName: 'li',
@@ -11,6 +10,9 @@
 	ui: {
 	    image: ".slide_image",
 	    text_span: ".slide_text span",
+	},
+	modelEvents: {
+	    "change": "render"
 	},
 	events: {
 	    'click .slide-container': 'clickHandler',
@@ -21,7 +23,6 @@
 	onShow: function () {
 	    var that = this;
 	    this.bindUIElements();
-
 	    /* We wait first time until loading background image, 
 	     * cause container dimensions for bigText() depends on it */
 
@@ -40,7 +41,6 @@
 	clickHandler: function (e) {
 
 	    var elem = $(this.el);
-
 	    if (e.pageX !== sl_prevX || e.pageY !== sl_prevY) {
 		$('.' + this.className + '.active').removeClass('active');
 		elem.addClass('active');
@@ -52,7 +52,6 @@
 	},
 	clickReport: function () {},
     });
-
     App.View.Common.Slides.List = Marionette.CollectionView.extend({
 	tagName: 'ul',
 	className: 'slide-preview-list',
@@ -69,12 +68,11 @@
 	},
 	onShow: function () {
 	    this.redrawSlides();
-	    App.vent.trigger("songservice:control:showslide", this.collection.at(0));
+	    this.readyReport();
 	},
+	readyReport: function () {}
+
     });
-
-
-
 })(window.App);
 
 

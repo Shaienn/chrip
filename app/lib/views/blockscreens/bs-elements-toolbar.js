@@ -12,10 +12,12 @@
 	className: 'row',
 	ui: {
 	    editBtn: '#bs-edit-element-btn',
+	    removeBtn: '#bs-remove-element-btn',
 	},
 	events: {
 	    'click #bs-open-element-btn': 'openBsElementFile',
 	    'click #bs-add-element-btn': 'createBsElement',
+	    'click @ui.removeBtn': 'removeBtnHandler',
 	    'click @ui.editBtn': 'editBtnHandler'
 	},
 	openBsElementFile: function () {
@@ -26,6 +28,9 @@
 	},
 	editBtnHandler: function () {
 	    App.vent.trigger('blockscreens:editElement');
+	},
+	removeBtnHandler: function () {
+	    App.vent.trigger('blockscreens:removeElement');
 	},
     });
 })(window.App);

@@ -6,7 +6,7 @@
     'use strict';
 
     App.View.SongService.SongBase = Backbone.Marionette.LayoutView.extend({
-	template: '#songservice-songbase-tpl',
+	template: '#songbase-tpl',
 	className: 'row',
 	ui: {
 	    A_Loader: '#songBaseAuthorsList .area .loader',
@@ -46,7 +46,6 @@
 	    this.listenTo(App.vent, "songbase:loadtext", _.bind(this.loadText, this));
 	},
 	onDestroy: function () {
-	    win.log("songbase destroy request");
 	    $('#songservice-control').show();
 	    $('#appmode-menu').show();
 	    $('#main-window-toptoolbar').show();

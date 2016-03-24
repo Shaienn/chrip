@@ -4,62 +4,31 @@
 
 (function (App) {
     'use strict';
-    App.View.BlockScreensDeleteModal = Backbone.Modal.extend({
-	template: '#blockscreens-modal-tpl',
-	events: {
-	    'click #delete-btn': 'deleteBtnHandler',
-	    'click #cancel-btn': 'cancelBtnHandler',
-	},
-	serializeData: function () {
-	    return {
-		"name": this.song.get('name')
-	    }
-	},
-	initialize: function (options) {
 
-	    if (typeof options.song != "undefined") {
-		this.song = options.song;
+    App.View.BlockScreens.Elements.RemoveForm = App.View.Common.Forms.RemoveForm.extend({
+	initial: function (options) {
+
+	    if (typeof options.group !== "undefined") {
+		this.collection = options.group;
 	    }
 
-	    if (typeof options.songbase != "undefined") {
-		this.songbase = options.songbase;
+	    if (typeof options.blockscreen !== "undefined") {
+		this.blockscreen = options.blockscreen;
 	    }
 
-	    if (typeof options.author != "undefined") {
-		this.author = options.author;
-	    }
-
-
+	    this.text = "Вы уверены что хотите удалить заставку: " + this.blockscreen.get('name');
 	},
-	beforeCancel: function () {
-	    /* It prevents close modal when we click outside */
-	    return false;
-	},
-	deleteBtnHandler: function () {
-
-	    win.log("delete");
-	    /* Delete authorname to db */
-
-	    App.Database.deleteSong(this.song);
-	    this.songbase.loadSongsLoader();
+	deleteActions: function () {
 	    var that = this;
-	    App.Database.close()
-		    .then(function () {
-			App.Database.init().then(function () {
-			    that.songbase.selectAuthor(that.author);
-			});
-		    });
-	    this.cancel();
+	    App.Database.removeFileFromBlockScreenGroup(this.blockscreen)
+		    .then(
+			    function () {
+				that.collection.remove(that.blockscreen);
+			    });
 	},
-	cancelBtnHandler: function () {
-	    this.cancel();
-	},
-	cancel: function () {
-	    win.log("cancel");
-	    this.destroy();
-	}
-
     });
+
+
     App.View.BlockScreens.Elements.EditForm = Backbone.Modal.extend({
 	id: 'blockscreens-modal',
 	template: '#blockscreens-edit-modal-tpl',
@@ -123,22 +92,16 @@
 			height: this.screen_bounds.height * this.scale,
 		    })
 		    );
-	    var preview_width = 300;
-	    var preview_height = 200;
-	    this.preview_scale = Math.min(
-		    preview_width / this.screen_bounds.width,
-		    preview_height / this.screen_bounds.height
-		    );
-	    $(this.ui.bsCanvas).attr('width', this.screen_bounds.width * this.preview_scale);
-	    $(this.ui.bsCanvas).attr('height', this.screen_bounds.height * this.preview_scale);
+	    $(this.ui.bsCanvas).attr('width', this.screen_bounds.width * (this.scale / 2));
+	    $(this.ui.bsCanvas).attr('height', this.screen_bounds.height * (this.scale / 2));
 	    this.elements_collection.render();
 	    $(this.ui.bsElementsList).html(this.elements_collection.el);
+
 	    this.elements_collection.collection.on("add change remove", function () {
-		console.log("collection render again");
-		console.log(that.elements_collection);
 		that.elements_collection.render();
 		that.renderPreviewArea();
 	    });
+
 	    this.renderPreviewArea(true);
 	},
 	/**********************************************/
@@ -162,6 +125,7 @@
 		if ($(element).attr('name') != "undefined") {
 		    name = $(element).attr('name');
 		}
+		$(element).attr('id', "bs-element-" + bsElements.length);
 
 		if ($(element).is('[class*="bs-html-img-container-"]')) {
 
@@ -169,7 +133,7 @@
 			name: name,
 			type: "img",
 			html: $(element).prop('outerHTML'),
-			id: "bs-element-" + bsElements.length,
+			id: $(element).attr('id')
 		    });
 		    bsElements.add(element);
 		}
@@ -180,7 +144,7 @@
 			name: name,
 			type: "text",
 			html: $(element).prop('outerHTML'),
-			id: "bs-element-" + bsElements.length,
+			id: $(element).attr('id')
 		    });
 		    bsElements.add(element);
 		}
@@ -191,7 +155,7 @@
 			name: name,
 			type: "background",
 			html: $(element).prop('outerHTML'),
-			id: "bs-element-" + bsElements.length,
+			id: $(element).attr('id')
 		    });
 		    bsElements.add(element);
 		}
@@ -220,9 +184,8 @@
 		    console.log(err);
 		}
 
-
 		if (is_existed !== true) {
-		    that.blockscreen.set('file', path + '.bs');
+		    that.blockscreen.set('file', path);
 
 		    /* add this file to group */
 		    App.Database.addFileToBlockScreenGroup(that.blockscreen)
@@ -395,23 +358,26 @@
 		    jquery_element = $($.parseHTML(html));
 		    this.append_resize_control(jquery_element, i, element.get("type"));
 		    editor.append(jquery_element);
-		    switch (element.get('type')) {
-			case ('text'):
-			    jquery_element.children('.bs-text').textFit({
-				multiline: true,
-			    });
+
+		    if (element.get('type') === "text") {
+			jquery_element.children('.bs-text').textFit({
+			    multiline: true,
+			});
 		    }
 		}
-//		var jquery_element = editor.find("#" + id);
-//		console.log(jquery_element);
+
+		if (element.get('type') === "background") {
+		    continue;
+		}
 
 		jquery_element.css("z-index", i);
 		if (this.elements_collection.selectedElement === i) {
 
+		    jquery_element.addClass("bs-editable");
+		    jquery_element.resizable('enable');
+		    jquery_element.draggable('enable');
+
 		    if (element.get('type') === "text") {
-			jquery_element.addClass("bs-editable");
-			jquery_element.resizable('enable');
-			jquery_element.draggable('enable');
 			jquery_element.removeClass('bs-inline-edit');
 			jquery_element.unbind('dblclick');
 			jquery_element.dblclick(function (e) {
@@ -460,9 +426,6 @@
 				});
 			    }
 			});
-		    } else {
-			jquery_element.resizable('enable');
-			jquery_element.draggable('enable');
 		    }
 
 		} else {
@@ -477,72 +440,11 @@
 		}
 	    }
 	},
-//	append_text_control: function (jquery_element, num) {
-//
-//	    var jquery_text_element = jquery_element.find('.bs-text');
-//	    var toolbar_width = 224;
-//	    /* Append buttons */
-//
-//	    var align_left = $('<div/>', {
-//		id: "bs-text-align-left-btn-" + num,
-//		html: '<i class="fa fa-align-left"></i>',
-//		css: {
-//		    float: "left"
-//		}
-//	    });
-//	    var align_center = $('<div/>', {
-//		id: "bs-text-align-center-btn-" + num,
-//		html: '<i class="fa fa-align-center"></i>',
-//		css: {
-//		    float: "left"
-//		}
-//	    });
-//	    var align_right = $('<div/>', {
-//		id: "bs-text-align-right-btn-" + num,
-//		html: '<i class="fa fa-align-right"></i>',
-//		css: {
-//		    float: "left"
-//		}
-//	    });
-//	    var toolbar = $('<div/>', {
-//		id: "bs-text-toolbar-" + num,
-//		class: "bs-text-toolbar",
-//		css: {
-//		    display: "none",
-//		    position: "absolute",
-//		    top: "calc( 100% + 10px )",
-//		    color: "white",
-//		    height: "auto",
-//		    width: toolbar_width + "px",
-//		}
-//	    });
-//	    toolbar.append(align_left);
-//	    toolbar.append(align_center);
-//	    toolbar.append(align_right);
-//	    /* Handlers */
-//
-//	    align_left.click(function () {
-//		jquery_text_element.css('text-align', 'left');
-//	    });
-//	    align_center.click(function () {
-//		jquery_text_element.css('text-align', 'center');
-//	    });
-//	    align_right.click(function () {
-//		jquery_text_element.css('text-align', 'right');
-//	    });
-//	    var colorPicker = new ColorPicker({
-//		width: 100,
-//		height: 100
-//	    });
-//	    colorPicker.setColor(jquery_text_element.css('color'));
-//	    colorPicker.onChange(function () {
-//		var newColor = colorPicker.getHexString();
-//		jquery_text_element.css('color', newColor);
-//	    });
-//	    colorPicker.appendTo(toolbar);
-//	    jquery_element.append(toolbar);
-//	},
 	append_resize_control: function (elem, num, type) {
+
+	    if (type === "background")
+		return;
+
 	    $('<div/>', {
 		id: "nwgrip-" + num,
 	    }).appendTo(elem);
@@ -580,7 +482,7 @@
 		    'w': '#wgrip-' + num
 		},
 	    });
-	    if (type == "text") {
+	    if (type === "text") {
 		elem.resizable({
 		    resize: function (event, ui) {
 			var jquery_text_element = elem.find(".bs-text");

@@ -66,7 +66,8 @@ _.extend(App, {
 	Settings: {},
 	Common: {
 	    Slides: {},
-	    ItemList: {}
+	    ItemList: {},
+	    Forms: {},
 	},
 	BlockScreens: {
 	    Editor: {},

@@ -46,23 +46,24 @@
     </div>
     <div class="btn-group btn-group-justified">
 	<div class="btn-group">
-	    <button type="button" class="btn btn-success pull-right" id="authorslist-add-btn">
+	    <button type="button" class="btn btn-success pull-right" id="songslist-add-btn">
 		<i class="fa fa-plus-square"></i>
 	    </button>
 	</div>
 	<div class="btn-group">
-	    <button type="button" class="btn btn-success pull-right" id="authorslist-remove-btn">
+	    <button type="button" class="btn btn-success pull-right" id="songslist-remove-btn">
 		<i class="fa fa-minus-square"></i>
 	    </button>
 	</div>
 	<div class="btn-group">
-	    <button type="button" class="btn btn-success pull-right" id="authorslist-edit-btn">
+	    <button type="button" class="btn btn-success pull-right" id="songslist-edit-btn">
 		<i class="fa fa-pencil-square"></i>
 	    </button>
 	</div>
     </div>
 </div>
 <div id="songBaseSongPreview" class="col-lg-3"></div>
+<div id="songBaseModal"></div>
 <div class="col-lg-12 white-line"></div>
 <!--
 <div class="songbase-container">

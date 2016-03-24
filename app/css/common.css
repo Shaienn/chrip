@@ -2,6 +2,10 @@ svg{
     font-kerning: normal; 
 }
 
+.btn:focus {
+    outline: none !important;
+}
+
 h2, .h2{
     font-size: 3em !important;
 }

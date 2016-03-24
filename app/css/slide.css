@@ -12,8 +12,6 @@ span.italic{
     align-items: center;
     justify-content: center;
     float: left;
-    width: inherit;
-    height: inherit;
     color: white;
     cursor: pointer;
     margin: 0;

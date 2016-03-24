@@ -264,6 +264,31 @@
 //
 //        },directory_path
 
+	checkFileUsage: function (file) {
+	    var d = Q.defer();
+	    var stmt = App.Database.user_db.prepare("SELECT COUNT(*) FROM BlockScreensFiles WHERE file = ?");
+	    stmt.get(file, function (err, row) {
+		if (err)
+		    d.reject(new Error(err));
+		d.resolve(row);
+	    });
+
+	    return d.promise;
+	},
+	removeFileFromBlockScreenGroup: function (blockscreen) {
+	    console.log(blockscreen);
+	    assert.ok(blockscreen instanceof App.Model.BlockScreens.Elements.Element);
+	    var d = Q.defer();
+	    var stmt = App.Database.user_db.prepare("DELETE FROM BlockScreensFiles WHERE gid = ? AND file = ?");
+	    stmt.run(
+		    blockscreen.get('gid'), blockscreen.get('file'), function (err) {
+		if (err)
+		    d.reject(new Error(err));
+		d.resolve(true);
+	    });
+
+	    return d.promise;
+	},
 	addFileToBlockScreenGroup: function (blockscreen) {
 
 	    assert.ok(blockscreen instanceof App.Model.BlockScreens.Elements.Element);
