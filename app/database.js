@@ -306,7 +306,7 @@
 	saveBlockScreenGroup: function (group) {
 	    var d = Q.defer();
 
-	    assert.ok(group instanceof App.Model.BlockScreens.Groups.Group);
+	    assert.ok(group instanceof App.Model.BlockScreens.Groups.Element);
 	    /* It is a global song, so create a new song in local db */
 
 	    if (typeof group.get('id') != "undefined") {
@@ -334,7 +334,7 @@
 	getBlockScreenFiles: function (group) {
 	    var d = Q.defer();
 
-	    assert.ok(group instanceof App.Model.BlockScreens.Groups.Group);
+	    assert.ok(group instanceof App.Model.BlockScreens.Groups.Element);
 
 	    var gid = group.get('id');
 	    var loadedBlockScreensFiles = [];
@@ -369,7 +369,7 @@
 
 		rows.forEach(function (item) {
 
-		    var bsg = new App.Model.BlockScreens.Groups.Group();
+		    var bsg = new App.Model.BlockScreens.Groups.Element;
 		    bsg.set('id', item.id);
 		    bsg.set('name', item.name);
 

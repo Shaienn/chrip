@@ -6,6 +6,10 @@ svg{
     outline: none !important;
 }
 
+select:focus {
+    outline: none !important;
+}
+
 h2, .h2{
     font-size: 3em !important;
 }

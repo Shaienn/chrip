@@ -9,19 +9,20 @@ types_selector += "<option "+(songpart.get('type') == key ? "selected='selected'
 %>
 
 <div id='songpart-type-area'>
-    <h2>Редактирование слайда</h2>
-    <span class="songpart-type">Тип части песни</span>
-    <div class="songpart-type-selector">
-        <select><%=types_selector%></select>
+    <div class="col-lg-12"><h2>Редактирование слайда</h2></div>
+    <span class="songpart-type col-lg-6 vert-offset-top-1 vert-offset-bottom-1">Тип части песни</span>
+    <div class="songpart-type-selector form-group col-lg-6 vert-offset-top-1 vert-offset-bottom-1">
+        <select class="form-control"><%=types_selector%></select>
     </div>
 </div>
+
 <div class="songpart-editor">
-    <div class='songpart-textarea'>
-        <textarea><%=songpart.get('text')%></textarea>
+    <div class='songpart-textarea form-group col-lg-6'>
+        <textarea class="form-control"><%=songpart.get('text')%></textarea>
     </div>
-    <div class="songpart-preview">
+    <div class="songpart-preview col-lg-6">
         <div class="slide-item active">
-            
+
         </div>
     </div>
 </div>

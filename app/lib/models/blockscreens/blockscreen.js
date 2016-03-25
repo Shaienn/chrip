@@ -7,14 +7,14 @@
 
     /* Model */
 
-    App.Model.BlockScreens.Groups.Group = Backbone.Model.extend({
+    App.Model.BlockScreens.Groups.Element = Backbone.Model.extend({
 	defaults: {
 	    name: "",
 	}
     });
 
     App.Model.BlockScreens.Groups.List = Backbone.Collection.extend({
-	model: App.Model.BlockScreens.Groups.Group
+	model: App.Model.BlockScreens.Groups.Element
     });
 
 

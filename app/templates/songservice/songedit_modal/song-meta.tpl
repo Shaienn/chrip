@@ -7,15 +7,13 @@ authors_selector += "<option "+( (song.attributes.aid == authors.at(key).attribu
 
 %>
 
-<div id='song-meta-area'>
-    <h2>Редактирование песни</h2>
-    <span class="song-author">Исполнитель</span>
-    <div class="song-author-selector">
-        <select><%=authors_selector%></select>
-    </div>
+<div class="col-lg-12"><h2>Редактирование песни</h2></div>
+<span class="song-author col-lg-6 vert-offset-top-1 vert-offset-bottom-1">Исполнитель</span>
+<div class="song-author-selector form-group col-lg-6 vert-offset-top-1 vert-offset-bottom-1">
+    <select class="form-control"><%=authors_selector%></select>
+</div>
 
-    <span class="song-name">Название песни</span>
-    <div class="song-name-input">
-        <input type='text' value='<%= song.attributes.name %>'>
-    </div>
+<span class="song-name col-lg-6 vert-offset-top-1 vert-offset-bottom-1">Название песни</span>
+<div class="song-name-input col-lg-6 form-group vert-offset-top-1 vert-offset-bottom-1">
+    <input type='text' class="form-control" value='<%= song.attributes.name %>'>
 </div>

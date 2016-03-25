@@ -8,7 +8,7 @@ and open the template in the editor.
     Author     : shaienn
 */
 
-#song-parts-container {
+/*#song-parts-container {
     width: 30%;
     float:left;
     min-width: 420px;
@@ -20,7 +20,7 @@ and open the template in the editor.
     float:left;
     max-width: calc(100% - 420px);
     height: 100%;
-}
+}*/
 
 #song-meta, #songpart-details{
     display: block;
@@ -55,27 +55,8 @@ and open the template in the editor.
     float: left;
 } 
 
-#add-slide-btn{
-    width: 80%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2em;
-    background: green;
-    color: white;
-    border-radius: 5px;
-    padding: 1%;
-}
-
 /*************** META *************/
 
-
-
-.song-author, .song-author-selector, .song-name, .song-name-input{
-    width: 50%;
-    float: left;
-    padding: 2%;
-}
 
 .song-author-selector{
 
@@ -150,24 +131,6 @@ and open the template in the editor.
 }
 
 
-.songpart-type-selector 
-{
-    display:inline-flex;
-    border:1px solid #bbbbbb;
-    position:relative;
-    margin-top: 1%;
-}
-
-.song-author-selector select, .songpart-type-selector select {
-    width:100%;
-    background-color:#ededed;
-    border:none;
-    outline:none;
-    padding:1%;
-    margin:0px;
-    position:relative;
-}
-
 #songpart-type-area{
     width: 100%;
     float: left;
@@ -182,6 +145,7 @@ and open the template in the editor.
 .songpart-textarea textarea{
     height: 100%;
     width: 100%;
+    resize: none;
 }
 
 .songpart-preview{
@@ -230,7 +194,7 @@ and open the template in the editor.
     color: white;
     background: #122b40;
     cursor: pointer;
-    border-radius: 20px;
+    border-radius: 10px;
     overflow: hidden;
     margin: 1%;
 }
