@@ -207,6 +207,7 @@
 	    this.ui.S_Loader.show();
 	},
 	hideSongsLoader: function () {
+	    console.log("hide loader");
 	    this.ui.S_Loader.hide();
 	},
 	loadSongs: function (author) {
@@ -274,11 +275,11 @@
 		return;
 	    }
 
-	    var authors_list = $('.authors ul');
-	    authors_list.find('li').removeClass('active');
-	    var item = authors_list.find('.authorItem[aid=' + aid + '][gaid=' + gaid + ']');
+	    var authors_list = $('.author-element-list');
+	    authors_list.children('li.active').removeClass('active');
+	    var item = authors_list.find('.item-container[aid=' + aid + '][gaid=' + gaid + ']');
 	    item.trigger('click');
-	    item.parents('.item').addClass('active');
+	    item.parent('.author-element-item').addClass('active');
 	    authors_list.scrollTop(0).scrollTop(item.position().top);
 	},
 	loadAuthors: function () {

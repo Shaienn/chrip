@@ -4,9 +4,7 @@
 
 (function (App) {
     'use strict';
-    var sqlite3 = require('sqlite3').verbose();
-    var Q = require('q');
-    var assert = require('assert');
+
 
     App.Database = {
 	db: {},
@@ -413,12 +411,12 @@
 	    App.Database.global_db.each("SELECT version FROM Version WHERE version_id = 1", function (err, row) {
 
 		if (err != null) {
-		    Settings.Config.version = 0;
+		    Settings.Config.songbase_version = 0;
 		} else {
-		    Settings.Config.version = row.version;
+		    Settings.Config.songbase_version = row.version;
 		}
 
-		d.resolve(Settings.Config.version);
+		d.resolve(Settings.Config.songbase_version);
 	    });
 	    return d.promise;
 	},

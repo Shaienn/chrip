@@ -69,7 +69,8 @@ var path = require("path");
     };
 
     Settings.Config = {
-	version: 0,
+	software_version: 2,
+	songbase_version: 0,
 	tmpPath: "./tmp",
 	chord_pattern: /\[[\w\W\s\S]+?\]/g,
 	slide_part: {

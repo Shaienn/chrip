@@ -268,7 +268,14 @@
 	},
 	saveBtnHandler: function () {
 
+
 	    win.log("save");
+
+	    var song_name = $(this.ui.songMeta).find(".song-name-input input").val();
+	    if (song_name == "") {
+		win.info("Song name should contain something");
+		return;
+	    }
 
 	    if (this.lock == true)
 		return;
@@ -297,11 +304,7 @@
 	    var author_key = $(this.ui.songMeta).find(".song-author-selector select").val();
 	    this.author = this.authors.models[author_key];
 
-	    var song_name = $(this.ui.songMeta).find(".song-name-input input").val();
 
-	    if (song_name == "") {
-		return;
-	    }
 
 	    this.song.set('text', song_text);
 	    this.song.set('name', song_name);
@@ -339,11 +342,12 @@
 	},
 	onReloadReady: function () {
 	    var that = this;
-	    if (typeof this.songbase != "undefined") {
-		this.songbase.selectAuthor(this.author);
-		this.songbase.hideSongsLoader();
+
+	    if (typeof this.songbase !== "undefined") {
+		App.vent.trigger("songbase:selectAuthor", this.author);
 	    }
-	    if (typeof this.control != "undefined") {
+
+	    if (typeof this.control !== "undefined") {
 		this.song.rebuild_slides().then(function () {
 		    that.control.onSongSlidesRedraw(that.song);
 		});

@@ -14,10 +14,14 @@ var base64 = require('node-base64-image');
 var sizeOf = require('image-size');
 var keypress = require('keypress');
 var ColorPicker = require('simple-color-picker-jq');
-var fs = require('fs-extra');
+var fse = require('fs-extra');
 var FileReader = require('filereader');
 var xml2js = require('xml2js');
 var klaw = require('klaw');
+var sqlite3 = require('sqlite3').verbose();
+var assert = require('assert');
+var http = require('http');
+var restify = require('restify');
 
 win.log = console.log.bind(console);
 win.debug = function () {
@@ -39,7 +43,7 @@ win.error = function () {
     var params = Array.prototype.slice.call(arguments, 1);
     params.unshift('%c[%cERROR%c] ' + arguments[0], 'color: black;', 'color: red;', 'color: black;');
     console.error.apply(console, params);
-    fs.appendFileSync(path.join(require('nw.gui').App.dataPath, 'logs.txt'), '\n\n' + (arguments[0].stack || arguments[0])); // log errors;
+    fse.appendFileSync(path.join(require('nw.gui').App.Config.runDir, '\logs.txt'), '\n\n' + (arguments[0].stack || arguments[0])); // log errors;
 };
 
 
@@ -61,7 +65,6 @@ _.extend(App, {
 	},
 	Settings: {},
 	Common: {
-	    Presentation: {},
 	    Slides: {},
 	    ItemList: {},
 	    Forms: {},
@@ -147,7 +150,7 @@ var initTemplates = function () {
 		tpl.setAttribute('id', path.basename(item, '.tpl') + "-tpl");
 		tpl.innerHTML = data;
 		document.body.appendChild(tpl);
-		console.log(path.basename(item, '.tpl') + "-tpl");
+		win.log(path.basename(item, '.tpl') + "-tpl");
 		d.resolve(true);
 	    });
 
@@ -200,9 +203,9 @@ var initApp = function () {
     var nwDir = path.dirname(process.execPath);
     var nwCwd = process.env.PWD;
 
-    console.log(nwPath);
-    console.log(nwDir);
-    console.log(nwCwd);
+    win.log(nwPath);
+    win.log(nwDir);
+    win.log(nwCwd);
 
     App.Config.execDir = nwCwd;//process.cwd();
     App.Config.runDir = nwCwd;//nwDir;
