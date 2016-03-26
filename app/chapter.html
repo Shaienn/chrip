@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <link rel="stylesheet" type="text/css" href="vendor/bootstrap/dist/css/bootstrap.css">
+        <link rel="stylesheet" type="text/css" href="vendor/bootstrap/dist/css/bootstrap-theme.css">
+        <link rel="stylesheet" type="text/css" href="vendor/font-awesome/css/font-awesome.min.css">
+        <link rel="stylesheet" type="text/css" href="vendor/backbone-modal/backbone.modal.css">
+        <link rel="stylesheet" type="text/css" href="vendor/backbone-modal/backbone.modal.theme.css">
+        <link rel="stylesheet" type="text/css" href="css/app.css">
+        <link rel="stylesheet" type="text/css" href="css/btn.css">
+        <link rel="stylesheet" type="text/css" href="css/control.css">
+        <link rel="stylesheet" type="text/css" href="css/toolbar.css">
+        <link rel="stylesheet" type="text/css" href="css/header.css">
+        <link rel="stylesheet" type="text/css" href="css/songbase.css">
+        <link rel="stylesheet" type="text/css" href="css/slide.css">
+        <link rel="stylesheet" type="text/css" href="css/appmode.css">
+        <link rel="stylesheet" type="text/css" href="css/common.css">
+        <link rel="stylesheet" type="text/css" href="css/settings.css">
+        <link rel="stylesheet" type="text/css" href="css/editor.css">
+        <link rel="stylesheet" type="text/css" href="css/visual.css">
+        <link rel="stylesheet" type="text/css" href="css/author-modal.css">
+        <link rel="stylesheet" type="text/css" href="css/loader.css">
+        <link rel="stylesheet" type="text/css" href="css/bible.css">
+        <link rel="stylesheet" type="text/css" href="css/videoplayer.css">
+        <link rel="stylesheet" type="text/css" href="css/media-control.css">
+        <link rel="stylesheet" type="text/css" href="css/songparts.css">
+        <link rel="stylesheet" type="text/css" href="css/blockscreens.css">
+        <link rel="stylesheet" type="text/css" href="css/modal.css">
+	<link rel="stylesheet" type="text/css" href="css/bootstrap-offsets.css">
+
+
+        <script src="vendor/jquery/dist/jquery.min.js"></script>
+        <script src="vendor/jquery-ui/jquery-ui.min.js"></script>
+        <script src="vendor/scripts/jquery-bigtext.js"></script>
+	<script src="node_modules/rasterizehtml/dist/rasterizeHTML.allinone.js"></script>
+	<script src="vendor/scripts/jquery.textFit.js"></script>
+
+
+    </head>
+    <body>
+
+	<div class="container" style="height: 400px; width: 400px; border: 1px solid white; color: white;">
+	    <div class="row">
+
+		<div class="col-lg-12" id="presentation-content" >
+
+		    <div class="slide-container" >
+			<img class="slide_image" src="/home/shaienn/workspace/nodejs/chrip/dist/chrip-nw/linux64/backgrounds/1.jpg" height="1080" width="1920">
+			<div class="slide-chapter-text" style="white-space: normal;">И сказал ей Елкана, муж ее: Анна!
+			    что ты плачешь и почему не ешь, и отчего скорбит сердце твое?
+			    не лучше ли я для тебя десяти сыновей?</div>
+			<div class="slide-chapter-link-container">
+			    <div class="slide-chapter-link">
+				1-я Царств 1:8
+			    </div>
+			</div>
+		    </div>
+
+		</div>
+	    </div>
+	</div>
+
+	<script>
+
+	    $(document).ready(function () {
+		var chapter_link = $('.slide-chapter-link');
+		var chapter_text = $('.slide-chapter-text');
+
+
+//		$('.slide-container').addClass('hidden');
+
+		$('.slide_image').load(function () {
+
+		    chapter_text.textFit({
+			multiline: true,
+		    });
+
+		    chapter_link.textFit({
+			multiline: false,
+		    });
+
+//		    $('.slide-container').removeClass('hidden');
+
+//		    chapter_link.show();
+//		    chapter_link.css('left', $('.slide-container').width());
+//		    $('.slide-container').css("opacity", 1);
+		    var width = chapter_link.width();
+		    chapter_link.css('left', '100%');
+		    chapter_link.delay(100).animate({left: 0}, {
+			duration: 1500,
+			specialEasing: {
+			    left: "easeOutBounce"
+			},
+		    });
+
+
+
+		});
+
+
+
+
+
+	    });
+	</script>
+
+
+    </body>
+</html>

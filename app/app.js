@@ -4,18 +4,14 @@
 
 console.log("Start");
 
-var
-	gui = require('nw.gui'),
-	win = gui.Window.get(),
-	os = require('os'),
-	path = require('path'),
-	url = require('url'),
-	Q = require('q'),
-	PEG = require("pegjs");
-
+var gui = require('nw.gui');
+var win = gui.Window.get();
+var os = require('os');
+var path = require('path');
+var url = require('url');
+var Q = require('q');
 var base64 = require('node-base64-image');
 var sizeOf = require('image-size');
-//var intel = require('intel');
 var keypress = require('keypress');
 var ColorPicker = require('simple-color-picker-jq');
 var fs = require('fs-extra');
@@ -65,6 +61,7 @@ _.extend(App, {
 	},
 	Settings: {},
 	Common: {
+	    Presentation: {},
 	    Slides: {},
 	    ItemList: {},
 	    Forms: {},
@@ -198,13 +195,6 @@ var getMac = function () {
 };
 
 var initApp = function () {
-
-
-//    intel.setLevel(intel.WARN);
-//    intel.addHandler(new intel.handlers.File('test.log'));
-//    intel.info("Start init app");
-//    intel.warn('i made it!');
-//    intel.debug('nobody loves me');
 
     var nwPath = process.execPath;
     var nwDir = path.dirname(process.execPath);

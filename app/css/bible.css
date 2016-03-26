@@ -30,12 +30,6 @@
     height: 10%;
 }
 
-
-#bible_low_half, #bible_high_half{
-    width: 100%;
-    float: left;
-}
-
 #bible_high_half{
     height: 70%;
 }
@@ -46,12 +40,14 @@
 
 #bible_slidecontrol{
     height: 100%;
-    float: left;
-    width: 50%;
     display: flex;
     align-items: center;
     text-align: center;
-    padding: 2%;
+}
+
+.bible-element-slide-preview-item{
+    height: 100%;
+    width: 100%;
 }
 
 #bible_search{
@@ -144,19 +140,39 @@
     background: #6b0f1a;
 }
 
-.slide-verse-text{
+.slide-chapter-text{
     top:0;
     position: absolute;
     height: 80%;
     width: 100%;
-
+    left: 0;
+    white-space: normal;
+    text-align: center;
 }
 
-.slide-verse-link{
+.slide-chapter-link-container{
+    height: calc(20% - 1px);
+    left: 0;
     position: absolute;
     top: 80%;
-    height: 20%;
     width: 100%;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    border-top: 1px solid white;
+}
+
+.slide-chapter-link{
+    height: 40%;
+    width: 98%;
+    text-align: right;
+    position: relative;
+    display: flex;
+    align-self: center;
+}
+
+#presentation-content .slide-container .slide-chapter-link{
+    left: 100%;
 }
 
 .medialistItem{

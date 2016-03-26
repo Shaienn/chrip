@@ -37,7 +37,6 @@
 
 	    win.log("slides button click");
 	    App.vent.trigger("appmode:switch_tab_to", "blockscreens");
-	    //App.vent.trigger("appmode:videoplayer:show");
 
 	},
 	settingsBtnHandler: function () {

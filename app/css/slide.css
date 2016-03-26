@@ -20,7 +20,7 @@ span.italic{
     white-space: nowrap;
 }
 
-.inner-item, .bible-slide-item {
+/*.inner-item, .bible-slide-item {
     display: flex;
     align-items: center;
     float: left;
@@ -31,11 +31,12 @@ span.italic{
     margin: 0;
     padding: 0;
     text-align: center;
-}
+}*/
 
 
 .slide-container {
     position: relative;
+    overflow: hidden;
 }
 
 .slide-container img{
@@ -62,10 +63,6 @@ span.italic{
 
 *[class*='-slide-preview-item'] .slide-container{
     -webkit-transform: scale3d(0.9,0.9,0.9) rotate( 0.0001deg);
-    /*display: inline-block;*/
-    /*max-height: 100%;*/
-    /*max-width: 100%;*/ 
-    /*vertical-align: middle;*/
     filter: alpha(opacity=60);
     opacity: 0.6;
     -webkit-transition: all 0.1s ease-out;
@@ -85,4 +82,25 @@ span.italic{
     -moz-transition: all 0.1s ease-out;
     -o-transition: all 0.1s ease-out;
     transition: all 0.1s ease-out;
+}
+
+
+
+
+
+
+/*.slide-container > * {
+    -webkit-transition: all 500ms
+}
+
+.slide-container.passive > * {
+    opacity: 0.6;
+}
+
+.slide-container.hidden > * {
+    opacity: 0;
+}
+
+.slide-container > * {
+    opacity: 1;*/
 }

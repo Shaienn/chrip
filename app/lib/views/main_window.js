@@ -46,7 +46,7 @@
 	    {
 		region: "BlockScreens_Tab_r",
 		startPoint: "BlockScreens",
-		button: "#appmode-menu-blockscreens-btn",
+		button: "#appmode-menu-slides-btn",
 		setting: "blockscreens",
 		onEvent: "blockscreens:control:onEvent",
 		offEvent: "blockscreens:control:offEvent",
@@ -146,12 +146,10 @@
 
 		    App.Update.init();
 
-		    console.log("update init");
 		    /* Menu */
 
 		    that.Menu.show(new App.View.AppModeMenu());
 
-		    console.log("menu show");
 		    /* Top toolbar */
 
 		    that.BottomBar_r.show(new App.View.MainWindow.BottomBar);
@@ -159,22 +157,16 @@
 		    App.vent.trigger("active_mode_changed", App.active_mode);
 		    App.vent.trigger("main_toolbar:set_black_mode_indication", App.black_mode);
 
-		    console.log("loading tabs");
-
 		    for (var i in that.tabs) {
 
 			var tab = that.tabs[i];
-			console.log(tab.setting);
 			var region = that.getRegion(tab.region);
 			var view = new App.View[tab.startPoint].Root;
 			region.show(view);
 			var tabContainer = $(that.getRegion(tab.region).el);
 			tabContainer.hide();
 			$(tab.button).removeClass('active');
-			console.log(i);
 		    }
-
-		    console.log("ready");
 
 		    App.SplashScreen.close();
 		    //win.show();

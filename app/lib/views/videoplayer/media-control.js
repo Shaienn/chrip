@@ -131,6 +131,8 @@
 	    this.vlc.onTimeChanged = this.onTimeChanged;
 	    this.vlc.onPositionChanged = this.onPositionChanged;
 	    this.vlc.onPlaying = this.onPlaying;
+	    this.vlc.onPaused = this.onPaused;
+	    this.vlc.onStopped = this.onStopped;
 	},
 	onDestroy: function () {
 	    this.vlc.stop();
@@ -139,12 +141,22 @@
 
 	    /* If active mode changed while player was stopped */
 
-	    if (new_state == false && this.vlc.playing == false) {
+	    if (new_state === false && this.vlc.playing === false) {
 
 		/* Remove additional context */
 
-		this.contexts = [];
+		that.contexts = [];
 
+	    }
+	},
+	onPaused: function () {
+	    if (App.active_mode === false) {
+		that.contexts = [];
+	    }
+	},
+	onStopped: function () {
+	    if (App.active_mode === false) {
+		that.contexts = [];
 	    }
 	},
 	onResize: function () {
@@ -181,13 +193,9 @@
 
 	    /* General click and move over player surface  */
 
-	    this.ui.wrapper.mouseup(
-		    this.mouseClickEnd
-		    );
+	    this.ui.wrapper.mouseup(this.mouseClickEnd);
 
-	    this.ui.wrapper.mousemove(
-		    this.mouseMoved
-		    );
+	    this.ui.wrapper.mousemove(this.mouseMoved);
 
 	    /* Bars */
 
@@ -331,7 +339,7 @@
 		that.seekDrag = false;
 		var p = (e.pageX - rect.left) / (rect.right - rect.left);
 		that.ui.progress_seen.css("width", (p * 100) + "%");
-		this.vlc.position = p;
+		that.vlc.position = p;
 		that.ui.time_current.text(that.ui.tooltip_inner.text());
 	    }
 

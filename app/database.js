@@ -65,8 +65,10 @@
 
 			stmt.run(key, Settings[settings_item][key], function (err) {
 
-			    if (err)
+			    if (err) {
+				win.error(err);
 				s_d.reject(new Error(err));
+			    }
 
 			    s_d.resolve(true);
 			});
@@ -107,6 +109,7 @@
 
 		if (err) {
 		    App.SplashScreen.send_progress("Open global database", "FAILED");
+		    win.error(err);
 		    d.reject(new Error(err));
 		}
 
@@ -114,6 +117,7 @@
 
 		    if (err) {
 			d.reject(new Error(err));
+			win.error(err);
 			App.SplashScreen.send_progress("Create virtual database", "FAILED");
 		    }
 
@@ -133,8 +137,10 @@
 				/* Global db */
 
 				App.Database.db.exec("ATTACH'" + App.Config.runDir + Settings.GeneralSettings.global_db + "'AS webdb", function (err) {
-				    if (err)
+				    if (err) {
+					win.error(err);
 					d.reject(new Error(err));
+				    }
 				});
 
 				App.Database.db.run("INSERT INTO main.Authors (uaid, name, db, gaid) SELECT '0', name, '1', author_id FROM webdb.Authors");
@@ -144,8 +150,10 @@
 				/* User db */
 
 				App.Database.db.exec("ATTACH'" + App.Config.runDir + Settings.GeneralSettings.user_db + "'AS userdb", function (err) {
-				    if (err)
+				    if (err) {
+					win.error(err);
 					d.reject(new Error(err));
+				    }
 				});
 
 				App.Database.db.run("INSERT INTO main.Authors (uaid, name, db, gaid) SELECT uaid, name, '2', gaid FROM userdb.Authors WHERE gaid LIKE 0");
@@ -159,8 +167,10 @@
 
 				    App.SplashScreen.send_progress("Create songs search table...", null);
 
-				    if (err)
+				    if (err) {
+					win.error(err);
 					d.reject(new Error(err));
+				    }
 
 				    var stmt = App.Database.db.prepare("INSERT INTO Songslist (memid, name, text) VALUES (?, ?, ?)");
 				    var rows_ts = [];
@@ -268,8 +278,11 @@
 	    var d = Q.defer();
 	    var stmt = App.Database.user_db.prepare("SELECT COUNT(*) FROM BlockScreensFiles WHERE file = ?");
 	    stmt.get(file, function (err, row) {
-		if (err)
+		if (err) {
+		    win.error(err);
 		    d.reject(new Error(err));
+		}
+
 		d.resolve(row);
 	    });
 
@@ -282,8 +295,10 @@
 	    var stmt = App.Database.user_db.prepare("DELETE FROM BlockScreensFiles WHERE gid = ? AND file = ?");
 	    stmt.run(
 		    blockscreen.get('gid'), blockscreen.get('file'), function (err) {
-		if (err)
+		if (err) {
+		    win.error(err);
 		    d.reject(new Error(err));
+		}
 		d.resolve(true);
 	    });
 
@@ -296,8 +311,10 @@
 	    var stmt = App.Database.user_db.prepare("INSERT INTO BlockScreensFiles (gid, file) VALUES (?,?)");
 	    stmt.run(
 		    blockscreen.get('gid'), blockscreen.get('file'), function (err) {
-		if (err)
+		if (err) {
+		    win.error(err);
 		    d.reject(new Error(err));
+		}
 		d.resolve(true);
 	    });
 
@@ -314,16 +331,20 @@
 		stmt.run(
 			group.get('name'),
 			group.get('id'), function (err) {
-		    if (err)
+		    if (err) {
+			win.error(err);
 			d.reject(new Error(err));
+		    }
 		    d.resolve(true);
 		});
 	    } else {
 		var stmt = App.Database.user_db.prepare("INSERT INTO BlockScreensGroups (name) VALUES (?)");
 		stmt.run(
 			group.get('name'), function (err) {
-		    if (err)
+		    if (err) {
+			win.error(err);
 			d.reject(new Error(err));
+		    }
 		    d.resolve(true);
 		});
 	    }
@@ -342,7 +363,8 @@
 	    var stmt = App.Database.user_db.prepare("SELECT * FROM BlockScreensFiles WHERE gid = ?");
 	    stmt.all(gid, function (err, rows) {
 		if (err) {
-		    console.log(err);
+		    win.error(err);
+		    d.reject(new Error(err));
 		}
 
 		rows.forEach(function (item) {
@@ -364,7 +386,8 @@
 	    var stmt = App.Database.user_db.prepare("SELECT * FROM BlockScreensGroups");
 	    stmt.all(function (err, rows) {
 		if (err) {
-		    console.log(err);
+		    win.error(err);
+		    d.reject(new Error(err));
 		}
 
 		rows.forEach(function (item) {
@@ -418,8 +441,10 @@
 
 		stmt.all(function (err, rows) {
 
-		    if (err)
+		    if (err) {
+			win.error(err);
 			d.reject(new Error(err));
+		    }
 
 		    rows.forEach(function (item) {
 			win.info("Set: " + item.key + " - " + item.value);
@@ -438,8 +463,10 @@
 	    var d = Q.defer();
 	    var stmt = App.Database.db.prepare("SELECT s.* FROM Songs s, Songslist sl WHERE sl.name MATCH ? AND s.memid = sl.memid UNION SELECT s.* FROM Songs s, Songslist sl WHERE sl.text MATCH ? AND s.memid = sl.memid");
 	    stmt.all(search_string, search_string, function (err, rows) {
-		if (err)
+		if (err) {
+		    win.error(err);
 		    d.reject(new Error(err));
+		}
 
 		var loadedSongs = [];
 		rows.forEach(function (item, i, arr) {
@@ -466,8 +493,10 @@
 
 	    var stmt = App.Database.user_db.prepare(sql);
 	    stmt.run(name, value, function (err) {
-		if (err)
+		if (err) {
+		    win.error(err);
 		    d.reject(new Error(err));
+		}
 
 		d.resolve();
 	    });
@@ -482,8 +511,10 @@
 
 	    var stmt = App.Database.db.prepare("SELECT Songs.* FROM Songs WHERE Songs.uaid LIKE ? AND Songs.gaid LIKE ? ORDER BY Songs.name");
 	    stmt.all(author.get('aid'), author.get('gaid'), function (err, rows) {
-		if (err)
+		if (err) {
+		    win.error(err);
 		    d.reject(new Error(err));
+		}
 
 		var loadedSongs = [];
 		rows.forEach(function (item, i, arr) {
@@ -514,8 +545,10 @@
 
 		var stmt = App.Database.user_db.prepare("DELETE FROM Songs WHERE usid = ?");
 		stmt.run(song.get('sid'), function (err) {
-		    if (err)
+		    if (err) {
+			win.error(err);
 			d.reject(new Error(err));
+		    }
 		    d.resolve(true);
 		});
 		stmt.finalize();
@@ -540,8 +573,10 @@
 		    var stmt = App.Database.user_db.prepare("INSERT INTO Songs (uaid, name, gaid, gsid, text) VALUES (?,?,?,?,?)");
 		    stmt.run(song.get('aid'), song.get('name'), song.get('gaid'), song.get('gsid'), song.get('text'), function (err) {
 
-			if (err)
+			if (err) {
+			    win.error(err);
 			    d.reject(new Error(err));
+			}
 
 			var song_id = this.lastID;
 			that.getSinger(
@@ -573,8 +608,10 @@
 		    var stmt = App.Database.user_db.prepare("UPDATE Songs SET uaid = ?, name = ?, gaid = ?, gsid = ?, text = ? WHERE usid = ?");
 		    stmt.run(song.get('aid'), song.get('name'), song.get('gaid'), song.get('gsid'), song.get('text'), song.get('sid'), function (err) {
 
-			if (err)
+			if (err) {
+			    win.error(err);
 			    d.reject(new Error(err));
+			}
 
 			that.getSinger(
 				song.get('gaid'),
@@ -604,8 +641,10 @@
 		    var stmt = App.Database.user_db.prepare("INSERT INTO Songs (uaid, name, gaid, gsid, text) VALUES (?,?,?,?,?)");
 		    stmt.run(song.get('aid'), song.get('name'), song.get('gaid'), "0", song.get('text'), function (err) {
 
-			if (err)
+			if (err) {
+			    win.error(err);
 			    d.reject(new Error(err));
+			}
 
 			var song_id = this.lastID;
 			that.getSinger(
@@ -647,8 +686,8 @@
 	    stmt.run(song.get('gsid'), song.get('sid'), function (err) {
 
 		if (err) {
+		    win.error(err);
 		    d.reject(new Error(err));
-		    return;
 		}
 
 		d.resolve(true);
@@ -663,6 +702,7 @@
 	    App.Database.user_db.all("SELECT * FROM LastSongs", function (err, rows) {
 
 		if (err) {
+		    win.error(err);
 		    d.reject(new Error("Load author failed. Got error: " + err));
 		    return;
 		}
@@ -675,6 +715,7 @@
 
 		    stmt.get(last_song_item.gsid, last_song_item.usid, function (err, item) {
 			if (err) {
+			    win.error(err);
 			    load_promise.reject(new Error(err));
 			    return;
 			}
@@ -710,8 +751,10 @@
 
 	    var stmt = App.Database.user_db.prepare("DELETE FROM LastSongs WHERE gsid = ? AND usid = ?");
 	    stmt.run(song.get('gsid'), song.get('sid'), function (err) {
-		if (err)
+		if (err) {
+		    win.error(err);
 		    d.reject(new Error(err));
+		}
 		d.resolve(true);
 	    });
 	    stmt.finalize();
@@ -720,8 +763,10 @@
 	removeAllFromLastSongs: function () {
 	    var d = Q.defer();
 	    App.Database.user_db.run("DELETE FROM LastSongs", [], function (err) {
-		if (err)
+		if (err) {
+		    win.error(err);
 		    d.reject(new Error(err));
+		}
 
 		d.resolve(true);
 	    });
@@ -741,8 +786,10 @@
 	    var stmt = App.Database.user_db.prepare("SELECT id FROM ForApprove WHERE gaid=? AND uaid=? AND gsid=? AND usid=?");
 	    stmt.get(gaid, uaid, gsid, usid, function (err, row) {
 
-		if (err)
+		if (err) {
+		    win.error(err);
 		    d.reject(new Error(err));
+		}
 
 		if (typeof row == "undefined") {
 
@@ -751,8 +798,10 @@
 		    var insert_stmt = App.Database.user_db.prepare("INSERT INTO ForApprove (gaid, uaid, gsid, usid, singer_name, song_name, song_text) VALUES (?,?,?,?,?,?,?)");
 		    insert_stmt.run(gaid, uaid, gsid, usid, singer_name, song_name, song_text, function (err) {
 
-			if (err)
+			if (err) {
+			    win.error(err);
 			    d.reject(new Error(err));
+			}
 			d.resolve(true);
 		    });
 		    insert_stmt.finalize();
@@ -764,8 +813,10 @@
 		    var update_stmt = App.Database.user_db.prepare("UPDATE ForApprove SET singer_name=?, song_name=?, song_text=? WHERE id=?");
 		    update_stmt.run(singer_name, song_name, song_text, row.id, function (err) {
 
-			if (err)
+			if (err) {
+			    win.error(err);
 			    d.reject(new Error(err));
+			}
 			d.resolve(true);
 		    });
 		    update_stmt.finalize();
@@ -783,8 +834,10 @@
 
 	    App.Database.user_db.all("SELECT * FROM ForApprove", function (err, rows) {
 
-		if (err)
+		if (err) {
+		    win.error(err);
 		    d.reject(new Error("Load author failed. Got error: " + err));
+		}
 
 		var loadedSongs = [];
 		rows.forEach(function (item, i, arr) {
@@ -826,8 +879,10 @@
 
 	    var stmt = App.Database.db.prepare("SELECT * FROM Authors WHERE gaid = ? AND uaid = ?");
 	    stmt.get(gaid, uaid, function (err, row) {
-		if (err)
+		if (err) {
+		    win.error(err);
 		    d.reject(new Error(err));
+		}
 
 		d.resolve(row.name);
 	    });
@@ -841,8 +896,10 @@
 
 	    App.Database.db.all("SELECT * FROM Authors", function (err, rows) {
 
-		if (err)
+		if (err) {
+		    win.error(err);
 		    d.reject(new Error(err));
+		}
 
 		var loadedAuthors = [];
 
