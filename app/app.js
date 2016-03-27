@@ -22,6 +22,8 @@ var sqlite3 = require('sqlite3').verbose();
 var assert = require('assert');
 var http = require('http');
 var restify = require('restify');
+var fontManager = require('font-manager-nw');
+
 
 win.log = console.log.bind(console);
 win.debug = function () {
@@ -43,7 +45,7 @@ win.error = function () {
     var params = Array.prototype.slice.call(arguments, 1);
     params.unshift('%c[%cERROR%c] ' + arguments[0], 'color: black;', 'color: red;', 'color: black;');
     console.error.apply(console, params);
-    fse.appendFileSync(path.join(require('nw.gui').App.Config.runDir, '\logs.txt'), '\n\n' + (arguments[0].stack || arguments[0])); // log errors;
+    fse.appendFileSync(path.join(App.Config.runDir.toString(), '\logs.txt'), '\n\n' + (arguments[0].stack || arguments[0])); // log errors;
 };
 
 
@@ -206,9 +208,16 @@ var initApp = function () {
     win.log(nwPath);
     win.log(nwDir);
     win.log(nwCwd);
+    win.log(process);
 
-    App.Config.execDir = nwCwd;//process.cwd();
-    App.Config.runDir = nwCwd;//nwDir;
+    if (process.platform === "linux") {
+	App.Config.execDir = nwCwd;//process.cwd();
+	App.Config.runDir = nwCwd;//nwDir;
+    } else {
+	App.Config.execDir = process.cwd();
+	App.Config.runDir = nwDir;
+    }
+
     App.ControlWindow = win;
 
     win.show();
@@ -231,13 +240,15 @@ App.addRegions({
 App.addInitializer(function (options) {
 
     App.SplashScreen.open()
-	    .then(function () {
-		App.SplashScreen.send_progress("Initializing", null);
-	    })
+	    .then(
+		    function () {
+			App.SplashScreen.send_progress("Initializing", null);
+		    })
 	    .then(initTemplates)
-	    .catch(function (err) {
-		App.SplashScreen.send_progress("Init templates", err.toString() + " failed");
-	    })
+	    .catch(
+		    function (err) {
+			App.SplashScreen.send_progress("Init templates", err.toString() + " failed");
+		    })
 	    .then(getMac)
 	    .then(initApp);
 });

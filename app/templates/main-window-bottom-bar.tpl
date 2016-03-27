@@ -14,8 +14,8 @@
     </div>
 
     <div class="col-lg-2 col-lg-offset-4">
-	<button type="button" class="btn btn-info"> 
-	    <i id="update-btn" class="fa fa-circle blink_element"><span>Доступно обновление</span></i>
+	<button type="button" class="btn btn-info" id="update-btn"> 
+	    <i class="fa fa-circle blink_element"><span>Доступно обновление</span></i>
 	</button>
     </div>
 </div>

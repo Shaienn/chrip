@@ -14,9 +14,17 @@ var path = require("path");
     'use strict';
     gui.Screen.Init();
 
-    var common_background_path = path.dirname(process.execPath) + "/backgrounds";
-    var common_bible_path = path.dirname(process.execPath) + "/bible";
-    var common_blockscreens_path = path.dirname(process.execPath) + "/blockscreens";
+    var app_path = "";
+
+    if (process.platform === "linux") {
+	app_path = path.dirname(process.execPath);
+    } else {
+	app_path = process.cwd()
+    }
+
+    var common_background_path = app_path + "/backgrounds";
+    var common_bible_path = app_path + "/bible";
+    var common_blockscreens_path = app_path + "/blockscreens";
 
     /* User interface */
 

@@ -26,6 +26,7 @@
 #songBaseSongPreview {
     height: calc(100% - 39px);
     padding: 1em;
+    color: wheat;
 }
 
 #songBaseSongEditor {
