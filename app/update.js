@@ -20,13 +20,7 @@
 		_.bind(that.runCheckUpdate, that)().done(function (res) {
 
 		    if (res == true) {
-
-			/* Do not call server again, because we already got info
-			 * that we need to update base
-			 * */
-
-			App.vent.trigger("main_toolbar:set_update_mode_indication", true);
-
+			that.runUpdate();
 		    } else {
 			setTimeout(p, Settings.GeneralSettings.update_period);
 		    }
@@ -39,20 +33,21 @@
 	},
 	runCheckUpdate: function () {
 	    var d = Q.defer();
-	    this.client.get('/songbase', function (err, req, res, obj) {
+	    this.client.get('/api/songbase/get_version', function (err, req, res, obj) {
 
 		if (err) {
 		    win.error(err);
-		    d.reject(new Error(err));
+		    d.reject(err);
 		}
 
 		win.log(obj);
 
-		if ((typeof obj != "undefined") && (typeof obj.version != "undefined")) {
+		if ((typeof obj != "undefined") && (typeof obj.version != "undefined") && (obj != false)) {
 		    if (obj.version != Settings.Config.songbase_version) {
 			win.log("Server has: " + obj.version + " but application has: " + Settings.Config.songbase_version);
 			d.resolve(true);
 		    } else {
+			win.log("Server has: " + obj.version + " and application has: " + Settings.Config.songbase_version);
 			d.resolve(false);
 		    }
 		} else {
@@ -64,31 +59,23 @@
 	runUpdate: function () {
 	    var d = Q.defer();
 	    var that = this;
-	    this.client.get('/songbase/link', function (err, req, res, obj) {
 
-		if (err) {
-		    win.error(err);
-		    d.reject(new Error(err));
-		    return;
-		}
+	    /* Download file */
 
-		if (typeof obj.link != "undefined") {
+	    var basePath = Settings.Config.tmpPath;
+	    fse.emptyDirSync(basePath);
+	    var dest = basePath + '/global.db';
+	    var file = fse.createOutputStream(dest);
 
-		    /* Download file */
+	    http.get(Settings.GeneralSettings.updateServer + '/api/songbase/get_database', function (response) {
+		response.pipe(file);
+		file.on('finish', function () {
+		    file.close(function () {
 
-		    var basePath = Settings.Config.tmpPath;
-		    fse.emptyDirSync(basePath);
-		    var dest = basePath + obj.link;
-		    var file = fse.createOutputStream(dest);
+			win.info("Download finished. Copy to source location");
 
-		    http.get(Settings.GeneralSettings.updateServer + obj.link, function (response) {
-			response.pipe(file);
-			file.on('finish', function () {
-			    file.close(function () {
-
-				win.info("Download finished. Copy to source location");
-
-				App.Database.close().then(
+			App.Database.close()
+				.then(
 					function () {
 					    win.log("Copying to " + App.Config.runDir + Settings.GeneralSettings.global_db);
 					    try {
@@ -97,19 +84,15 @@
 						win.error('Copying got an error: ', err, err.stack);
 					    }
 					    App.Database.init().then(function () {
-						App.vent.trigger("main_toolbar:set_update_mode_indication", false);
 						that.runPeriodicalCheck();
 					    });
 					});
-			    });
-			});
-
-		    }).on('error', function (err) { // Handle errors
-			fse.unlink(dest);
-			win.error(err);
-			throw new Error(err);
 		    });
-		}
+		});
+	    }).on('error', function (err) { // Handle errors
+		fse.unlink(dest);
+		win.error(err);
+		throw new Error(err);
 	    });
 	    return d.promise;
 	},
@@ -121,15 +104,17 @@
 
 			    var song = res[i];
 			    song.mac = Settings.Config.mac;
-			    that.client.post('/approve', song, function (err, req, res, obj) {
-
+			    console.log(song);
+			    that.client.post('/api/song/add', song, function (err, req, res, obj) {
+				
 				if (err) {
 				    win.error(err);
 				    throw new Error(err);
 				}
 
-				if (typeof obj.approve != "undefined")
+				if (typeof obj.approve != "undefined") {
 				    App.Database.removeSongForApprove(obj.approve);
+				}
 			    });
 			}
 		    }

@@ -133,7 +133,9 @@
 
 	},
 	onShow: function () {
-
+	    
+	    console.log("Show");
+	    
 	    var that = this;
 
 	    /* Header */

@@ -109,6 +109,7 @@
 		    App.SplashScreen.send_progress("Open global database", "FAILED");
 		    win.error(err);
 		    d.reject(new Error(err));
+		    return;
 		}
 
 		App.Database.db = new sqlite3.Database(':memory:', function (err) {
@@ -117,6 +118,7 @@
 			d.reject(new Error(err));
 			win.error(err);
 			App.SplashScreen.send_progress("Create virtual database", "FAILED");
+			return;
 		    }
 
 		    App.Database.user_db_check().then(function () {
@@ -138,11 +140,12 @@
 				    if (err) {
 					win.error(err);
 					d.reject(new Error(err));
+					return;
 				    }
 				});
 
-				App.Database.db.run("INSERT INTO main.Authors (uaid, name, db, gaid) SELECT '0', name, '1', author_id FROM webdb.Authors");
-				App.Database.db.run("INSERT INTO main.Songs (usid, uaid, name, db, gsid, gaid, text) SELECT '0', '0', name, '1', song_id, author_id, text FROM webdb.Songs");
+				App.Database.db.run("INSERT INTO main.Authors (uaid, name, db, gaid) SELECT '0', name, '1', gaid FROM webdb.Authors");
+				App.Database.db.run("INSERT INTO main.Songs (usid, uaid, name, db, gsid, gaid, text) SELECT '0', '0', name, '1', gsid, gaid, text FROM webdb.Songs");
 				App.Database.db.exec("DETACH webdb");
 
 				/* User db */
@@ -151,6 +154,7 @@
 				    if (err) {
 					win.error(err);
 					d.reject(new Error(err));
+					return;
 				    }
 				});
 
@@ -168,6 +172,7 @@
 				    if (err) {
 					win.error(err);
 					d.reject(new Error(err));
+					return;
 				    }
 
 				    var stmt = App.Database.db.prepare("INSERT INTO Songslist (memid, name, text) VALUES (?, ?, ?)");
@@ -188,8 +193,10 @@
 						row.text.toLowerCase(),
 						function (err) {
 
-						    if (err)
+						    if (err) {
 							row_d.reject(new Error(err));
+							return;
+						    }
 
 						    row_d.resolve(true);
 						});
@@ -408,12 +415,12 @@
 	    App.SplashScreen.send_progress("Get database version...", null);
 
 	    var d = Q.defer();
-	    App.Database.global_db.each("SELECT version FROM Version WHERE version_id = 1", function (err, row) {
+	    App.Database.global_db.each("SELECT value FROM Parameters WHERE key = 'db_version'", function (err, row) {
 
 		if (err != null) {
 		    Settings.Config.songbase_version = 0;
 		} else {
-		    Settings.Config.songbase_version = row.version;
+		    Settings.Config.songbase_version = row.value;
 		}
 
 		d.resolve(Settings.Config.songbase_version);
@@ -472,9 +479,9 @@
 		    loadedSongs.push({
 			name: item.name,
 			db: item.db,
-			aid: item.uaid,
+			uaid: item.uaid,
 			gaid: item.gaid,
-			sid: item.usid,
+			usid: item.usid,
 			gsid: item.gsid,
 			text: item.text,
 		    });
@@ -504,11 +511,11 @@
 	loadSongs: function (author) {
 	    var d = Q.defer();
 
-	    assert.ok(!isNaN(author.get('aid')));
+	    assert.ok(!isNaN(author.get('uaid')));
 	    assert.ok(!isNaN(author.get('gaid')));
 
 	    var stmt = App.Database.db.prepare("SELECT Songs.* FROM Songs WHERE Songs.uaid LIKE ? AND Songs.gaid LIKE ? ORDER BY Songs.name");
-	    stmt.all(author.get('aid'), author.get('gaid'), function (err, rows) {
+	    stmt.all(author.get('uaid'), author.get('gaid'), function (err, rows) {
 		if (err) {
 		    win.error(err);
 		    d.reject(new Error(err));
@@ -519,9 +526,9 @@
 		    loadedSongs.push({
 			name: item.name,
 			db: item.db,
-			aid: item.uaid,
+			uaid: item.uaid,
 			gaid: item.gaid,
-			sid: item.usid,
+			usid: item.usid,
 			gsid: item.gsid,
 			text: item.text,
 		    });
@@ -535,14 +542,14 @@
 	    var d = Q.defer();
 
 	    assert.ok(song instanceof App.Model.Song);
-	    assert.ok(!isNaN(song.get('sid')));
+	    assert.ok(!isNaN(song.get('usid')));
 
 	    if (song.get('db') == '2') {
 
 		/* We only delete local authors */
 
 		var stmt = App.Database.user_db.prepare("DELETE FROM Songs WHERE usid = ?");
-		stmt.run(song.get('sid'), function (err) {
+		stmt.run(song.get('usid'), function (err) {
 		    if (err) {
 			win.error(err);
 			d.reject(new Error(err));
@@ -569,7 +576,7 @@
 		    /* It is a global song, so create a new song in local db */
 
 		    var stmt = App.Database.user_db.prepare("INSERT INTO Songs (uaid, name, gaid, gsid, text) VALUES (?,?,?,?,?)");
-		    stmt.run(song.get('aid'), song.get('name'), song.get('gaid'), song.get('gsid'), song.get('text'), function (err) {
+		    stmt.run(song.get('uaid'), song.get('name'), song.get('gaid'), song.get('gsid'), song.get('text'), function (err) {
 
 			if (err) {
 			    win.error(err);
@@ -579,12 +586,12 @@
 			var song_id = this.lastID;
 			that.getSinger(
 				song.get('gaid'),
-				song.get('aid')
+				song.get('uaid')
 				).then(
 				function (singer_name) {
 				    that.addSongForApprove(
 					    song.get('gaid'),
-					    song.get('aid'),
+					    song.get('uaid'),
 					    song.get('gsid'),
 					    song_id,
 					    singer_name,
@@ -604,7 +611,7 @@
 		    /* It is a local song, update  */
 
 		    var stmt = App.Database.user_db.prepare("UPDATE Songs SET uaid = ?, name = ?, gaid = ?, gsid = ?, text = ? WHERE usid = ?");
-		    stmt.run(song.get('aid'), song.get('name'), song.get('gaid'), song.get('gsid'), song.get('text'), song.get('sid'), function (err) {
+		    stmt.run(song.get('uaid'), song.get('name'), song.get('gaid'), song.get('gsid'), song.get('text'), song.get('usid'), function (err) {
 
 			if (err) {
 			    win.error(err);
@@ -613,13 +620,13 @@
 
 			that.getSinger(
 				song.get('gaid'),
-				song.get('aid')
+				song.get('uaid')
 				).then(function (singer_name) {
 			    that.addSongForApprove(
 				    song.get('gaid'),
-				    song.get('aid'),
+				    song.get('uaid'),
 				    song.get('gsid'),
-				    song.get('sid'),
+				    song.get('usid'),
 				    singer_name,
 				    song.get('name'),
 				    song.get('text')
@@ -637,7 +644,7 @@
 		    /* New song, create */
 
 		    var stmt = App.Database.user_db.prepare("INSERT INTO Songs (uaid, name, gaid, gsid, text) VALUES (?,?,?,?,?)");
-		    stmt.run(song.get('aid'), song.get('name'), song.get('gaid'), "0", song.get('text'), function (err) {
+		    stmt.run(song.get('uaid'), song.get('name'), song.get('gaid'), "0", song.get('text'), function (err) {
 
 			if (err) {
 			    win.error(err);
@@ -647,12 +654,12 @@
 			var song_id = this.lastID;
 			that.getSinger(
 				song.get('gaid'),
-				song.get('aid')
+				song.get('uaid')
 				).then(
 				function (singer_name) {
 				    that.addSongForApprove(
 					    song.get('gaid'),
-					    song.get('aid'),
+					    song.get('uaid'),
 					    0,
 					    song_id,
 					    singer_name,
@@ -681,7 +688,7 @@
 	    assert.ok(song instanceof App.Model.Song);
 
 	    var stmt = App.Database.user_db.prepare("INSERT INTO LastSongs (gsid, usid) VALUES (?,?)");
-	    stmt.run(song.get('gsid'), song.get('sid'), function (err) {
+	    stmt.run(song.get('gsid'), song.get('usid'), function (err) {
 
 		if (err) {
 		    win.error(err);
@@ -721,9 +728,9 @@
 			var song = new App.Model.Song();
 			song.set('name', item.name);
 			song.set('db', item.db);
-			song.set('aid', item.uaid);
+			song.set('uaid', item.uaid);
 			song.set('gaid', item.gaid);
-			song.set('sid', item.usid);
+			song.set('usid', item.usid);
 			song.set('gsid', item.gsid);
 			song.set('text', item.text);
 
@@ -748,7 +755,7 @@
 	    assert.ok(song instanceof App.Model.Song);
 
 	    var stmt = App.Database.user_db.prepare("DELETE FROM LastSongs WHERE gsid = ? AND usid = ?");
-	    stmt.run(song.get('gsid'), song.get('sid'), function (err) {
+	    stmt.run(song.get('gsid'), song.get('usid'), function (err) {
 		if (err) {
 		    win.error(err);
 		    d.reject(new Error(err));
@@ -838,7 +845,7 @@
 		}
 
 		var loadedSongs = [];
-		rows.forEach(function (item, i, arr) {
+		rows.forEach(function (item) {
 		    loadedSongs.push({
 			id: item.id,
 			gaid: item.gaid,
@@ -846,8 +853,8 @@
 			gsid: item.gsid,
 			usid: item.usid,
 			singer_name: item.singer_name,
-			song_name: item.song_name,
-			song_text: item.song_text
+			name: item.song_name,
+			text: item.song_text
 		    });
 		});
 		d.resolve(loadedSongs);
@@ -905,7 +912,7 @@
 		    loadedAuthors.push({
 			name: item.name,
 			db: item.db,
-			aid: item.uaid,
+			uaid: item.uaid,
 			gaid: item.gaid,
 		    });
 
@@ -920,14 +927,14 @@
 	deleteAuthor: function (author) {
 
 	    assert.ok(author instanceof App.Model.Author);
-	    assert.ok(!isNaN(author.get('aid')));
+	    assert.ok(!isNaN(author.get('uaid')));
 
 	    if (author.get('db') == '2') {
 
 		/* We only delete local authors */
 
 		var stmt = App.Database.user_db.prepare("DELETE FROM Authors WHERE uaid = ?");
-		stmt.run(author.get('aid'));
+		stmt.run(author.get('uaid'));
 		stmt.finalize();
 	    }
 
@@ -935,15 +942,13 @@
 	saveAuthor: function (author) {
 
 	    assert.ok(author instanceof App.Model.Author);
-	    assert.ok(!isNaN(author.get('aid')));
-	    assert.ok(!isNaN(author.get('gaid')));
 
 	    switch (author.get('db')) {
 
 		case ('1'):
 
 		    /* It is a global author, so create a new author in local db */
-
+		    assert.ok(!isNaN(author.get('gaid')));
 		    var stmt = App.Database.user_db.prepare("INSERT INTO Authors (name, gaid) VALUES (?,?)");
 		    stmt.run(author.get('name'), author.get('gaid'));
 		    stmt.finalize();
@@ -952,9 +957,9 @@
 		case ('2'):
 
 		    /* It is a local author, update  */
-
+		    assert.ok(!isNaN(author.get('uaid')));
 		    var stmt = App.Database.user_db.prepare("UPDATE Authors SET name = ? WHERE uaid = ?");
-		    stmt.run(author.get('name'), author.get('aid'));
+		    stmt.run(author.get('name'), author.get('uaid'));
 		    stmt.finalize();
 
 		    break;

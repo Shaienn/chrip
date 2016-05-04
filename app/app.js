@@ -25,6 +25,8 @@ var restify = require('restify');
 var fontManager = require('font-manager-nw');
 
 
+
+
 win.log = console.log.bind(console);
 win.debug = function () {
     var params = Array.prototype.slice.call(arguments, 1);
@@ -113,6 +115,8 @@ App.ViewStack = [];
 
 var initTemplates = function () {
 
+    console.log("Init templates");
+
     /* Read all files from /templates directory */
     App.SplashScreen.send_progress("Init templates", null);
 
@@ -126,9 +130,9 @@ var initTemplates = function () {
 		    }
 		})
 		.on('error', function (err, item) {
-		    console.log(err.message);
-		    console.log(item.path); // the file the error occurred on
-		    d.reject(err);
+		    win.error(err.message);
+		    win.error(item.path); // the file the error occurred on
+		    throw new Error(err);
 		})
 		.on('end', function () {
 		    d.resolve(f);
@@ -140,11 +144,12 @@ var initTemplates = function () {
     function add_tpl_into_dom(items) {
 	var ts = []; // files, directories, symlinks, etc
 	var d = Q.defer();
-
+	console.log(items[0]);
 	items.forEach(function (item) {
-	    fs.readFile(item, function (err, data) {
+	    fse.readFile(item, function (err, data) {
 		if (err) {
-		    d.reject(err);
+		    win.error(err);
+		    throw new Error(err);
 		}
 
 		var tpl = document.createElement('script');
@@ -184,12 +189,17 @@ var closeApp = function () {
 
 
 var getMac = function () {
+
+    win.log("getMac");
+
     var d = Q.defer();
     App.SplashScreen.send_progress("Get MAC address", null);
     require('getmac').getMac(
 	    function (err, macAddress) {
-		if (err)
+		if (err) {
+		    win.error(err);
 		    throw new Error(err);
+		}
 
 		Settings.Config.mac = macAddress;
 		App.SplashScreen.send_progress(null, "OK");
@@ -200,6 +210,8 @@ var getMac = function () {
 };
 
 var initApp = function () {
+
+    win.log("initApp");
 
     var nwPath = process.execPath;
     var nwDir = path.dirname(process.execPath);

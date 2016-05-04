@@ -58,6 +58,32 @@
 		return;
 	    }
 
+	    /* Assign buttons */
+
+	    switch (song.get('db')) {
+
+		case('1'):
+
+		    console.log("Global");
+		    $('#songslist-edit-btn').addClass('disabled');
+		    $('#songslist-remove-btn').addClass('disabled');
+
+		    break;
+		case('2'):
+
+		    console.log("Local");
+		    $('#songslist-edit-btn').removeClass('disabled');
+		    $('#songslist-remove-btn').removeClass('disabled');
+
+		    break;
+		default:
+
+		    console.log("Undefined");
+		    $('#songslist-edit-btn').addClass('disabled');
+		    $('#songslist-remove-btn').addClass('disabled');
+	    }
+
+
 	    this.selectedSong = song;
 
 	    /* Clear song text */
@@ -78,7 +104,6 @@
 			continue;
 		    }
 
-		    var songPart = new App.Model.SongPart();
 		    var part_text = part[1].trim();
 
 		    /* remove chords */
@@ -113,8 +138,8 @@
 
 		var songCollection = new App.Model.SongCollection(loadedSongs);
 
-		var songCollectionView = App.View.SongService.Songs.List({
-		    collection: songCollection,
+		var songCollectionView = new App.View.SongService.Songs.List({
+		    collection: songCollection
 		});
 
 		that.SongList_r.show(songCollectionView);
@@ -140,7 +165,7 @@
 
 	    /* Get selected author */
 
-	    if (this.selectedAuthor == "undefined") {
+	    if (typeof this.selectedAuthor == "undefined") {
 		win.log("Select author first");
 		return;
 	    }
@@ -221,29 +246,25 @@
 		case('1'):
 
 		    console.log("Global");
-		    $('#authorslist-edit-btn').addClass('passive');
-		    $('#authorslist-remove-btn').addClass('passive');
+		    $('#authorslist-edit-btn').addClass('disabled');
+		    $('#authorslist-remove-btn').addClass('disabled');
 
 		    break;
 		case('2'):
 
 		    console.log("Local");
-		    $('#authorslist-edit-btn').removeClass('passive');
-		    $('#authorslist-remove-btn').removeClass('passive');
+		    $('#authorslist-edit-btn').removeClass('disabled');
+		    $('#authorslist-remove-btn').removeClass('disabled');
 
 		    break;
 		default:
 
 		    console.log("Undefined");
-		    $('#authorslist-edit-btn').addClass('passive');
-		    $('#authorslist-remove-btn').addClass('passive');
+		    $('#authorslist-edit-btn').addClass('disabled');
+		    $('#authorslist-remove-btn').addClass('disabled');
 	    }
 
-	    /* Save selected author */
-
-	    this.selectedAuthor = author;
-
-	    var that = this;
+	    var self = this;
 
 	    author.getSongs().then(function (loadedSongs) {
 
@@ -255,8 +276,8 @@
 		    collection: songCollection,
 		});
 
-		that.SongList_r.show(songCollectionView);
-		that.hideSongsLoader();
+		self.SongList_r.show(songCollectionView);
+		self.hideSongsLoader();
 	    });
 
 	},
@@ -268,16 +289,20 @@
 	},
 	selectAuthor: function (author) {
 
-	    var aid = author.get('aid');
+	    var uaid = author.get('uaid');
 	    var gaid = author.get('gaid');
 
-	    if (aid == "undefined" || gaid == "undefined") {
+	    if (typeof uaid == "undefined" || typeof gaid == "undefined") {
 		return;
 	    }
 
+	    /* Save selected author */
+
+	    this.selectedAuthor = author;
+
 	    var authors_list = $('.author-element-list');
 	    authors_list.children('li.active').removeClass('active');
-	    var item = authors_list.find('.item-container[aid=' + aid + '][gaid=' + gaid + ']');
+	    var item = authors_list.find('.item-container[uaid=' + uaid + '][gaid=' + gaid + ']');
 	    item.trigger('click');
 	    item.parent('.author-element-item').addClass('active');
 	    authors_list.scrollTop(0).scrollTop(item.position().top);
@@ -285,7 +310,7 @@
 	loadAuthors: function () {
 
 	    this.loadAuthorsLoader();
-	    var that = this;
+	    var self = this;
 
 	    App.Database.loadAuthors().then(function (loadedAuthors) {
 		var authorCollection = new App.Model.AuthorCollection(loadedAuthors);
@@ -293,9 +318,9 @@
 		    collection: authorCollection,
 		});
 
-		that.loadedAuthors = authorCollection;
-		that.AuthorsList_r.show(authorCollectionView);
-		that.hideAuthorsLoader();
+		self.loadedAuthors = authorCollection;
+		self.AuthorsList_r.show(authorCollectionView);
+		self.hideAuthorsLoader();
 	    });
 	},
 	onShow: function () {

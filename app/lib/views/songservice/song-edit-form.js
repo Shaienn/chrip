@@ -308,7 +308,7 @@
 
 	    this.song.set('text', song_text);
 	    this.song.set('name', song_name);
-	    this.song.set('aid', this.author.attributes.aid);
+	    this.song.set('uaid', this.author.attributes.uaid);
 	    this.song.set('gaid', this.author.attributes.gaid);
 
 

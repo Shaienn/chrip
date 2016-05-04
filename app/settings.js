@@ -2,25 +2,14 @@
  * Created by shaienn on 02.09.15.
  */
 
-var os = require('os');
 var Settings = {};
-var gui = require('nw.gui');
-var fontManager = require("font-manager-nw");
-var fs = require('fs');
-var path = require("path");
 
 (function (App) {
 
     'use strict';
     gui.Screen.Init();
 
-    var app_path = "";
-
-    if (process.platform === "linux") {
-	app_path = path.dirname(process.execPath);
-    } else {
-	app_path = process.cwd()
-    }
+    var app_path = path.dirname(process.execPath);
 
     var common_background_path = app_path + "/backgrounds";
     var common_bible_path = app_path + "/bible";
@@ -31,7 +20,8 @@ var path = require("path");
     Settings.GeneralSettings = {
 	user_db: "/db/user.db",
 	global_db: "/db/global.db",
-	updateServer: "http://185.46.9.150:8080",
+	//updateServer: "http://185.46.9.150:8080",
+	updateServer: "http://localhost:3000",
 	update_period: 300000,
 	appMode: 'songservice',
 	presentation_monitor: 0,
@@ -143,7 +133,7 @@ var path = require("path");
 	    var extensions = [".png", ".jpg"];
 	    var imagesList = [];
 
-	    var files = fs.readdirSync(background_path);
+	    var files = fse.readdirSync(background_path);
 
 	    files.forEach(function (file) {
 
@@ -165,7 +155,7 @@ var path = require("path");
 	    var extensions = [".bs"];
 	    var blocscreensList = [];
 
-	    var files = fs.readdirSync(bs_path);
+	    var files = fse.readdirSync(bs_path);
 
 	    files.forEach(function (file) {
 
@@ -187,7 +177,7 @@ var path = require("path");
 	    var extensions = [".xml"];
 	    var bibleList = [];
 
-	    var files = fs.readdirSync(Settings.BibleSettings.bible_path);
+	    var files = fse.readdirSync(Settings.BibleSettings.bible_path);
 
 	    files.forEach(function (file) {
 

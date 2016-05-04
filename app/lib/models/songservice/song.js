@@ -8,9 +8,9 @@
         defaults: {
             name: "",
             db: "0",
-            aid: "",
+            uaid: "",
             gaid: "",
-            sid: "",
+            usid: "",
             gsid: "",
             text: "",
         },

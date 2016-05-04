@@ -14,7 +14,7 @@
 
             name: "",
             db: "0",
-            aid: "",
+            uaid: "",
             gaid: "",
             text: "",
 

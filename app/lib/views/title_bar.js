@@ -1,5 +1,3 @@
-var os = require('os');
-
 (function (App) {
     'use strict';
 
@@ -7,7 +5,7 @@ var os = require('os');
 	template: '#header-tpl',
 	className: "col-lg-12",
 	events: {
-	    'click .application-close-btn': 'closeWindow',
+	    'click #application-close-btn': 'closeWindow',
 	},
 	initialize: function () {
 	    this.nativeWindow = require('nw.gui').Window.get();
