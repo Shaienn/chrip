@@ -44,18 +44,7 @@
 	    /* Delete authorname to db */
 
 	    App.Database.deleteAuthor(this.author);
-
-	    var that = this;
-
-	    that.songbase.loadAuthorsLoader(true);
-
-	    App.Database.close()
-		    .then(function () {
-			App.Database.init().then(function () {
-			    that.songbase.loadAuthors();
-			});
-		    });
-
+	    this.songbase.loadAuthors();
 	    this.cancel();
 	},
 	cancelBtnHandler: function () {
@@ -80,13 +69,17 @@
 	},
 	initialize: function (options) {
 
-	    if (options.bsg != "undefined") {
+	    if (typeof options.bsg != "undefined") {
 		this.bsg = options.bsg;
+	    }
+
+	    if (typeof options.blockscreens != "undefined") {
+		this.blockscreens = options.blockscreens;
 	    }
 
 	},
 	onShow: function () {
-	    if (this.bsg != "undefined") {
+	    if (typeof this.bsg != "undefined") {
 		var name = this.bsg.get('name');
 		$(this.ui.Input).val(name);
 	    }
@@ -114,20 +107,14 @@
 
 	    /* Save bsg to db */
 
-	    App.Database.saveBlockScreenGroup(this.bsg);
-
 	    var that = this;
+	    that.blockscreens.show_bsg_loader();
 
-//	    that.songbase.loadAuthorsLoader(true);
-//
-//	    App.Database.close()
-//		    .then(function () {
-//			App.Database.init().then(function () {
-//			    that.songbase.loadAuthors();
-//			});
-//		    });
-
-	    this.cancel();
+	    App.Database.saveBlockScreenGroup(this.bsg)
+		    .then(function () {
+			that.blockscreens.load_bs_groups();
+			that.cancel();
+		    });
 	},
 	cancelBtnHandler: function () {
 	    this.cancel();

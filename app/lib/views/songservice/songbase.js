@@ -65,24 +65,21 @@
 		case('1'):
 
 		    console.log("Global");
-		    $('#songslist-edit-btn').addClass('disabled');
 		    $('#songslist-remove-btn').addClass('disabled');
 
 		    break;
 		case('2'):
 
 		    console.log("Local");
-		    $('#songslist-edit-btn').removeClass('disabled');
 		    $('#songslist-remove-btn').removeClass('disabled');
 
 		    break;
 		default:
 
 		    console.log("Undefined");
-		    $('#songslist-edit-btn').addClass('disabled');
 		    $('#songslist-remove-btn').addClass('disabled');
 	    }
-
+	    $('#songslist-edit-btn').removeClass('disabled');
 
 	    this.selectedSong = song;
 
@@ -159,14 +156,13 @@
 	},
 	openEditAuthorWindow: function () {
 
-	    if ($('#authorslist-edit-btn').hasClass('passive')) {
+	    if ($('#authorslist-edit-btn').hasClass('disabled')) {
 		return;
 	    }
 
 	    /* Get selected author */
 
 	    if (typeof this.selectedAuthor == "undefined") {
-		win.log("Select author first");
 		return;
 	    }
 
@@ -181,7 +177,7 @@
 	},
 	openRemoveAuthorWindow: function () {
 
-	    if ($('#authorslist-remove-btn').hasClass('passive')) {
+	    if ($('#authorslist-remove-btn').hasClass('disabled')) {
 		return;
 	    }
 
@@ -246,23 +242,21 @@
 		case('1'):
 
 		    console.log("Global");
-		    $('#authorslist-edit-btn').addClass('disabled');
 		    $('#authorslist-remove-btn').addClass('disabled');
 
 		    break;
 		case('2'):
 
 		    console.log("Local");
-		    $('#authorslist-edit-btn').removeClass('disabled');
 		    $('#authorslist-remove-btn').removeClass('disabled');
 
 		    break;
 		default:
 
 		    console.log("Undefined");
-		    $('#authorslist-edit-btn').addClass('disabled');
 		    $('#authorslist-remove-btn').addClass('disabled');
 	    }
+	    $('#authorslist-edit-btn').removeClass('disabled');
 
 	    var self = this;
 
@@ -331,6 +325,10 @@
 	    $('#songservice-control').hide();
 	    $('#appmode-menu').hide();
 	    $('#main-window-toptoolbar').hide();
+	    $('#songslist-edit-btn').addClass('disabled');
+	    $('#songslist-remove-btn').addClass('disabled');
+	    $('#authorslist-edit-btn').addClass('disabled');
+	    $('#authorslist-remove-btn').addClass('disabled');
 
 	    this.PlayList_r.show(new App.View.SongService.PlayList.List({
 		childView: App.View.PlayListSongBase,

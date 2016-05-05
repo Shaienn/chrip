@@ -22,3 +22,4 @@
     </div>
 </div>
 <div id="bsModal"></div>
+<input id="bsInput" type="file" accept="bs" style="display:none"></input>

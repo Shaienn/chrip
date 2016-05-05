@@ -7,6 +7,7 @@
 
     App.View.BlockScreens.Groups.Element = App.View.Common.ItemList.Element.extend({
 	className: 'bs-' + App.View.Common.ItemList.Element.prototype.className,
+	template: '#bsg-itemview-tpl',
 	clickReport: function (e) {
 	    App.vent.trigger("blockscreens:selectBsGroup", this.model);
 	},

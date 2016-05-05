@@ -1,4 +1,4 @@
-    /**
+/**
  * Created by shaienn on 29.09.15.
  */
 
@@ -175,35 +175,31 @@
 	saveBsHandler: function () {
 	    var files = $(this.ui.bsSaveInput)[0].files;
 	    var path = files[0].path.replace(/\.[^/.]+$/, "") + '.bs';
-	    this.saveBsFile(path, false);
+	    this.saveBsFile(path);
 	},
-	saveBsFile: function (path, is_existed) {
+	saveBsFile: function (path) {
 	    var that = this;
-	    fs.writeFile(path, this.xml, function (err) {
-		if (err) {
-		    console.log(err);
-		}
+	    fse.writeFile(path, this.xml, function (err) {
+		if (err)
+		    throw new Error(err);
 
-		if (is_existed !== true) {
-		    that.blockscreen.set('file', path);
 
-		    /* add this file to group */
-		    App.Database.addFileToBlockScreenGroup(that.blockscreen)
-			    .then(function () {
-				that.cancel();
-			    });
-		} else {
-		    that.cancel();
-		}
+		that.blockscreen.set('file', path);
+		App.Database.add_file_to_blockscreen_group(that.blockscreen)
+			.then(
+				function () {
+				    that.exit_and_reload();
+				}
+			);
 	    });
 	},
 	convertImageToBase64: function (path) {
 	    var d = Q.defer();
 	    var options = {localFile: true, string: true};
 	    base64.base64encoder(path, options, function (err, image) {
-		if (err) {
-		    d.reject(err);
-		}
+		if (err)
+		    throw new Error(err);
+
 		d.resolve(image);
 	    });
 	    return d.promise;
@@ -653,11 +649,19 @@
 			if (typeof (that.blockscreen.get('file')) === "undefined") {
 			    that.openSaveBsDialog();
 			} else {
-			    that.saveBsFile(that.blockscreen.get('file'), true);
+			    that.saveBsFile(that.blockscreen.get('file'));
 			}
 		    });
 	},
 	cancelBtnHandler: function () {
+	    this.cancel();
+	},
+	exit_and_reload: function () {
+	    console.log("Here");
+	    var dumb_group = new App.Model.BlockScreens.Groups.Element();
+	    dumb_group.set('gid', this.blockscreen.get('gid'));
+	    this.blockscreens
+		    .select_blockscreen_group(dumb_group);
 	    this.cancel();
 	},
 	cancel: function () {
@@ -667,23 +671,5 @@
 	    }
 	    this.destroy();
 	},
-	closeDatabase: function () {
-	    App.Database.close().then(_.bind(this.openDatabase, this));
-	},
-	openDatabase: function () {
-	    App.Database.init().then(_.bind(this.onReloadReady, this));
-	},
-	onReloadReady: function () {
-	    var that = this;
-	    if (typeof this.songbase !== "undefined") {
-		this.songbase.selectAuthor(this.author);
-		this.songbase.hideSongsLoader();
-	    }
-	    if (typeof this.control !== "undefined") {
-		this.song.rebuild_slides().then(function () {
-		    that.control.onSongSlidesRedraw(that.song);
-		});
-	    }
-	}
     });
 })(window.App);

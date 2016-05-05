@@ -24,9 +24,6 @@ var http = require('http');
 var restify = require('restify');
 var fontManager = require('font-manager-nw');
 
-
-
-
 win.log = console.log.bind(console);
 win.debug = function () {
     var params = Array.prototype.slice.call(arguments, 1);
@@ -49,7 +46,6 @@ win.error = function () {
     console.error.apply(console, params);
     fse.appendFileSync(path.join(App.Config.runDir.toString(), '\logs.txt'), '\n\n' + (arguments[0].stack || arguments[0])); // log errors;
 };
-
 
 var App = new Backbone.Marionette.Application();
 
@@ -163,7 +159,6 @@ var initTemplates = function () {
 
 	    ts.push(d.promise);
 	});
-
 	return Q.all(ts);
     }
 

@@ -10,6 +10,7 @@
     App.Model.BlockScreens.Groups.Element = Backbone.Model.extend({
 	defaults: {
 	    name: "",
+	    gid: null,
 	}
     });
 

@@ -33,7 +33,7 @@
 		App.Database.user_db.run("CREATE TABLE IF NOT EXISTS [LastSongs] ([gsid] INTEGER, [usid] INTEGER)");
 
 
-		App.Database.user_db.run("CREATE TABLE IF NOT EXISTS [BlockScreensGroups] ([id] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, [name] TEXT NOT NULL) ");
+		App.Database.user_db.run("CREATE TABLE IF NOT EXISTS [BlockScreensGroups] ([gid] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, [name] TEXT NOT NULL) ");
 		App.Database.user_db.run("CREATE TABLE IF NOT EXISTS [BlockScreensFiles] ([gid] INTEGER NOT NULL, [file] TEXT NOT NULL) ");
 
 		/* If we have no settings inside database files, just add its defaults */
@@ -46,26 +46,18 @@
 		];
 
 		var settings_promises = [];
-		App.SplashScreen.send_progress("Check user settings", null);
-
-
 		settings_table.forEach(function (settings_item, table_index, table_array) {
 
 		    var sql = "INSERT OR IGNORE INTO " + settings_item + " (key, value) VALUES (?, ?)";
 		    var stmt = App.Database.user_db.prepare(sql);
-		    var up_value = (100 / table_array.length) * table_index;
 
 		    Object.keys(Settings[settings_item]).forEach(function (key, key_index, key_array) {
 			var s_d = Q.defer();
-
-			var down_value = up_value + ((100 / table_array.length) / key_array.length) * key_index;
-			App.SplashScreen.send_progress(null, Math.floor(down_value).toString());
-
 			stmt.run(key, Settings[settings_item][key], function (err) {
 
 			    if (err) {
 				win.error(err);
-				s_d.reject(new Error(err));
+				throw new Error(err);
 			    }
 
 			    s_d.resolve(true);
@@ -79,7 +71,6 @@
 
 		Q.all(settings_promises).then(function () {
 		    d.resolve(true);
-		    App.SplashScreen.send_progress(null, "Done");
 		});
 	    });
 
@@ -99,34 +90,25 @@
 	},
 	init: function () {
 
-	    App.SplashScreen.send_progress("Init databases", null);
-
 	    var d = Q.defer();
-
+	    win.log('init');
 	    App.Database.global_db = new sqlite3.Database(App.Config.runDir + Settings.GeneralSettings.global_db, function (err) {
 
 		if (err) {
-		    App.SplashScreen.send_progress("Open global database", "FAILED");
 		    win.error(err);
-		    d.reject(new Error(err));
-		    return;
+		    throw new Error(err);
 		}
 
 		App.Database.db = new sqlite3.Database(':memory:', function (err) {
 
 		    if (err) {
-			d.reject(new Error(err));
 			win.error(err);
-			App.SplashScreen.send_progress("Create virtual database", "FAILED");
-			return;
+			throw new Error(err);
 		    }
 
 		    App.Database.user_db_check().then(function () {
 			App.Database.getVersion().then(function () {
 			    App.Database.db.serialize(function () {
-
-				App.SplashScreen.send_progress("Init virtual database", null);
-
 
 				App.Database.db.run("CREATE TABLE IF NOT EXISTS [Authors] ([memid] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,[uaid] INTEGER NOT NULL,[gaid] INTEGER,[name] TEXT NOT NULL,[db] TEXT NOT NULL)");
 				App.Database.db.run("CREATE TABLE IF NOT EXISTS [Songs] ([memid] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,[usid] INTEGER NOT NULL,[uaid] INTEGER NOT NULL,[gsid] INTEGER,[gaid] INTEGER,[name] TEXT,[db] TEXT NOT NULL, [text] TEXT)");
@@ -139,8 +121,7 @@
 				App.Database.db.exec("ATTACH'" + App.Config.runDir + Settings.GeneralSettings.global_db + "'AS webdb", function (err) {
 				    if (err) {
 					win.error(err);
-					d.reject(new Error(err));
-					return;
+					throw new Error(err);
 				    }
 				});
 
@@ -153,8 +134,7 @@
 				App.Database.db.exec("ATTACH'" + App.Config.runDir + Settings.GeneralSettings.user_db + "'AS userdb", function (err) {
 				    if (err) {
 					win.error(err);
-					d.reject(new Error(err));
-					return;
+					throw new Error(err);
 				    }
 				});
 
@@ -167,21 +147,15 @@
 				App.Database.db.exec("CREATE VIRTUAL TABLE Songslist USING fts4(memid, name, text)");
 				App.Database.db.all("SELECT * FROM Songs", function (err, rows) {
 
-				    App.SplashScreen.send_progress("Create songs search table...", null);
-
 				    if (err) {
 					win.error(err);
-					d.reject(new Error(err));
-					return;
+					throw new Error(err);
 				    }
 
 				    var stmt = App.Database.db.prepare("INSERT INTO Songslist (memid, name, text) VALUES (?, ?, ?)");
 				    var rows_ts = [];
 
-				    rows.forEach(function (row, i, arr) {
-
-					var up_value = (100 / arr.length) * i;
-					App.SplashScreen.send_progress(null, Math.floor(up_value).toString());
+				    rows.forEach(function (row) {
 
 					if (row.text == null)
 					    return;
@@ -194,8 +168,7 @@
 						function (err) {
 
 						    if (err) {
-							row_d.reject(new Error(err));
-							return;
+							throw new Error(err);
 						    }
 
 						    row_d.resolve(true);
@@ -285,7 +258,7 @@
 	    stmt.get(file, function (err, row) {
 		if (err) {
 		    win.error(err);
-		    d.reject(new Error(err));
+		    throw new Error(err);
 		}
 
 		d.resolve(row);
@@ -302,43 +275,65 @@
 		    blockscreen.get('gid'), blockscreen.get('file'), function (err) {
 		if (err) {
 		    win.error(err);
-		    d.reject(new Error(err));
+		    throw new Error(err);
 		}
 		d.resolve(true);
 	    });
-
+	    stmt.finalize();
 	    return d.promise;
 	},
-	addFileToBlockScreenGroup: function (blockscreen) {
+	find_file_in_blockscreen_group: function (blockscreen) {
+	    assert.ok(blockscreen instanceof App.Model.BlockScreens.Elements.Element);
+	    var d = Q.defer();
+	    var stmt = App.Database.user_db.prepare("SELECT COUNT(*) as count FROM BlockScreensFiles WHERE gid = ? AND file = ?");
+	    stmt.get(
+		    blockscreen.get('gid'), blockscreen.get('file'), function (err, row) {
+		if (err) {
+		    win.error(err);
+		    throw new Error(err);
+		}
+		d.resolve(row.count);
+	    });
+	    stmt.finalize();
+	    return d.promise;
+	},
+	add_file_to_blockscreen_group: function (blockscreen) {
 
 	    assert.ok(blockscreen instanceof App.Model.BlockScreens.Elements.Element);
 	    var d = Q.defer();
-	    var stmt = App.Database.user_db.prepare("INSERT INTO BlockScreensFiles (gid, file) VALUES (?,?)");
-	    stmt.run(
-		    blockscreen.get('gid'), blockscreen.get('file'), function (err) {
-		if (err) {
-		    win.error(err);
-		    d.reject(new Error(err));
-		}
-		d.resolve(true);
-	    });
 
+	    this.find_file_in_blockscreen_group(blockscreen)
+		    .then(function (count) {
+			console.log(count);
+			if (count) {
+			    d.resolve(true);
+			} else {
+			    var stmt = App.Database.user_db.prepare("INSERT INTO BlockScreensFiles (gid, file) VALUES (?,?)");
+			    stmt.run(
+				    blockscreen.get('gid'), blockscreen.get('file'), function (err) {
+				if (err) {
+				    win.error(err);
+				    throw new Error(err);
+				}
+				d.resolve(true);
+			    });
+			    stmt.finalize();
+			}
+		    });
 	    return d.promise;
 	},
 	saveBlockScreenGroup: function (group) {
 	    var d = Q.defer();
 
 	    assert.ok(group instanceof App.Model.BlockScreens.Groups.Element);
-	    /* It is a global song, so create a new song in local db */
-
-	    if (typeof group.get('id') != "undefined") {
-		var stmt = App.Database.user_db.prepare("UPDATE BlockScreensGroups SET name = ? WHERE id = ?");
+	    if ((typeof group.get('gid') != "undefined") && (group.get('gid') != null)) {
+		var stmt = App.Database.user_db.prepare("UPDATE BlockScreensGroups SET name = ? WHERE gid = ?");
 		stmt.run(
 			group.get('name'),
-			group.get('id'), function (err) {
+			group.get('gid'), function (err) {
 		    if (err) {
 			win.error(err);
-			d.reject(new Error(err));
+			throw new Error(err);
 		    }
 		    d.resolve(true);
 		});
@@ -348,12 +343,11 @@
 			group.get('name'), function (err) {
 		    if (err) {
 			win.error(err);
-			d.reject(new Error(err));
+			throw new Error(err);
 		    }
 		    d.resolve(true);
 		});
 	    }
-
 	    stmt.finalize();
 	    return d.promise;
 	},
@@ -362,14 +356,14 @@
 
 	    assert.ok(group instanceof App.Model.BlockScreens.Groups.Element);
 
-	    var gid = group.get('id');
+	    var gid = group.get('gid');
 	    var loadedBlockScreensFiles = [];
 
 	    var stmt = App.Database.user_db.prepare("SELECT * FROM BlockScreensFiles WHERE gid = ?");
 	    stmt.all(gid, function (err, rows) {
 		if (err) {
 		    win.error(err);
-		    d.reject(new Error(err));
+		    throw new Error(err);
 		}
 
 		rows.forEach(function (item) {
@@ -378,7 +372,7 @@
 
 		d.resolve(loadedBlockScreensFiles);
 	    });
-
+	    stmt.finalize();
 	    return d.promise;
 	},
 	getBlockScreensGroups: function () {
@@ -392,13 +386,13 @@
 	    stmt.all(function (err, rows) {
 		if (err) {
 		    win.error(err);
-		    d.reject(new Error(err));
+		    throw new Error(err);
 		}
 
 		rows.forEach(function (item) {
 
 		    var bsg = new App.Model.BlockScreens.Groups.Element;
-		    bsg.set('id', item.id);
+		    bsg.set('gid', item.gid);
 		    bsg.set('name', item.name);
 
 		    loadedBlockScreensGroups.push(bsg);
@@ -448,7 +442,7 @@
 
 		    if (err) {
 			win.error(err);
-			d.reject(new Error(err));
+			throw new Error(err);
 		    }
 
 		    rows.forEach(function (item) {
@@ -470,7 +464,7 @@
 	    stmt.all(search_string, search_string, function (err, rows) {
 		if (err) {
 		    win.error(err);
-		    d.reject(new Error(err));
+		    throw new Error(err);
 		}
 
 		var loadedSongs = [];
@@ -500,7 +494,7 @@
 	    stmt.run(name, value, function (err) {
 		if (err) {
 		    win.error(err);
-		    d.reject(new Error(err));
+		    throw new Error(err);
 		}
 
 		d.resolve();
@@ -518,7 +512,7 @@
 	    stmt.all(author.get('uaid'), author.get('gaid'), function (err, rows) {
 		if (err) {
 		    win.error(err);
-		    d.reject(new Error(err));
+		    throw new Error(err);
 		}
 
 		var loadedSongs = [];
@@ -552,7 +546,7 @@
 		stmt.run(song.get('usid'), function (err) {
 		    if (err) {
 			win.error(err);
-			d.reject(new Error(err));
+			throw new Error(err);
 		    }
 		    d.resolve(true);
 		});
@@ -580,7 +574,7 @@
 
 			if (err) {
 			    win.error(err);
-			    d.reject(new Error(err));
+			    throw new Error(err);
 			}
 
 			var song_id = this.lastID;
@@ -648,7 +642,7 @@
 
 			if (err) {
 			    win.error(err);
-			    d.reject(new Error(err));
+			    throw new Error(err);
 			}
 
 			var song_id = this.lastID;
@@ -674,7 +668,7 @@
 		    });
 		    break;
 		default:
-		    d.reject(new Error('Unknown song`s DB'));
+		    throw new Error('Unknown song`s DB');
 
 	    }
 
@@ -692,7 +686,7 @@
 
 		if (err) {
 		    win.error(err);
-		    d.reject(new Error(err));
+		    throw new Error(err);
 		}
 
 		d.resolve(true);
@@ -708,8 +702,7 @@
 
 		if (err) {
 		    win.error(err);
-		    d.reject(new Error("Load author failed. Got error: " + err));
-		    return;
+		    throw new Error("Load author failed. Got error: " + err);
 		}
 
 		var loadedSongs = [];
@@ -721,8 +714,7 @@
 		    stmt.get(last_song_item.gsid, last_song_item.usid, function (err, item) {
 			if (err) {
 			    win.error(err);
-			    load_promise.reject(new Error(err));
-			    return;
+			    throw new Error(err);
 			}
 
 			var song = new App.Model.Song();
@@ -758,7 +750,7 @@
 	    stmt.run(song.get('gsid'), song.get('usid'), function (err) {
 		if (err) {
 		    win.error(err);
-		    d.reject(new Error(err));
+		    throw new Error(err);
 		}
 		d.resolve(true);
 	    });
@@ -770,7 +762,7 @@
 	    App.Database.user_db.run("DELETE FROM LastSongs", [], function (err) {
 		if (err) {
 		    win.error(err);
-		    d.reject(new Error(err));
+		    throw new Error(err);
 		}
 
 		d.resolve(true);
@@ -793,7 +785,7 @@
 
 		if (err) {
 		    win.error(err);
-		    d.reject(new Error(err));
+		    throw new Error(err);
 		}
 
 		if (typeof row == "undefined") {
@@ -805,7 +797,7 @@
 
 			if (err) {
 			    win.error(err);
-			    d.reject(new Error(err));
+			    throw new Error(err);
 			}
 			d.resolve(true);
 		    });
@@ -820,14 +812,14 @@
 
 			if (err) {
 			    win.error(err);
-			    d.reject(new Error(err));
+			    throw new Error(err);
 			}
 			d.resolve(true);
 		    });
 		    update_stmt.finalize();
 
 		} else {
-		    d.reject(new Error("Wrong row.id value: " + row.id));
+		    throw new Error("Wrong row.id value: " + row.id);
 		}
 	    });
 	    stmt.finalize();
@@ -841,7 +833,7 @@
 
 		if (err) {
 		    win.error(err);
-		    d.reject(new Error("Load author failed. Got error: " + err));
+		    throw new Error("Load author failed. Got error: " + err);
 		}
 
 		var loadedSongs = [];
@@ -886,7 +878,7 @@
 	    stmt.get(gaid, uaid, function (err, row) {
 		if (err) {
 		    win.error(err);
-		    d.reject(new Error(err));
+		    throw new Error(err);
 		}
 
 		d.resolve(row.name);
@@ -903,7 +895,7 @@
 
 		if (err) {
 		    win.error(err);
-		    d.reject(new Error(err));
+		    throw new Error(err);
 		}
 
 		var loadedAuthors = [];
