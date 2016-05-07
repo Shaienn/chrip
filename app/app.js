@@ -59,7 +59,9 @@ _.extend(App, {
 	    Songs: {},
 	    Slides: {}
 	},
-	Bible: {},
+	Bible: {
+	    Slides: {},
+	},
 	Media: {
 	    Elements: {},
 	},
@@ -70,8 +72,9 @@ _.extend(App, {
 	    Forms: {},
 	},
 	BlockScreens: {
-	    Editor: {},
+	    Slides: {},
 	    Elements: {},
+	    Editor: {},
 	    Groups: {},
 	},
     },
@@ -80,10 +83,13 @@ _.extend(App, {
 	    Authors: {},
 	    PlayList: {},
 	    Songs: {},
-	    Slides: {}
+	    Slides: {},
+	    Elements: {},
 	},
 	SongEditor: {},
-	Bible: {},
+	Bible: {
+	    Slides: {},
+	},
 	Media: {
 	    Elements: {},
 	},
@@ -95,6 +101,7 @@ _.extend(App, {
 	    Editor: {},
 	    Elements: {},
 	    Groups: {},
+	    Slides: {},
 	},
     },
     ControlWindow: null,

@@ -8,12 +8,17 @@
     App.Model.Common.Slides.Slide = Backbone.Model.extend({
     });
 
-    App.Model.BibleSlide = App.Model.Common.Slides.Slide.extend({
+    App.Model.Bible.Slides.Slide = App.Model.Common.Slides.Slide.extend({
 	text: "",
 	link: "",
     });
 
-    App.Model.SongSlide = App.Model.Common.Slides.Slide.extend({
+    App.Model.SongService.Slides.Slide = App.Model.Common.Slides.Slide.extend({
+	text: "",
+	number: 0,
+    });
+
+    App.Model.BlockScreens.Slides.Slide = App.Model.Common.Slides.Slide.extend({
 	text: "",
 	number: 0,
     });

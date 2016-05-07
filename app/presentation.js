@@ -8,6 +8,9 @@
 	Windows: [],
 	Elements: [
 	    {
+		element: ""
+	    },
+	    {
 		element: "SongSlide",
 		handler: function (slide) {
 		    var slide_template = _.template($('#slide-tpl').html());

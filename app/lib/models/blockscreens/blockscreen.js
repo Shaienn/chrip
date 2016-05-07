@@ -11,6 +11,7 @@
 	defaults: {
 	    name: "",
 	    gid: null,
+	    fid: null,
 	}
     });
 

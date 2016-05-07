@@ -50,7 +50,7 @@
 	    App.Model.QueueVerseListCollection.remove(verse);
 	},
 	showVerseSlide: function (verse) {
-	    this.SlideControl_r.show(new App.View.Bible.SingleVerseSlide({
+	    this.SlideControl_r.show(new App.View.Bible.Slides.Slide({
 		model: verse.slide
 	    }));
 

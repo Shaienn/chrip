@@ -37,7 +37,7 @@
 
 		    /* Redraw slides */
 
-		    if (!that.model instanceof App.Model.Song)
+		    if (!that.model instanceof App.Model.SongService.Elements.Element)
 			return;
 
 		    App.vent.trigger("songservice:control:context:edit_song", that.model);
@@ -54,7 +54,7 @@
 
 		    /* Redraw slides */
 
-		    if (!that.model instanceof App.Model.Song)
+		    if (!that.model instanceof App.Model.SongService.Elements.Element)
 			return;
 
 		    that.model.rebuild_slides().then(function () {

@@ -10,7 +10,8 @@
 	ui: {
 	    bsg_loader: '#blockscreens-list .area .loader',
 	    bsInput: '#bsInput',
-	    bsGroups: '#blockscreens-list .area .bs-groups'
+	    bsGroups: '#blockscreens-list .area .bs-groups',
+	    bsgContent: '#bsg-content'
 	},
 	events: {
 	    'change @ui.bsInput': 'add_selected_bs_to_group',
@@ -71,6 +72,16 @@
 	},
 	selectElementHandler: function (element) {
 	    this.elements_collection.selected_index = this.elements_collection.collection.indexOf(element);
+
+	    var items = this.ui.bsgContent.find('.bs-element-slide-preview-item');
+	    items.removeClass('active');
+	    items.find('.slide-container[fid="' + element.get('fid') + '"]')
+		    .parent().addClass('active');
+
+	    if (App.active_mode == true) {
+		App.vent.trigger("presentation:set_new_element", element);
+	    }
+
 	},
 	removeElementHandler: function () {
 	    var selected_element = this.elements_collection.collection.at(this.elements_collection.selected_index);
@@ -108,6 +119,7 @@
 	},
 	select_blockscreen_group: function (group) {
 
+	    win.debug('select_blockscreen_group');
 	    var gid = group.get('gid');
 	    if (typeof (gid) === "undefined") {
 		return;
@@ -139,16 +151,18 @@
 
 		    objects.forEach(function (item) {
 
+			console.log(item);
 			var element = new App.Model.BlockScreens.Elements.Element();
 			element.set('html', item.value.html);
 			element.set('preview', item.value.preview);
 			element.set('name', item.value.name);
 			element.set('file', item.value.file);
+			element.set('fid', item.value.fid);
 			element.set('gid', gid);
 			elements.add(element);
 		    });
-		    var elements_view = new App.View.BlockScreens.Elements.List({
-			childView: App.View.BlockScreens.Elements.Element,
+		    var elements_view = new App.View.BlockScreens.Slides.List({
+			childView: App.View.BlockScreens.Slides.Slide,
 			collection: elements,
 		    });
 		    that.elements_collection = elements_view;
@@ -174,6 +188,7 @@
 
 			var object = JSON.parse(res.root);
 			object.file = item.file;
+			object.fid = item.fid;
 			d.resolve(object);
 		    });
 		});

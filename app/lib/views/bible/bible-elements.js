@@ -2,8 +2,8 @@
     'use strict'
 
     /* TODO remove boxfit and left only one fit text plugin for all purposes */
-
-    App.View.Bible.SingleVerseSlide = App.View.Common.Slides.Slide.extend({
+    App.View.Bible.Slides.Slide = App.View.Common.Slides.Slide.extend({
+//    App.View.Bible.SingleVerseSlide = App.View.Common.Slides.Slide.extend({
 	template: "#chapter-slide-tpl",
 	tagName: "div",
 	className: 'bible-element-' + App.View.Common.Slides.Slide.prototype.className,

@@ -34,7 +34,7 @@
 
 
 		App.Database.user_db.run("CREATE TABLE IF NOT EXISTS [BlockScreensGroups] ([gid] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, [name] TEXT NOT NULL) ");
-		App.Database.user_db.run("CREATE TABLE IF NOT EXISTS [BlockScreensFiles] ([gid] INTEGER NOT NULL, [file] TEXT NOT NULL) ");
+		App.Database.user_db.run("CREATE TABLE IF NOT EXISTS [BlockScreensFiles] ([fid] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, [gid] INTEGER NOT NULL, [file] TEXT NOT NULL) ");
 
 		/* If we have no settings inside database files, just add its defaults */
 
@@ -359,7 +359,7 @@
 	    var gid = group.get('gid');
 	    var loadedBlockScreensFiles = [];
 
-	    var stmt = App.Database.user_db.prepare("SELECT * FROM BlockScreensFiles WHERE gid = ?");
+	    var stmt = App.Database.user_db.prepare("SELECT fid, file FROM BlockScreensFiles WHERE gid = ?");
 	    stmt.all(gid, function (err, rows) {
 		if (err) {
 		    win.error(err);
@@ -679,7 +679,7 @@
 
 	    var d = Q.defer();
 
-	    assert.ok(song instanceof App.Model.Song);
+	    assert.ok(song instanceof App.Model.SongService.Elements.Element);
 
 	    var stmt = App.Database.user_db.prepare("INSERT INTO LastSongs (gsid, usid) VALUES (?,?)");
 	    stmt.run(song.get('gsid'), song.get('usid'), function (err) {

@@ -53,7 +53,7 @@
 	},
 	loadText: function (song) {
 
-	    if (!(song instanceof App.Model.Song)) {
+	    if (!(song instanceof App.Model.SongService.Elements.Element)) {
 		win.error("Wrong song object");
 		return;
 	    }
@@ -133,7 +133,7 @@
 
 		win.log(JSON.stringify(loadedSongs));
 
-		var songCollection = new App.Model.SongCollection(loadedSongs);
+		var songCollection = new App.Model.SongService.Elements.List(loadedSongs);
 
 		var songCollectionView = new App.View.SongService.Songs.List({
 		    collection: songCollection
@@ -191,7 +191,7 @@
 	openAddSongWindow: function () {
 
 	    var form = new App.View.SongEditForm({
-		song: new App.Model.Song(),
+		song: new App.Model.SongService.Elements.Element(),
 		authors: this.loadedAuthors,
 		songbase: this
 	    });
@@ -264,7 +264,7 @@
 
 		//win.log(JSON.stringify(loadedSongs));
 
-		var songCollection = new App.Model.SongCollection(loadedSongs);
+		var songCollection = new App.Model.SongService.Elements.List(loadedSongs);
 
 		var songCollectionView = new App.View.SongService.Songs.List({
 		    collection: songCollection,

@@ -8,8 +8,8 @@
     var ControlBaseModel = Backbone.Model.extend({});
     App.Model.ControlBaseModel = ControlBaseModel;
 
-    App.Model.SongControlPanelCollection = Backbone.Collection.extend({
-        model: App.Model.SongSlide,
+    App.Model.SongService.Slides.List = Backbone.Collection.extend({
+	model: App.Model.SongService.Slides.Slide,
     });
 
 })(window.App);

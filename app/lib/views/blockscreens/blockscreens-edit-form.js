@@ -16,14 +16,22 @@
 		this.blockscreen = options.blockscreen;
 	    }
 
+	    if (typeof options.blockscreens !== "undefined") {
+		this.blockscreens = options.blockscreens;
+	    }
+
 	    this.text = "Вы уверены что хотите удалить заставку: " + this.blockscreen.get('name');
 	},
 	deleteActions: function () {
-	    var that = this;
+	    var self = this;
+	    var dumb_group = new App.Model.BlockScreens.Groups.Element();
+	    dumb_group.set('gid', this.blockscreen.get('gid'));
+
 	    App.Database.removeFileFromBlockScreenGroup(this.blockscreen)
 		    .then(
 			    function () {
-				that.collection.remove(that.blockscreen);
+				self.collection.remove(self.blockscreen);
+				self.blockscreens.select_blockscreen_group(dumb_group);
 			    });
 	},
     });
@@ -64,6 +72,10 @@
 		this.file_path = options.file_path;
 	    }
 
+	    if (typeof options.blockscreens !== "undefined") {
+		this.blockscreens = options.blockscreens;
+	    }
+
 	    this.listenTo(App.vent, "blockscreens:modal:select_item", _.bind(this.selectElement, this));
 	    this.listenTo(App.vent, "blockscreens:modal:remove_item", _.bind(this.removeElement, this));
 	    this.listenTo(App.vent, "blockscreens:modal:edit_item:set_text_align", _.bind(this.setTextAlign, this));
@@ -71,7 +83,6 @@
 	},
 	onShow: function () {
 	    var that = this;
-	    console.log(this.blockscreen);
 	    var bsElementsCollection = this.getBlockScreenItems(this.blockscreen);
 	    this.elements_collection = new App.View.BlockScreens.Editor.List({
 		collection: bsElementsCollection,
@@ -657,11 +668,9 @@
 	    this.cancel();
 	},
 	exit_and_reload: function () {
-	    console.log("Here");
 	    var dumb_group = new App.Model.BlockScreens.Groups.Element();
 	    dumb_group.set('gid', this.blockscreen.get('gid'));
-	    this.blockscreens
-		    .select_blockscreen_group(dumb_group);
+	    this.blockscreens.select_blockscreen_group(dumb_group);
 	    this.cancel();
 	},
 	cancel: function () {

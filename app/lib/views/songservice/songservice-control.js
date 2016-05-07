@@ -111,13 +111,13 @@
 	},
 	show_song_slides: function (item) {
 
-	    if (item instanceof App.Model.Song) {
+	    if (item instanceof App.Model.SongService.Elements.Element) {
 
 		this.active_item = item;
 
 		/* Collection of itemviews */
 
-		var itemCollection = new App.Model.SongControlPanelCollection(item.slides);
+		var itemCollection = new App.Model.SongService.Slides.List(item.slides);
 
 
 		var itemCollectionView = new App.View.SongService.Slides.List({
