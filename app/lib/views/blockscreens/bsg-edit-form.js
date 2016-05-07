@@ -85,7 +85,6 @@
 	    }
 	},
 	onDestroy: function () {
-	    console.log('close');
 	},
 	beforeCancel: function () {
 
@@ -94,8 +93,6 @@
 	    return false;
 	},
 	saveBtnHandler: function () {
-
-	    win.log("save");
 
 	    var name = $(this.ui.Input).val();
 
@@ -120,10 +117,8 @@
 	    this.cancel();
 	},
 	cancel: function () {
-	    win.log("cancel");
 	    this.destroy();
 	}
-
     });
 
 
