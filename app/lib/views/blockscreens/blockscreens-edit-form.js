@@ -537,6 +537,7 @@
 			var height = ($(container).height() / editor.height()) * 100;
 			var y = ($(container).position().top / editor.height()) * 100;
 			var x = ($(container).position().left / editor.width()) * 100;
+			var font_helper = (parseInt(text_element.css('font-size'), 10) / $(container).height()) * 100;
 			var simplified_element = $('<div/>', {
 			    class: "bs-html-text-container-" + i,
 			    name: $(container).attr('name'),
@@ -556,7 +557,8 @@
 			    css: {
 				textAlign: text_element.css('text-align'),
 				color: text_element.css('color'),
-			    }
+			    },
+			    font_helper: font_helper,
 			});
 			simplified_element.append(text_span);
 			store_stack.push(simplified_element.prop('outerHTML'));

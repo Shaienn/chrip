@@ -1,9 +1,7 @@
 (function (App) {
     'use strict'
 
-    /* TODO remove boxfit and left only one fit text plugin for all purposes */
     App.View.Bible.Slides.Slide = App.View.Common.Slides.Slide.extend({
-//    App.View.Bible.SingleVerseSlide = App.View.Common.Slides.Slide.extend({
 	template: "#chapter-slide-tpl",
 	tagName: "div",
 	className: 'bible-element-' + App.View.Common.Slides.Slide.prototype.className,
@@ -13,11 +11,11 @@
 	    verse_link: ".slide-chapter-link",
 	},
 	onShow: function () {
-	    var that = this;
+	    var self = this;
 	    this.bindUIElements();
 
 	    /* We wait first time until loading background image, 
-	     * cause container dimensions for boxfit() depends on it */
+	     * cause container dimensions for textFit() depends on it */
 
 	    if (this.image_loaded) {
 		this.ui.verse_text.textFit({
@@ -26,11 +24,11 @@
 	    } else {
 		this.ui.verse_text.hide();
 		this.ui.image.load(function () {
-		    that.ui.verse_text.show();
-		    that.ui.verse_text.textFit({
+		    self.ui.verse_text.show();
+		    self.ui.verse_text.textFit({
 			multiline: true,
 		    });
-		    that.image_loaded = true;
+		    self.image_loaded = true;
 		});
 	    }
 

@@ -24,7 +24,7 @@
 	},
 	onShow: function () {
 	    this.MediaList_r.show(new App.View.Media.Elements.List({
-		collection: App.Model.MediaListCollection,
+		collection: App.Model.Media.Elements.List,
 	    }));
 	},
 	/**************************************/
@@ -36,13 +36,13 @@
 	    var files = $(this.ui.Input)[0].files;
 
 	    for (var i = 0; i < files.length; i++) {
-		var media = new App.Model.Media();
+		var media = new App.Model.Media.Elements.Element();
 		var mrl = "file:///" + files[i].path;
 		media.set("mrl", mrl);
 		var type = files[i].type.split('/')[0]; /* TODO in windows mkv files is not recognized as video type */
 		media.set("type", type);
 		media.set("name", files[i].name);
-		App.Model.MediaListCollection.add(media);
+		App.Model.Media.Elements.List.add(media);
 	    }
 	},
 	mediaSelected: function (media) {

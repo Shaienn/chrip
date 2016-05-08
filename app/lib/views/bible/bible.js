@@ -50,9 +50,9 @@
 	    App.Model.QueueVerseListCollection.remove(verse);
 	},
 	showVerseSlide: function (verse) {
-	    this.SlideControl_r.show(new App.View.Bible.Slides.Slide({
-		model: verse.slide
-	    }));
+//	    this.SlideControl_r.show(new App.View.Bible.Slides.Slide({
+//		model: verse.slide
+//	    }));
 
 	    if (App.active_mode == true) {
 		App.vent.trigger("presentation:set_new_element", verse.slide);

@@ -25,7 +25,7 @@
     "mac_icon": "",
     "show_in_taskbar": true,
     "transparent": false,
-    "toolbar": true,
+    "toolbar": false,
     "icon": ""
   },
   "version": "1.0.0",

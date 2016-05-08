@@ -4,17 +4,21 @@
 
 (function (App) {
     'use strict';
-    App.Model.Media = Backbone.Model.extend({
-        defaults: {
-            mrl: "",
-            name: "",
-            type: "",
-            volume: null,
-        },
+    App.Model.Media.Elements.Element = Backbone.Model.extend({
+	defaults: {
+	    mrl: "",
+	    name: "",
+	    type: "",
+	    volume: null,
+	},
     });
 
-    App.Model.MediaCollection = Backbone.Collection.extend({
-        model: App.Model.Media,
+    var MediaList = Backbone.Collection.extend({
+	model: App.Model.Media.Elements.Element,
     });
+
+    App.Model.Media.Elements.List = new MediaList;
+
+    App.Model.Media.Elements.List.reset([]);
 
 })(window.App);

@@ -8,10 +8,36 @@
 	Windows: [],
 	Elements: [
 	    {
-		element: ""
+		element: App.Model.BlockScreens.Elements.Element,
+		handler: function (element) {
+		    console.log(element);
+		    return element.get('html');
+		},
+		before: function (target) {
+		    var d = Q.defer();
+
+		    /* Convert % to px according screen size */
+
+		    var texts = target.find('.bs-text');
+		    texts.each(function () {
+
+			$(this).css('width', '100%');
+			$(this).css('height', '100%');
+
+			var font_regarding_parent = $(this).attr('font_helper');
+			var parent_height = $(this).parent().height();
+			var element_height
+				= (parent_height * font_regarding_parent) / 100;
+
+			$(this).css('font-size', element_height + 'px');
+		    });
+
+		    d.resolve(true);
+		    return d.promise;
+		}
 	    },
 	    {
-		element: "SongSlide",
+		element: App.Model.SongService.Slides.Slide,
 		handler: function (slide) {
 		    var slide_template = _.template($('#slide-tpl').html());
 		    var element_body = slide_template(slide.attributes);
@@ -30,7 +56,7 @@
 		}
 	    },
 	    {
-		element: "BibleSlide",
+		element: App.Model.Bible.Slides.Slide,
 		handler: function (slide) {
 		    var verse_template = _.template($('#chapter-slide-tpl').html());
 		    var element_body = verse_template(slide.attributes);
@@ -69,7 +95,7 @@
 		}
 	    },
 	    {
-		element: "Media",
+		element: App.Model.Media.Elements.Element,
 		handler: function () {
 		    return $("<canvas/>", {
 			id: 'media-canvas'
@@ -122,17 +148,14 @@
 	    App.vent.trigger("mediaplayer:stop");
 
 	    for (var i = 0; i < Presentation.Elements.length; i++) {
-		if (new_element instanceof App.Model[Presentation.Elements[i].element]) {
+
+		if (new_element instanceof Presentation.Elements[i].element) {
 
 		    var element_body = Presentation.Elements[i].handler(new_element);
-
 		    for (var w in Presentation.Windows) {
 
 			var body = Presentation.Windows[w].window.document.body;
 			var content = $(body).find("#presentation-content");
-
-			/* Find everything inside this container */
-
 			var garbage = content.children().addClass("garbage");
 			content.append(element_body);
 			var newElement = content.children().not(".garbage");
@@ -145,12 +168,13 @@
 						queue: false,
 						complete: function () {
 						    garbage.remove();
-						    Presentation.Elements[i].after(newElement);
+						    if (typeof Presentation.Elements[i].after != "undefined") {
+							Presentation.Elements[i].after(newElement);
+						    }
 						}
 					    }
 				    );
 				});
-
 		    }
 		    break;
 		}

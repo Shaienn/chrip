@@ -10,7 +10,7 @@
     var MediaListCollection = Backbone.Collection.extend({});
 
     App.Model.MediaListCollection = new MediaListCollection({
-        model: App.Model.Media
+	model: App.Model.Media.Elements.Element,
     });
 
     App.Model.MediaListCollection.reset([]);
