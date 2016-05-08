@@ -21,8 +21,6 @@
 		    var texts = target.find('.bs-text');
 		    texts.each(function () {
 
-			$(this).css('width', '100%');
-			$(this).css('height', '100%');
 
 			var font_regarding_parent = $(this).attr('font_helper');
 			var parent_height = $(this).parent().height();
@@ -30,6 +28,7 @@
 				= (parent_height * font_regarding_parent) / 100;
 
 			$(this).css('font-size', element_height + 'px');
+			$(this).css('line-height', element_height + 'px');
 		    });
 
 		    d.resolve(true);
