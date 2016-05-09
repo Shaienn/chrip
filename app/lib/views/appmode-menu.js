@@ -17,27 +17,21 @@
 	    'click #appmode-menu-settings-btn': 'settingsBtnHandler',
 	},
 	songsBtnHandler: function () {
-
 	    win.log("presentation button click");
 	    App.vent.trigger("appmode:switch_tab_to", "songservice");
 	},
 	bibleBtnHandler: function () {
 	    win.log(" bible button click");
 	    App.vent.trigger("appmode:switch_tab_to", "bible");
-	    //App.vent.trigger("appmode:bible:show");
 	},
 	mediaBtnHandler: function () {
 
 	    win.log("media button click");
 	    App.vent.trigger("appmode:switch_tab_to", "media");
-	    //App.vent.trigger("appmode:videoplayer:show");
-
 	},
 	slidesBtnHandler: function () {
-
 	    win.log("slides button click");
 	    App.vent.trigger("appmode:switch_tab_to", "blockscreens");
-
 	},
 	settingsBtnHandler: function () {
 	    win.log("Settings button click");

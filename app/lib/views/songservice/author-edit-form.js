@@ -4,36 +4,6 @@
 
 (function (App) {
     'use strict';
-    App.View.AuthorDeleteModal = App.View.Common.Forms.RemoveForm.extend({
-	initial: function (options) {
-
-	    if (typeof options.songbase !== "undefined") {
-		this.songbase = options.songbase;
-	    }
-
-	    if (typeof options.author !== "undefined") {
-		this.author = options.author;
-	    }
-
-	    this.text = "Вы уверены что хотите удалить автора: " + this.author.get('name');
-	},
-	deleteActions: function () {
-	    this.songbase.loadAuthorsLoader(true);
-	    var that = this;
-	    App.Database.deleteAuthor(this.author).then(
-		    function () {
-			App.Database.close().then(
-				function () {
-				    App.Database.init().then(
-					    function () {
-						that.songbase.loadAuthors();
-					    });
-				});
-		    });
-	},
-    });
-
-
     App.View.SongService.Authors.EditForm = App.View.Common.Forms.SimpleForm.extend({
 	id: 'author-modal',
 	template: '#author-edit-modal-tpl',
