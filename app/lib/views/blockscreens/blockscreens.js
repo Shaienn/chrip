@@ -1,6 +1,7 @@
 'use strict';
 (function (App) {
 
+    var self;
     App.View.BlockScreens.Root = Backbone.Marionette.LayoutView.extend({
 	template: '#blockscreens-tpl',
 	id: 'blockscreens-main-window',
@@ -27,18 +28,29 @@
 	    }
 	},
 	initialize: function () {
-	    this.listenTo(App.vent, "blockscreens:addNewBsGroup", _.bind(this.createBlockscreenGroup, this));
+	    self = this;
+	    this.listenTo(App.vent, "blockscreens:addNewBsGroup", _.bind(this.create_new_bs_group, this));
 	    this.listenTo(App.vent, "blockscreens:selectBsGroup", _.bind(this.selectBlockscreenGroupHandler, this));
-	    this.listenTo(App.vent, "blockscreens:createElement", _.bind(this.createElementHandler, this));
-	    this.listenTo(App.vent, "blockscreens:openElement", _.bind(this.openElementHandler, this));
-	    this.listenTo(App.vent, "blockscreens:editElement", _.bind(this.editElementHandler, this));
+	    this.listenTo(App.vent, "blockscreens:createElement", _.bind(this.create_new_bs_element, this));
+	    this.listenTo(App.vent, "blockscreens:openElement", _.bind(this.open_bs_element_file, this));
+	    this.listenTo(App.vent, "blockscreens:editElement", _.bind(this.edit_bs_element, this));
 	    this.listenTo(App.vent, "blockscreens:removeElement", _.bind(this.removeElementHandler, this));
 	    this.listenTo(App.vent, "blockscreens:selectElement", _.bind(this.selectElementHandler, this));
+
+	    this.listenTo(App.vent, 'blockscreens:onEvent', _.bind(this.onEvent, this));
+	    this.listenTo(App.vent, 'blockscreens:offEvent', _.bind(this.offEvent, this));
 	},
-	openElementHandler: function () {
+	open_bs_element_file: function () {
+
+	    if (self.selected_group == null)
+		return;
+
 	    $(this.ui.bsInput).trigger('click');
 	},
 	add_selected_bs_to_group: function () {
+
+	    if (self.selected_group == null)
+		return;
 
 	    function process_files(files, gid) {
 		var file_tasks = [];
@@ -84,6 +96,10 @@
 
 	},
 	removeElementHandler: function () {
+
+	    if (self.selected_group == null)
+		return;
+
 	    var selected_element = this.elements_collection.collection.at(this.elements_collection.selected_index);
 	    var remove_form = new App.View.BlockScreens.Elements.RemoveForm({
 		blockscreens: this,
@@ -92,7 +108,11 @@
 	    });
 	    this.modals.show(remove_form);
 	},
-	editElementHandler: function () {
+	edit_bs_element: function () {
+
+	    if (self.selected_group == null)
+		return;
+
 	    var selected_element = this.elements_collection.collection.at(this.elements_collection.selected_index);
 	    var bse = new App.View.BlockScreens.Elements.EditForm({
 		blockscreens: this,
@@ -100,16 +120,20 @@
 	    });
 	    this.modals.show(bse);
 	},
-	createElementHandler: function () {
+	create_new_bs_element: function () {
+
+	    if (self.selected_group == null)
+		return;
+
 	    var bse = new App.View.BlockScreens.Elements.EditForm({
 		blockscreens: this,
 		blockscreen: new App.Model.BlockScreens.Elements.Element({
-		    gid: this.selected_group.get('gid')
+		    gid: self.selected_group.get('gid')
 		})
 	    });
 	    this.modals.show(bse);
 	},
-	createBlockscreenGroup: function () {
+	create_new_bs_group: function () {
 
 	    var bsg = new App.View.BlockScreens.Groups.EditForm({
 		blockscreens: this,
@@ -130,7 +154,6 @@
 	},
 	selectBlockscreenGroupHandler: function (group) {
 
-	    var that = this;
 	    var gid = group.get('gid');
 	    if (typeof (gid) === "undefined") {
 		return;
@@ -143,7 +166,7 @@
 
 		/* parse each file and get JSON objects  */
 		console.log(files);
-		that.parseBlockscreensFiles(files).then(function (objects) {
+		self.parseBlockscreensFiles(files).then(function (objects) {
 
 		    console.log(objects);
 		    var elements = new App.Model.BlockScreens.Elements.List();
@@ -165,8 +188,8 @@
 			childView: App.View.BlockScreens.Slides.Slide,
 			collection: elements,
 		    });
-		    that.elements_collection = elements_view;
-		    that.BSGContent_r.show(elements_view);
+		    self.elements_collection = elements_view;
+		    self.BSGContent_r.show(elements_view);
 		});
 	    });
 	    this.BSGControl_r.show(new App.View.BlockScreens.Elements.ToolBar({}));
@@ -197,9 +220,10 @@
 	    return Q.allSettled(files);
 	},
 	onShow: function () {
-	    win.debug("bs onShow");
 	    this.ToolBar_r.show(new App.View.BlockScreens.Groups.ToolBar());
+
 	    /* Load stored blockscreens groups from DB and construct list */
+
 	    this.load_bs_groups();
 	},
 	show_bsg_loader: function () {
@@ -209,8 +233,6 @@
 	    this.ui.bsg_loader.hide();
 	},
 	load_bs_groups: function () {
-	    win.debug("bs load_bs_groups");
-	    var that = this;
 	    this.show_bsg_loader();
 	    App.Database.getBlockScreensGroups().then(function (loadedBlockScreensGroups) {
 
@@ -220,10 +242,43 @@
 		var bsg_collection_view = new App.View.BlockScreens.Groups.List({
 		    collection: bsg_collection,
 		});
-		that.groups_collection = bsg_collection_view;
-		that.List_r.show(bsg_collection_view);
-		that.hide_bsg_loader();
+		self.groups_collection = bsg_collection_view;
+		self.List_r.show(bsg_collection_view);
+		self.hide_bsg_loader();
 	    });
+	},
+	onEvent: function () {
+	    self.offEvent();
+	    $(App.ControlWindow.window.document).on('keydown', self.key_map);
+	},
+	offEvent: function () {
+	    $(App.ControlWindow.window.document).off('keydown', self.key_map);
+	},
+	key_map: function (event) {
+	    console.log(event);
+	    var key = event.which;
+
+	    if (event.ctrlKey) {
+
+		switch (key) {
+		    case (71):
+			/* CTRL + G open bs-group creation form  */
+			self.create_new_bs_group();
+			break;
+		    case (79):
+			/* CTRL + O open bs selection form  */
+			self.open_bs_element_file();
+			break;
+		    case (78):
+			/* CTRL + N open bs creation form  */
+			self.create_new_bs_element();
+			break;
+		    case (69):
+			/* CTRL + E open bs edit form  */
+			self.edit_bs_element();
+			break;
+		}
+	    }
 	},
     });
 }(window.App));

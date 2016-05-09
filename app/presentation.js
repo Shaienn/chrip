@@ -16,12 +16,8 @@
 		before: function (target) {
 		    var d = Q.defer();
 
-		    /* Convert % to px according screen size */
-
 		    var texts = target.find('.bs-text');
 		    texts.each(function () {
-
-
 			var font_regarding_parent = $(this).attr('font_helper');
 			var parent_height = $(this).parent().height();
 			var element_height
@@ -134,8 +130,6 @@
 	    App.vent.trigger("main_toolbar:set_black_mode_indication", Presentation.BlackMode);
 	},
 	set_new_element: function (new_element) {
-	    win.log("set_new_element");
-
 	    if (Presentation.State == false)
 		return;
 
@@ -220,8 +214,6 @@
 			Presentation.State = false;
 			App.vent.trigger("presentation:changed", false);
 		    });
-
-
 		    App.vent.trigger("presentation:changed", true);
 		    Presentation.State = true;
 		}

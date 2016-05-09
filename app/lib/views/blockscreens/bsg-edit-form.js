@@ -57,9 +57,12 @@
 
     });
 
+
+    var self;
     App.View.BlockScreens.Groups.EditForm = Backbone.Modal.extend({
 	id: 'bsg-modal',
 	template: '#bsg-edit-modal-tpl',
+	lock: false,
 	ui: {
 	    Input: '#bsg-name-input',
 	},
@@ -79,12 +82,32 @@
 
 	},
 	onShow: function () {
+	    self = this;
 	    if (typeof this.bsg != "undefined") {
 		var name = this.bsg.get('name');
 		$(this.ui.Input).val(name);
 	    }
+	    $(App.ControlWindow.window.document).on('keydown', this.key_map);
+	    $(this.ui.Input).focus();
+	},
+	key_map: function (event) {
+	    var key = event.which;
+
+	    /* Enter is OK */
+	    /* ESC is Cancel */
+
+	    switch (key) {
+		case (13):
+		    self.saveBtnHandler();
+		    break;
+		case (27):
+		    self.cancel();
+		    break;
+	    }
+
 	},
 	onDestroy: function () {
+	    $(App.ControlWindow.window.document).off('keydown', this.key_map);
 	},
 	beforeCancel: function () {
 
@@ -94,9 +117,14 @@
 	},
 	saveBtnHandler: function () {
 
+	    if (self.lock)
+		return;
+
+	    self.lock = true;
 	    var name = $(this.ui.Input).val();
 
 	    if (name == "") {
+		self.lock = false;
 		return;
 	    }
 
@@ -104,13 +132,11 @@
 
 	    /* Save bsg to db */
 
-	    var that = this;
-	    that.blockscreens.show_bsg_loader();
-
+	    self.blockscreens.show_bsg_loader();
 	    App.Database.saveBlockScreenGroup(this.bsg)
 		    .then(function () {
-			that.blockscreens.load_bs_groups();
-			that.cancel();
+			self.blockscreens.load_bs_groups();
+			self.cancel();
 		    });
 	},
 	cancelBtnHandler: function () {

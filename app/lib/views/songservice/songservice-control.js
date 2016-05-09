@@ -138,9 +138,7 @@
 	    App.vent.trigger("resize");
 	},
 	offEvent: function () {
-
 	    $(App.ControlWindow.window.document).off('keydown', this.keyHandler);
-
 	},
 	keyHandler: function (event) {
 

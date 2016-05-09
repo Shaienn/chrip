@@ -48,8 +48,8 @@
 		startPoint: "BlockScreens",
 		button: "#appmode-menu-slides-btn",
 		setting: "blockscreens",
-		onEvent: "blockscreens:control:onEvent",
-		offEvent: "blockscreens:control:offEvent",
+		onEvent: "blockscreens:onEvent",
+		offEvent: "blockscreens:offEvent",
 	    },
 	    {
 		region: "Settings_Tab_r",
