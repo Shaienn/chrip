@@ -37,8 +37,8 @@
 	    'submit @ui.searchForm': 'search',
 	},
 	loadedAuthors: [],
-	selectedAuthor: {},
-	selectedSong: {},
+	selectedAuthor: null,
+	selectedSong: null,
 	initialize: function () {
 	    this.listenTo(App.vent, "songbase:loadsongs", _.bind(this.loadSongs, this));
 	    this.listenTo(App.vent, "songbase:search", _.bind(this.search, this));
@@ -146,7 +146,7 @@
 	},
 	openAddAuthorWindow: function () {
 
-	    var form = new App.View.AuthorEditForm({
+	    var form = new App.View.SongService.Authors.EditForm({
 		author: new App.Model.Author(),
 		songbase: this
 	    });
@@ -162,12 +162,11 @@
 
 	    /* Get selected author */
 
-	    if (typeof this.selectedAuthor == "undefined") {
+	    if (this.selectedAuthor == null) {
 		return;
 	    }
 
-
-	    var form = new App.View.AuthorEditForm({
+	    var form = new App.View.SongService.Authors.EditForm({
 		author: this.selectedAuthor,
 		songbase: this
 	    });
@@ -181,7 +180,7 @@
 		return;
 	    }
 
-	    var form = new App.View.AuthorDeleteModal({
+	    var form = new App.View.SongService.Authors.RemoveForm({
 		author: this.selectedAuthor,
 		songbase: this
 	    });
@@ -190,7 +189,7 @@
 	},
 	openAddSongWindow: function () {
 
-	    var form = new App.View.SongEditForm({
+	    var form = new App.View.SongService.Songs.EditForm({
 		song: new App.Model.SongService.Elements.Element(),
 		authors: this.loadedAuthors,
 		songbase: this
@@ -201,7 +200,7 @@
 	},
 	openEditSongWindow: function () {
 
-	    var form = new App.View.SongEditForm({
+	    var form = new App.View.SongService.Songs.EditForm({
 		song: this.selectedSong,
 		authors: this.loadedAuthors,
 		songbase: this
@@ -216,7 +215,7 @@
 		return;
 	    }
 
-	    var form = new App.View.SongDeleteModal({
+	    var form = new App.View.SongService.Songs.RemoveForm({
 		author: this.selectedAuthor,
 		song: this.selectedSong,
 		songbase: this
@@ -228,7 +227,6 @@
 	    this.ui.S_Loader.show();
 	},
 	hideSongsLoader: function () {
-	    console.log("hide loader");
 	    this.ui.S_Loader.hide();
 	},
 	loadSongs: function (author) {
@@ -297,9 +295,9 @@
 	    var authors_list = $('.author-element-list');
 	    authors_list.children('li.active').removeClass('active');
 	    var item = authors_list.find('.item-container[uaid=' + uaid + '][gaid=' + gaid + ']');
-	    item.trigger('click');
 	    item.parent('.author-element-item').addClass('active');
 	    authors_list.scrollTop(0).scrollTop(item.position().top);
+	    this.loadSongs(author);
 	},
 	loadAuthors: function () {
 

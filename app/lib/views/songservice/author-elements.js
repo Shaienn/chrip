@@ -5,7 +5,7 @@
 	className: 'author-' + App.View.Common.ItemList.Element.prototype.className,
 	template: '#author-itemview-tpl',
 	clickReport: function (e) {
-	    App.vent.trigger("songbase:loadsongs", this.model);
+	    App.vent.trigger("songbase:selectAuthor", this.model);
 	},
     });
 

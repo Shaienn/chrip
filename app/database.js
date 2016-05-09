@@ -918,6 +918,8 @@
 	},
 	deleteAuthor: function (author) {
 
+	    var d = Q.defer();
+
 	    assert.ok(author instanceof App.Model.Author);
 	    assert.ok(!isNaN(author.get('uaid')));
 
@@ -926,10 +928,17 @@
 		/* We only delete local authors */
 
 		var stmt = App.Database.user_db.prepare("DELETE FROM Authors WHERE uaid = ?");
-		stmt.run(author.get('uaid'));
+		stmt.run(author.get('uaid'), function (err) {
+		    if (err) {
+			win.error(err);
+			throw new Error(err);
+		    }
+		    d.resolve(true);
+		});
 		stmt.finalize();
 	    }
 
+	    return d.promise;
 	},
 	saveAuthor: function (author) {
 

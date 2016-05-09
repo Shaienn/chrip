@@ -73,7 +73,7 @@
 	    App.Database.loadAuthors().then(function (loadedAuthors) {
 
 		var authorCollection = new App.Model.AuthorCollection(loadedAuthors);
-		var form = new App.View.SongEditForm({
+		var form = new App.View.SongService.Songs.EditForm({
 		    song: song,
 		    authors: authorCollection,
 		    control: that

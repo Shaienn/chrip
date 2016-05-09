@@ -37,6 +37,8 @@
     });
 
 
+
+    var self;
     App.View.BlockScreens.Elements.EditForm = Backbone.Modal.extend({
 	id: 'blockscreens-modal',
 	template: '#blockscreens-edit-modal-tpl',
@@ -63,6 +65,7 @@
 	    'change #bs-save-file': 'saveBsHandler',
 	},
 	initialize: function (options) {
+	    self = this;
 
 	    if (typeof options.blockscreen !== "undefined") {
 		this.blockscreen = options.blockscreen;
@@ -82,13 +85,14 @@
 	    this.listenTo(App.vent, "blockscreens:modal:edit_item:set_color", _.bind(this.setColor, this));
 	},
 	onShow: function () {
-	    var that = this;
+	    $(App.ControlWindow.window.document).on('keydown', this.key_map);
+
+
 	    var bsElementsCollection = this.getBlockScreenItems(this.blockscreen);
 	    this.elements_collection = new App.View.BlockScreens.Editor.List({
 		collection: bsElementsCollection,
 		childView: App.View.BlockScreens.Editor.Element
 	    });
-	    console.log(this.elements_collection.collection);
 
 	    this.screen_bounds = Settings.Utils.getPresentationScreen().bounds;
 	    var editor = $(this.ui.bsEditorArea);
@@ -109,25 +113,48 @@
 	    $(this.ui.bsElementsList).html(this.elements_collection.el);
 
 	    this.elements_collection.collection.on("add change remove", function () {
-		that.elements_collection.render();
-		that.renderPreviewArea();
+		self.elements_collection.render();
+		self.renderPreviewArea();
 	    });
 
 	    this.renderPreviewArea(true);
+	},
+	onDestroy: function () {
+	    $(App.ControlWindow.window.document).off('keydown', this.key_map);
+	},
+	key_map: function (event) {
+	    var key = event.which;
+
+	    /* Enter is OK */
+	    /* ESC is Cancel */
+
+	    switch (key) {
+		case (27):
+		    self.cancel();
+		    break;
+	    }
+
+	    if (event.ctrlKey) {
+
+		/* CTRL + S save */
+
+		if (key == 83) {
+		    win.log("Open songbase request");
+		    self.saveBtnHandler();
+		}
+	    }
+
 	},
 	/**********************************************/
 
 	getBlockScreenItems: function (bs) {
 
 	    /* Get html string, create DOM element and parse with jQuery */
-	    console.log(bs);
 	    var container = $('<div/>', {
 		html: bs.get('html')
 	    });
 	    var bsElements = new App.Model.BlockScreens.Editor.List();
 	    /* iterate */
-
-	    console.log(container.children());
 
 	    container.children().each(function (index) {
 
@@ -172,7 +199,6 @@
 		}
 	    });
 
-	    console.log(bsElements);
 	    return bsElements;
 	},
 	/* Buttons handlers */

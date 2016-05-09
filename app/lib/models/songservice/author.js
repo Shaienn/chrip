@@ -14,8 +14,8 @@
 
             name: "",
             db: "0",
-            uaid: "",
-            gaid: "",
+            uaid: 0,
+            gaid: 0,
             text: "",
 
         },

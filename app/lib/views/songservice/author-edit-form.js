@@ -4,7 +4,6 @@
 
 (function (App) {
     'use strict';
-
     App.View.AuthorDeleteModal = App.View.Common.Forms.RemoveForm.extend({
 	initial: function (options) {
 
@@ -21,7 +20,6 @@
 	deleteActions: function () {
 	    this.songbase.loadAuthorsLoader(true);
 	    var that = this;
-
 	    App.Database.deleteAuthor(this.author).then(
 		    function () {
 			App.Database.close().then(
@@ -35,84 +33,51 @@
 	},
     });
 
-    var AuthorEditForm = Backbone.Modal.extend({
+
+    App.View.SongService.Authors.EditForm = App.View.Common.Forms.SimpleForm.extend({
 	id: 'author-modal',
 	template: '#author-edit-modal-tpl',
 	ui: {
 	    Input: '#author-name-input',
 	},
-	events: {
-	    'click #save-btn': 'saveBtnHandler',
-	    'click #cancel-btn': 'cancelBtnHandler',
-	},
-	initialize: function (options) {
-
-	    if (options.author != "undefined") {
+	init: function (options) {
+	    if (typeof options.author !== "undefined") {
 		this.author = options.author;
 	    }
 
-	    if (options.songbase != "undefined") {
+	    if (typeof options.songbase !== "undefined") {
 		this.songbase = options.songbase;
 	    }
-
 	},
-	onShow: function () {
-	    if (this.author != "undefined") {
+	show: function () {
+	    if (typeof this.author !== "undefined") {
 		var name = this.author.get('name');
 		$(this.ui.Input).val(name);
 	    }
+	    $(this.ui.Input).focus();
 	},
-	onDestroy: function () {
-	    console.log('close');
-	},
-	beforeCancel: function () {
-
-	    /* It prevents close modal when we click outside */
-
-	    return false;
-	},
-	saveBtnHandler: function () {
-
-	    win.log("save");
-
+	actions: function () {
 	    var name = $(this.ui.Input).val();
-
 	    if (name == "") {
-		return;
+		return false;
 	    }
 
 	    this.author.set('name', name);
 
 	    /* Save authorname to db */
 
+	    var self = this;
 	    App.Database.saveAuthor(this.author);
-
-	    var that = this;
-
-	    that.songbase.loadAuthorsLoader(true);
-
+	    self.songbase.loadAuthorsLoader(true);
 	    App.Database.close()
 		    .then(function () {
 			App.Database.init().then(function () {
-			    that.songbase.loadAuthors();
+			    self.songbase.loadAuthors();
 			});
 		    });
-
-	    this.cancel();
-	},
-	cancelBtnHandler: function () {
-	    this.cancel();
-	},
-	cancel: function () {
-	    win.log("cancel");
-	    this.destroy();
+	    return true;
 	}
-
     });
-
-    App.View.AuthorEditForm = AuthorEditForm;
-
-
 })(window.App);
 
 
