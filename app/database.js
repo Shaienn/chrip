@@ -1,3 +1,4 @@
+
 /**
  * Created by shaienn on 02.09.15.
  */
@@ -535,7 +536,7 @@
 	deleteSong: function (song) {
 	    var d = Q.defer();
 
-	    assert.ok(song instanceof App.Model.Song);
+	    assert.ok(song instanceof App.Model.SongService.Elements.Element);
 	    assert.ok(!isNaN(song.get('usid')));
 
 	    if (song.get('db') == '2') {
@@ -560,7 +561,7 @@
 
 	    var d = Q.defer();
 
-	    assert.ok(song instanceof App.Model.Song);
+	    assert.ok(song instanceof App.Model.SongService.Elements.Element);
 
 	    var that = this;
 	    switch (song.get('db')) {
@@ -717,7 +718,7 @@
 			    throw new Error(err);
 			}
 
-			var song = new App.Model.Song();
+			var song = new App.Model.SongService.Elements.Element();
 			song.set('name', item.name);
 			song.set('db', item.db);
 			song.set('uaid', item.uaid);
@@ -744,7 +745,7 @@
 	removeSongFromLastSongs: function (song) {
 	    var d = Q.defer();
 
-	    assert.ok(song instanceof App.Model.Song);
+	    assert.ok(song instanceof App.Model.SongService.Elements.Element);
 
 	    var stmt = App.Database.user_db.prepare("DELETE FROM LastSongs WHERE gsid = ? AND usid = ?");
 	    stmt.run(song.get('gsid'), song.get('usid'), function (err) {

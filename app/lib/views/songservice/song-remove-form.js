@@ -58,6 +58,7 @@
 				function () {
 				    App.Database.init().then(
 					    function () {
+						self.selectedSong = null;
 						self.songbase.selectAuthor(self.author);
 					    });
 				});

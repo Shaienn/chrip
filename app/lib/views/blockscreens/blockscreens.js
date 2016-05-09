@@ -42,14 +42,14 @@
 	},
 	open_bs_element_file: function () {
 
-	    if (self.selected_group == null)
+	    if (this.selected_group == null)
 		return;
 
 	    $(this.ui.bsInput).trigger('click');
 	},
 	add_selected_bs_to_group: function () {
 
-	    if (self.selected_group == null)
+	    if (this.selected_group == null)
 		return;
 
 	    function process_files(files, gid) {
@@ -97,7 +97,7 @@
 	},
 	removeElementHandler: function () {
 
-	    if (self.selected_group == null)
+	    if (this.selected_group == null)
 		return;
 
 	    var selected_element = this.elements_collection.collection.at(this.elements_collection.selected_index);
@@ -110,7 +110,7 @@
 	},
 	edit_bs_element: function () {
 
-	    if (self.selected_group == null)
+	    if (this.selected_group == null)
 		return;
 
 	    var selected_element = this.elements_collection.collection.at(this.elements_collection.selected_index);
@@ -122,7 +122,7 @@
 	},
 	create_new_bs_element: function () {
 
-	    if (self.selected_group == null)
+	    if (this.selected_group == null)
 		return;
 
 	    var bse = new App.View.BlockScreens.Elements.EditForm({
@@ -145,7 +145,7 @@
 
 	    win.debug('select_blockscreen_group');
 	    var gid = group.get('gid');
-	    if (typeof (gid) === "undefined") {
+	    if (typeof group == "undefined") {
 		return;
 	    }
 	    var group_item = this.ui.bsGroups.find('.item-container[gid="' + gid + '"]');
@@ -154,12 +154,15 @@
 	},
 	selectBlockscreenGroupHandler: function (group) {
 
-	    var gid = group.get('gid');
-	    if (typeof (gid) === "undefined") {
+	    if (typeof group == "undefined") {
 		return;
 	    }
 
+	    console.log(group);
+
+	    var gid = group.get('gid');
 	    this.selected_group = group;
+
 	    /* Get files associated with this group */
 
 	    App.Database.getBlockScreenFiles(group).then(function (files) {
@@ -255,7 +258,6 @@
 	    $(App.ControlWindow.window.document).off('keydown', self.key_map);
 	},
 	key_map: function (event) {
-	    console.log(event);
 	    var key = event.which;
 
 	    if (event.ctrlKey) {
