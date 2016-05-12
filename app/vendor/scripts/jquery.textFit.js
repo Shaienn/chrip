@@ -35,7 +35,6 @@
 	    var low, mid, high;
 
 	    originalText = $(this).html();
-	    console.log(originalText);
 
 	    if ((settings.originalWidth != null) && (settings.originalHeight != null)) {
 		originalWidth = parseInt(settings.originalWidth);
@@ -47,9 +46,6 @@
 		originalHeight = $(this).height();
 		hardSize = false;
 	    }
-
-	    console.log(originalWidth);
-	    console.log(originalHeight);
 
 	    // Don't process if we can't find box dimensions
 	    if (!originalWidth || (!settings.widthOnly && !originalHeight)) {

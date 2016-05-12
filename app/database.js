@@ -323,6 +323,28 @@
 		    });
 	    return d.promise;
 	},
+	remove_block_screen_group: function (group) {
+	    var d = Q.defer();
+	    assert.ok(group instanceof App.Model.BlockScreens.Groups.Element);
+
+	    var stmt = App.Database.user_db.prepare("DELETE FROM BlockScreensGroups WHERE gid = ?");
+	    stmt.get(group.get('gid'), function (err) {
+
+		if (err)
+		    throw new Error(err);
+
+		stmt = App.Database.user_db.prepare("DELETE FROM BlockScreensFiles WHERE gid = ?");
+		stmt.run(group.get('gid'), function (err) {
+		    if (err)
+			throw new Error(err);
+
+		    d.resolve(true);
+		});
+
+	    });
+
+	    return d.promise;
+	},
 	saveBlockScreenGroup: function (group) {
 	    var d = Q.defer();
 

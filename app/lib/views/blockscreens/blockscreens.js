@@ -31,6 +31,9 @@
 	    self = this;
 	    this.listenTo(App.vent, "blockscreens:addNewBsGroup", _.bind(this.create_new_bs_group, this));
 	    this.listenTo(App.vent, "blockscreens:selectBsGroup", _.bind(this.selectBlockscreenGroupHandler, this));
+	    this.listenTo(App.vent, "blockscreens:removeBsGroup", _.bind(this.remove_selected_bs_group, this));
+
+
 	    this.listenTo(App.vent, "blockscreens:createElement", _.bind(this.create_new_bs_element, this));
 	    this.listenTo(App.vent, "blockscreens:openElement", _.bind(this.open_bs_element_file, this));
 	    this.listenTo(App.vent, "blockscreens:editElement", _.bind(this.edit_bs_element, this));
@@ -81,6 +84,23 @@
 	    });
 
 	    return d.promise;
+	},
+	remove_selected_bs_group: function () {
+	    this.remove_bs_group.call(this, this.selected_group);
+
+	},
+	remove_bs_group: function (group) {
+
+	    console.log(group);
+
+	    if (typeof group == 'undefined' || group == null)
+		return;
+
+	    var self = this;
+	    App.Database.remove_block_screen_group(group)
+		    .then(function () {
+			self.load_bs_groups();
+		    });
 	},
 	selectElementHandler: function (element) {
 	    this.elements_collection.selected_index = this.elements_collection.collection.indexOf(element);
@@ -145,20 +165,19 @@
 
 	    win.debug('select_blockscreen_group');
 	    var gid = group.get('gid');
-	    if (typeof group == "undefined") {
+	    if (typeof group == "undefined" || group == null) {
 		return;
 	    }
 	    var group_item = this.ui.bsGroups.find('.item-container[gid="' + gid + '"]');
 	    console.log(group_item);
 	    group_item.trigger('click');
+
 	},
 	selectBlockscreenGroupHandler: function (group) {
 
-	    if (typeof group == "undefined") {
+	    if (typeof group == "undefined" || group == null) {
 		return;
 	    }
-
-	    console.log(group);
 
 	    var gid = group.get('gid');
 	    this.selected_group = group;
@@ -168,16 +187,13 @@
 	    App.Database.getBlockScreenFiles(group).then(function (files) {
 
 		/* parse each file and get JSON objects  */
-		console.log(files);
 		self.parseBlockscreensFiles(files).then(function (objects) {
 
-		    console.log(objects);
 		    var elements = new App.Model.BlockScreens.Elements.List();
 		    /* Create bsElements */
 
 		    objects.forEach(function (item) {
 
-			console.log(item);
 			var element = new App.Model.BlockScreens.Elements.Element();
 			element.set('html', item.value.html);
 			element.set('preview', item.value.preview);
@@ -193,6 +209,7 @@
 		    });
 		    self.elements_collection = elements_view;
 		    self.BSGContent_r.show(elements_view);
+		    $('#bs-remove-group-btn').removeClass('disabled');
 		});
 	    });
 	    this.BSGControl_r.show(new App.View.BlockScreens.Elements.ToolBar({}));
@@ -248,6 +265,18 @@
 		self.groups_collection = bsg_collection_view;
 		self.List_r.show(bsg_collection_view);
 		self.hide_bsg_loader();
+
+		var group_item = self.ui.bsGroups.find('.item-container').first();
+		if (group_item.length > 0) {
+		    group_item.trigger('click');
+		} else {
+		    console.log(group_item);
+		    $('#bs-remove-group-btn').addClass('disabled');
+		    self.BSGContent_r.$el.remove();
+		    self.BSGControl_r.$el.remove();
+		    self.selected_group = null;
+		}
+
 	    });
 	},
 	onEvent: function () {
