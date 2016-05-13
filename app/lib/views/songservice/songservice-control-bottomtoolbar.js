@@ -9,7 +9,6 @@
 
     App.View.SongService.Control.BottomToolBar = Backbone.Marionette.ItemView.extend({
 	template: '#songservice-playlist-bottomtoolbar-tpl',
-	className: 'row',
 	events: {
 	    'click #songservice-openbase-btn': 'openSongBase'
 	},

@@ -6,7 +6,7 @@
 	<span class="glyphicon glyphicon glyphicon-edit"></span> Редактировать слайд
     </button>
     <button type="button" class="btn btn-danger" id="bs-remove-element-btn">
-	<i class="fa fa-plus-circle" title="Cancel"><span>Удалить слайд</span></i>
+	<i class="fa fa-times-circle" title="Cancel"><span>Удалить слайд</span></i>
     </button>
     <button type="button" class="btn btn-success" id="bs-add-element-btn">
 	<i class="fa fa-plus-circle" title="Cancel"><span>Создать слайд</span></i>

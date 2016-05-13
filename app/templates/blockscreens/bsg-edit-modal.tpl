@@ -14,8 +14,8 @@
 
     <div class="row vert-offset-top-1  vert-offset-bottom-1">	
 	<div class="col-lg-2 col-lg-offset-10 text-right">
-	    <button id="save-btn" type="button" class="btn btn-success">
-		<i class="fa fa-2x    fa-check-circle-o" title="Add"></i>
+	    <button id="action-btn" type="button" class="btn btn-success">
+		<i class="fa fa-2x fa-check-circle-o" title="Add"></i>
 	    </button>
 	    <button id="cancel-btn" type="button" class="btn btn-danger">
 		<i class="fa fa-2x fa-ban" title="Cancel"></i>
