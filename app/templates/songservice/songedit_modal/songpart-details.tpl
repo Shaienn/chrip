@@ -21,8 +21,25 @@ types_selector += "<option "+(songpart.get('type') == key ? "selected='selected'
         <textarea class="form-control"><%=songpart.get('text')%></textarea>
     </div>
     <div class="songpart-preview col-lg-6">
-        <div class="slide-item active">
+	<div class="col-lg-12">
+	    <div class="preview-area">
+	    </div>
+	</div>    
 
-        </div>
+    </div>
+</div>
+
+<div class="col-lg-12">
+    <div class="btn-group btn-group-justified ">
+	<div class="btn-group">
+	    <button type="button" class="btn btn-success" id="slide-preview-btn">
+		<i class="fa fa-plus-square">Слайд</i>
+	    </button>
+	</div>
+	<div class="btn-group">
+	    <button type="button" class="btn btn-success" id="chords-preview-btn">
+		<i class="fa fa-plus-square">Аккорды</i>
+	    </button>
+	</div>
     </div>
 </div>

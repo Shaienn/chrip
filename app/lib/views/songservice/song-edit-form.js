@@ -5,12 +5,13 @@
 (function (App) {
     'use strict';
 
-
+    var self;
     App.View.SongService.Songs.EditForm = Backbone.Modal.extend({
 	id: 'song-modal',
 	template: '#song-edit-modal-tpl',
 	lock: false,
 	collection_view: null,
+	chords_preview_mode: false,
 	ui: {
 	    songMeta: "#song-meta",
 	    songPartsList: "#song-parts-list",
@@ -21,6 +22,8 @@
 	    'click #add-slide-btn': 'addSongPartHandler',
 	    'click #save-btn': 'saveBtnHandler',
 	    'click #cancel-btn': 'cancelBtnHandler',
+	    'click #slide-preview-btn': 'slidePreviewHandler',
+	    'click #chords-preview-btn': 'chordsPreviewHandler'
 	},
 	initialize: function (options) {
 
@@ -51,9 +54,10 @@
 	    }
 
 
+
 	},
 	onShow: function () {
-
+	    self = this;
 	    var songPartCollection = this.getSongPartsCollection(this.song);
 	    this.collection_view = new App.View.SongPartCollection({
 		collection: songPartCollection,
@@ -67,9 +71,29 @@
 		song: this.song,
 	    }));
 
+
+
 	},
 	/**********************************************/
 
+	slidePreviewHandler: function () {
+	    win.log("slidePreviewHandler");
+	    self.chords_preview_mode = false;
+	    $('#slide-preview-btn').addClass('active');
+	    $('#chords-preview-btn').removeClass('active');
+	    var details = $(this.ui.songPartDetails);
+	    var input = details.find("textarea");
+	    input.trigger("change");
+	},
+	chordsPreviewHandler: function () {
+	    win.log("chordsPreviewHandler");
+	    self.chords_preview_mode = true;
+	    $('#slide-preview-btn').removeClass('active');
+	    $('#chords-preview-btn').addClass('active');
+	    var details = $(this.ui.songPartDetails);
+	    var input = details.find("textarea");
+	    input.trigger("change");
+	},
 	addSongPartHandler: function () {
 	    win.log("Add song part handler");
 	    var new_part = new App.Model.SongPart();
@@ -94,7 +118,8 @@
 	    $(this.ui.songPartDetails).html("");
 	},
 	showSongpartDetails: function (songpart) {
-	    win.log("show details");
+	    win.log("show slide details");
+
 	    var details_template = _.template($('#songpart-details-tpl').html());
 	    var details = $(this.ui.songPartDetails);
 	    details.html(details_template({
@@ -104,7 +129,7 @@
 
 	    var input = details.find("textarea");
 	    var typeSelector = details.find(".songpart-type-selector select");
-	    var preview = details.find(".songpart-preview .slide-item");
+	    var preview = details.find(".songpart-preview .preview-area");
 
 	    var slide_template = _.template($('#slide-tpl').html());
 	    var screen_bounds = Settings.Utils.getPresentationScreen().bounds;
@@ -121,45 +146,89 @@
 
 	    input.on("change keyup paste", function () {
 
-		/* convert strings to slide representation */
+		if (self.chords_preview_mode == false) {
+		    $('#slide-preview-btn').addClass('active');
+		    /* convert strings to slide representation */
+		    preview.removeClass('chords-preview');
+		    preview.addClass('slide-item');
+		    var text = $(this).val();
 
-		var text = $(this).val();
+		    /* Append some rules */
 
-		/* Append some rules */
+		    var lines = text.split("\n");
+		    var corrected_text = "";
 
-		var lines = text.split("\n");
-		var corrected_text = "";
+		    for (var s in lines) {
+			var one_line_text = lines[s].trim();
+			corrected_text += one_line_text.charAt(0).toUpperCase() + one_line_text.slice(1) + '\n';
+		    }
 
-		for (var s in lines) {
-		    var one_line_text = lines[s].trim();
-		    corrected_text += one_line_text.charAt(0).toUpperCase() + one_line_text.slice(1) + '\n';
+		    var preparedText = corrected_text.trim()
+			    .replace(Settings.Config.chord_pattern, "")
+			    .replace(/\r\n|\n/g, "<br>");
+		    songpart.set('text', corrected_text.trim());
+		    songpart.set('text_visual', preparedText);
+
+		    preview.html(slide_template({
+			number: 0,
+			background: Settings.SongserviceSettings.background,
+			height: screen_bounds.height,
+			width: screen_bounds.width,
+			text: preparedText,
+			font: Settings.SongserviceSettings.font_family
+		    }));
+
+		    var text_span = preview.find('.slide_text span');
+		    text_span.hide();
+		    preview.find('img').load(function () {
+			text_span.show();
+			text_span.bigText();
+		    });
+		} else {
+		    /* convert strings to chords representation */
+		    $('#chords-preview-btn').addClass('active');
+		    preview.addClass('chords-preview');
+		    preview.removeClass('slide-item');
+		    var text = $(this).val();
+		    text = text.trim();
+
+		    var re = /(\[[\w\/#1-9\-+]+\])/g
+		    var eol = /\r?\n/
+
+		    var preview_html = "";
+		    text.split(eol).map(
+			    function (line) {
+
+				var chord_line = "";
+				var text_line = "";
+				var chord = null;
+				var chord_cursor_pos = 0;
+				while ((chord = re.exec(line)) != null) {
+
+				    var clear_chord
+					    = chord[0].replace(/[\[\]]/g, "");
+
+				    var str = new Array(chord.index - chord_cursor_pos).join(" ");
+				    chord_cursor_pos = chord.index + clear_chord.length;
+				    chord_line += "<span class='chord'>" + str + clear_chord + "</span>";
+				}
+
+				text_line = line.replace(re, "");
+
+				preview_html += chord_line;
+				preview_html += '\r\n';
+				preview_html += text_line;
+				preview_html += '\r\n';
+			    }
+		    );
+
+		    preview.html(preview_html);
 		}
 
-		var preparedText = corrected_text.trim()
-			.replace(Settings.Config.chord_pattern, "")
-			.replace(/\r\n|\n/g, "<br>");
-		songpart.set('text', corrected_text.trim());
-		songpart.set('text_visual', preparedText);
 
-		preview.html(slide_template({
-		    number: 0,
-		    background: Settings.SongserviceSettings.background,
-		    height: screen_bounds.height,
-		    width: screen_bounds.width,
-		    text: preparedText,
-		    font: Settings.SongserviceSettings.font_family
-		}));
-
-		var text_span = preview.find('.slide_text span');
-		text_span.hide();
-		preview.find('img').load(function () {
-		    text_span.show();
-		    text_span.bigText();
-		});
 	    });
 
 	    input.trigger("change");
-
 	},
 	getSongPartsCollection: function (song) {
 	    /* {sos} ... {eos} */

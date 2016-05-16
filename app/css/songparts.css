@@ -28,11 +28,11 @@ and open the template in the editor.
 }
 
 #song-meta{
-    height: 50%;
+    height: calc(30% - 38px);
 }
 
 #songpart-details{
-    height: 50%;
+    height: 70%;
 }
 
 #song-parts-header{
@@ -54,6 +54,23 @@ and open the template in the editor.
     width: 100%;
     float: left;
 } 
+
+
+.songpart-preview .chords-preview{
+    white-space: pre-wrap;
+    line-height: 2em;
+    font-size: 1em;
+    font-family: monospace;
+}
+
+.songpart-preview .chords-preview > span.chord {
+    position: relative;
+    display:inline;
+    width: 0;
+    overflow:visible;
+    color:#a82927;
+    font-family: monospace;
+}
 
 /*************** META *************/
 
@@ -150,11 +167,8 @@ and open the template in the editor.
 
 .songpart-preview{
     height: 100%;
-    padding: 2%;
     width: 50%;
     float: left;
-    display: flex;
-    justify-content: center;
 }
 
 .songpart-editor{
