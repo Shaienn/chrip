@@ -61,6 +61,7 @@ var Settings = {};
     };
 
     Settings.BlockScreensSettings = {
+	bs_folder: common_blockscreens_path,
 	show_time: 1500,
 	transition_time: 300,
 	order: 'random',
@@ -194,7 +195,7 @@ var Settings = {};
 	    });
 
 	    return bibleList;
-	}
+	},
     }
 
 

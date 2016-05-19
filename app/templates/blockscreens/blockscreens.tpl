@@ -21,5 +21,7 @@
 	</div>
     </div>
 </div>
+<canvas id="bs-hidden-canvas" height="100%" width="100%"></canvas>
 <div id="bsModal"></div>
 <input id="bsInput" type="file" accept="bs" style="display:none"></input>
+<input id="imagesInput" type="file" accept="png" style="display:none" multiple="multiple"></input>

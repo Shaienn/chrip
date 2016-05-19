@@ -18,6 +18,13 @@ module.exports = {
                 cwd: '<%= settings.app %>/backgrounds',
                 src: ['**'],
                 dest: '<%= settings.dist %>/chrip-nw/<%= settings.build_platform %>/backgrounds'
+            },
+            {
+                expand: true,
+                cwd: '<%= settings.app %>/blockscreens',
+                src: ['**'],
+                dest: '<%= settings.dist %>/chrip-nw/<%= settings.build_platform %>/blockscreens'
+
             }
         ],
     }

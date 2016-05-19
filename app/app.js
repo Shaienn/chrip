@@ -76,6 +76,7 @@ _.extend(App, {
 	    Elements: {},
 	    Editor: {},
 	    Groups: {},
+	    Helper: {},
 	},
     },
     Model: {

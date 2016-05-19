@@ -8,7 +8,7 @@
 
             <div id="bs-editor-container" class="col-lg-9 fill">
                 <div id="bs-editor-area"></div>
-		<canvas id="bs-hidden-canvas"></canvas>
+		<!-- <canvas id="bs-hidden-canvas"></canvas> -->
             </div>
         </div>
         <input id="img-input" type="file" accept="jpg,png,gif" style="display:none"></input>

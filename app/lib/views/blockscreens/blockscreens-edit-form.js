@@ -5,8 +5,9 @@
 (function (App) {
     'use strict';
 
-    App.View.BlockScreens.Elements.RemoveForm = App.View.Common.Forms.RemoveForm.extend({
-	initial: function (options) {
+    App.View.BlockScreens.Elements.RemoveForm = App.View.Common.Forms.SimpleForm.extend({
+	template: '#remove-form-tpl',
+	init: function (options) {
 
 	    if (typeof options.group !== "undefined") {
 		this.collection = options.group;
@@ -22,7 +23,7 @@
 
 	    this.text = "Вы уверены что хотите удалить заставку: " + this.blockscreen.get('name');
 	},
-	deleteActions: function () {
+	actions: function () {
 	    var self = this;
 	    var dumb_group = new App.Model.BlockScreens.Groups.Element();
 	    dumb_group.set('gid', this.blockscreen.get('gid'));
@@ -33,6 +34,12 @@
 				self.collection.remove(self.blockscreen);
 				self.blockscreens.select_blockscreen_group(dumb_group);
 			    });
+	    return true;
+	},
+	serializeData: function () {
+	    return {
+		"text": this.text
+	    }
 	},
     });
 
@@ -88,7 +95,7 @@
 	    $(App.ControlWindow.window.document).on('keydown', this.key_map);
 
 
-	    var bsElementsCollection = this.getBlockScreenItems(this.blockscreen);
+	    var bsElementsCollection = App.View.BlockScreens.Helper.getBlockScreenElements(this.blockscreen);
 	    this.elements_collection = new App.View.BlockScreens.Editor.List({
 		collection: bsElementsCollection,
 		childView: App.View.BlockScreens.Editor.Element
@@ -147,60 +154,6 @@
 	},
 	/**********************************************/
 
-	getBlockScreenItems: function (bs) {
-
-	    /* Get html string, create DOM element and parse with jQuery */
-	    var container = $('<div/>', {
-		html: bs.get('html')
-	    });
-	    var bsElements = new App.Model.BlockScreens.Editor.List();
-	    /* iterate */
-
-	    container.children().each(function (index) {
-
-		var element = this;
-		var name = "element-" + index;
-		if ($(element).attr('name') != "undefined") {
-		    name = $(element).attr('name');
-		}
-		$(element).attr('id', "bs-element-" + bsElements.length);
-
-		if ($(element).is('[class*="bs-html-img-container-"]')) {
-
-		    var element = new App.Model.BlockScreens.Editor.Element({
-			name: name,
-			type: "img",
-			html: $(element).prop('outerHTML'),
-			id: $(element).attr('id')
-		    });
-		    bsElements.add(element);
-		}
-
-		if ($(element).is('[class*="bs-html-text-container-"]')) {
-
-		    var element = new App.Model.BlockScreens.Editor.Element({
-			name: name,
-			type: "text",
-			html: $(element).prop('outerHTML'),
-			id: $(element).attr('id')
-		    });
-		    bsElements.add(element);
-		}
-
-		if ($(element).is('[class*="bs-html-background-container-"]')) {
-
-		    var element = new App.Model.BlockScreens.Editor.Element({
-			name: name,
-			type: "background",
-			html: $(element).prop('outerHTML'),
-			id: $(element).attr('id')
-		    });
-		    bsElements.add(element);
-		}
-	    });
-
-	    return bsElements;
-	},
 	/* Buttons handlers */
 
 	openImgDialog: function () {
@@ -230,17 +183,6 @@
 			);
 	    });
 	},
-	convertImageToBase64: function (path) {
-	    var d = Q.defer();
-	    var options = {localFile: true, string: true};
-	    base64.base64encoder(path, options, function (err, image) {
-		if (err)
-		    throw new Error(err);
-
-		d.resolve(image);
-	    });
-	    return d.promise;
-	},
 	addImgHandler: function () {
 
 	    var that = this;
@@ -251,7 +193,7 @@
 		var path = files[i].path;
 		/* Convert image to base64 type */
 
-		this.convertImageToBase64(path).then(function (img_data) {
+		App.View.BlockScreens.Helper.convertImageToBase64(path).then(function (img_data) {
 
 		    var dimensions = sizeOf(path.toString());
 		    /* Create image element */

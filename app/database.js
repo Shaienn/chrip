@@ -255,14 +255,18 @@
 
 	checkFileUsage: function (file) {
 	    var d = Q.defer();
-	    var stmt = App.Database.user_db.prepare("SELECT COUNT(*) FROM BlockScreensFiles WHERE file = ?");
+	    console.log(file);
+	    var stmt = App.Database.user_db.prepare("SELECT COUNT(*) as count FROM BlockScreensFiles WHERE file = ?");
 	    stmt.get(file, function (err, row) {
+
+		console.log(row);
+
 		if (err) {
 		    win.error(err);
 		    throw new Error(err);
 		}
 
-		d.resolve(row);
+		d.resolve(row.count);
 	    });
 
 	    return d.promise;
@@ -278,6 +282,9 @@
 		    win.error(err);
 		    throw new Error(err);
 		}
+
+
+
 		d.resolve(true);
 	    });
 	    stmt.finalize();
@@ -324,23 +331,59 @@
 	    return d.promise;
 	},
 	remove_block_screen_group: function (group) {
-	    var d = Q.defer();
+	    var self = this;
 	    assert.ok(group instanceof App.Model.BlockScreens.Groups.Element);
 
+	    function remove_bs_files(files) {
+
+		console.log('remove_bs_files');
+
+		var files_queue = [];
+
+		files.forEach(function (file) {
+		    var d = Q.defer();
+		    console.log(file);
+		    var file_path = file.file;
+		    self.checkFileUsage(file_path)
+			    .then(function (count) {
+
+				win.log("Files in usage: %d", count);
+
+				if (count == 1) {
+				    fse.remove(file_path, function (err) {
+
+					if (err)
+					    return console.error(err);
+					d.resolve(true);
+				    });
+				} else {
+				    d.resolve(true);
+				}
+			    });
+		    files_queue.push(d.promise);
+		});
+
+		return Q.all(files_queue);
+	    }
+
+	    var d = Q.defer();
 	    var stmt = App.Database.user_db.prepare("DELETE FROM BlockScreensGroups WHERE gid = ?");
 	    stmt.get(group.get('gid'), function (err) {
 
 		if (err)
 		    throw new Error(err);
 
-		stmt = App.Database.user_db.prepare("DELETE FROM BlockScreensFiles WHERE gid = ?");
-		stmt.run(group.get('gid'), function (err) {
-		    if (err)
-			throw new Error(err);
+		self.getBlockScreenFiles(group)
+			.then(remove_bs_files)
+			.then(function () {
+			    stmt = App.Database.user_db.prepare("DELETE FROM BlockScreensFiles WHERE gid = ?");
+			    stmt.run(group.get('gid'), function (err) {
+				if (err)
+				    throw new Error(err);
 
-		    d.resolve(true);
-		});
-
+				d.resolve(true);
+			    });
+			});
 	    });
 
 	    return d.promise;

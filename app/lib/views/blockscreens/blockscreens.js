@@ -11,11 +11,13 @@
 	ui: {
 	    bsg_loader: '#blockscreens-list .area .loader',
 	    bsInput: '#bsInput',
+	    imagesInput: '#imagesInput',
 	    bsGroups: '#blockscreens-list .area .bs-groups',
 	    bsgContent: '#bsg-content'
 	},
 	events: {
 	    'change @ui.bsInput': 'add_selected_bs_to_group',
+	    'change @ui.imagesInput': 'create_new_bs_element_from_image',
 	},
 	regions: {
 	    List_r: '#blockscreens-list .area .bs-groups',
@@ -28,13 +30,15 @@
 	    }
 	},
 	initialize: function () {
-	    self = this;
 	    this.listenTo(App.vent, "blockscreens:addNewBsGroup", _.bind(this.create_new_bs_group, this));
 	    this.listenTo(App.vent, "blockscreens:selectBsGroup", _.bind(this.selectBlockscreenGroupHandler, this));
 	    this.listenTo(App.vent, "blockscreens:removeBsGroup", _.bind(this.remove_selected_bs_group, this));
 
 
 	    this.listenTo(App.vent, "blockscreens:createElement", _.bind(this.create_new_bs_element, this));
+	    this.listenTo(App.vent, "blockscreens:createElementFromImage", _.bind(this.open_image_file, this));
+
+
 	    this.listenTo(App.vent, "blockscreens:openElement", _.bind(this.open_bs_element_file, this));
 	    this.listenTo(App.vent, "blockscreens:editElement", _.bind(this.edit_bs_element, this));
 	    this.listenTo(App.vent, "blockscreens:removeElement", _.bind(this.removeElementHandler, this));
@@ -42,6 +46,15 @@
 
 	    this.listenTo(App.vent, 'blockscreens:onEvent', _.bind(this.onEvent, this));
 	    this.listenTo(App.vent, 'blockscreens:offEvent', _.bind(this.offEvent, this));
+	},
+	open_image_file: function () {
+
+	    console.log("open file");
+
+	    if (this.selected_group == null)
+		return;
+
+	    $(this.ui.imagesInput).trigger('click');
 	},
 	open_bs_element_file: function () {
 
@@ -71,7 +84,6 @@
 	    }
 
 	    var files = $(this.ui.bsInput)[0].files;
-	    var self = this;
 	    var gid = self.selected_group.get('gid');
 	    if (typeof (gid) === "undefined") {
 		return;
@@ -90,8 +102,6 @@
 
 	},
 	remove_bs_group: function (group) {
-
-	    console.log(group);
 
 	    if (typeof group == 'undefined' || group == null)
 		return;
@@ -153,6 +163,37 @@
 	    });
 	    this.modals.show(bse);
 	},
+	create_new_bs_element_from_image: function () {
+
+	    if (this.selected_group == null)
+		return;
+
+	    function process_files(files, gid) {
+		var file_tasks = [];
+		for (var i = 0; i < files.length; i++) {
+		    var path = files[i].path;
+
+		    file_tasks.push(App.View.BlockScreens.Helper.createBlockScreenFromImage(path, gid));
+		}
+		return Q.all(file_tasks);
+	    }
+
+	    var files = $(this.ui.imagesInput)[0].files;
+	    var self = this;
+	    var gid = self.selected_group.get('gid');
+	    if (typeof (gid) === "undefined") {
+		return;
+	    }
+	    var d = Q.defer();
+
+	    process_files(files, gid).then(function () {
+		self.select_blockscreen_group(self.selected_group);
+		d.resolve(true);
+	    });
+
+	    return d.promise;
+
+	},
 	create_new_bs_group: function () {
 
 	    var bsg = new App.View.BlockScreens.Groups.EditForm({
@@ -175,9 +216,13 @@
 	},
 	selectBlockscreenGroupHandler: function (group) {
 
+	    win.debug('select_blockscreen_group handler');
+
 	    if (typeof group == "undefined" || group == null) {
 		return;
 	    }
+
+	    console.log("select after check");
 
 	    var gid = group.get('gid');
 	    this.selected_group = group;
@@ -186,8 +231,12 @@
 
 	    App.Database.getBlockScreenFiles(group).then(function (files) {
 
+		console.log(files);
+
 		/* parse each file and get JSON objects  */
 		self.parseBlockscreensFiles(files).then(function (objects) {
+
+		    console.log(objects);
 
 		    var elements = new App.Model.BlockScreens.Elements.List();
 		    /* Create bsElements */
@@ -240,6 +289,7 @@
 	    return Q.allSettled(files);
 	},
 	onShow: function () {
+	    self = this;
 	    this.ToolBar_r.show(new App.View.BlockScreens.Groups.ToolBar());
 
 	    /* Load stored blockscreens groups from DB and construct list */
@@ -272,8 +322,9 @@
 		} else {
 		    console.log(group_item);
 		    $('#bs-remove-group-btn').addClass('disabled');
-		    self.BSGContent_r.$el.remove();
-		    self.BSGControl_r.$el.remove();
+
+		    self.BSGContent_r.$el.html('');
+		    self.BSGControl_r.$el.html('');
 		    self.selected_group = null;
 		}
 
