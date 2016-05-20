@@ -1,6 +1,6 @@
 'use strict';
 (function (App) {
-    var wcjs = require("wcjs-prebuilt");
+
     var that;
     App.View.Media.Control = Marionette.ItemView.extend({
 	template: "#media-control-tpl",
@@ -9,6 +9,7 @@
 	seekDrag: false,
 	volDrag: false,
 	main_context: null,
+	vlc_not_installed: false,
 	contexts: [],
 	vlc: null,
 	ui: {
@@ -101,41 +102,59 @@
 		this.media_element = options.media_element;
 	    }
 
-	    this.listenTo(App.vent, "mediaplayer:pause", _.bind(this.mediaPause, this));
-	    this.listenTo(App.vent, "mediaplayer:play", _.bind(this.mediaPlay, this));
-	    this.listenTo(App.vent, "mediaplayer:stop", _.bind(this.mediaStop, this));
+	    try {
+		this.wcjs = require("WebChimera.js");
+		this.vlc_not_installed = false;
+		this.listenTo(App.vent, "mediaplayer:pause", _.bind(this.mediaPause, this));
+		this.listenTo(App.vent, "mediaplayer:play", _.bind(this.mediaPlay, this));
+		this.listenTo(App.vent, "mediaplayer:stop", _.bind(this.mediaStop, this));
 
-	    this.listenTo(App.vent, "mediaplayer:add_video_context", _.bind(this.addVideoContext, this));
-	    this.listenTo(App.vent, "resize", _.bind(this.onResize, this));
-	    this.listenTo(App.vent, "active_mode_changed", _.bind(this.onResize, this));
+		this.listenTo(App.vent, "mediaplayer:add_video_context", _.bind(this.addVideoContext, this));
+		this.listenTo(App.vent, "resize", _.bind(this.onResize, this));
+		this.listenTo(App.vent, "active_mode_changed", _.bind(this.onResize, this));
 
-	    this.vlc = wcjs.createPlayer();
+		this.vlc = this.wcjs.createPlayer();
 
-	    this.vlc.onFrameReady = function (frame) {
-		that.main_context.render(frame, frame.width, frame.height, frame.uOffset, frame.vOffset);
-		for (var i = 0; i < that.contexts.length; i++) {
-		    that.contexts[i].render(frame, frame.width, frame.height, frame.uOffset, frame.vOffset);
+		this.vlc.onFrameReady = function (frame) {
+		    that.main_context.render(frame, frame.width, frame.height, frame.uOffset, frame.vOffset);
+		    for (var i = 0; i < that.contexts.length; i++) {
+			that.contexts[i].render(frame, frame.width, frame.height, frame.uOffset, frame.vOffset);
+		    }
 		}
+	    } catch (e) {
+		console.log(e);
+		this.wcjs = null;
+		this.vlc_not_installed = true;
 	    }
 	},
 	onShow: function () {
 	    console.log("onShow");
-	    console.log(this.ui.canvas[0]);
-	    this.main_context = require("webgl-video-renderer").setupCanvas(this.ui.canvas[0]);
-	    if (typeof this.main_context == "undefined") {
-		console.log("We can`t configure GL context. Sorry");
-		return;
+
+	    if (this.vlc_not_installed) {
+		this.ui.center.html('VLC player is not installed. Please install for media funcionality.');
+	    } else {
+		this.main_context = require("webgl-video-renderer").setupCanvas(this.ui.canvas[0]);
+		if (typeof this.main_context == "undefined") {
+		    console.log("We can`t configure GL context. Sorry");
+		    return;
+		}
+
+		this.playerInterfaceInit();
+		this.vlc.onTimeChanged = this.onTimeChanged;
+		this.vlc.onPositionChanged = this.onPositionChanged;
+		this.vlc.onPlaying = this.onPlaying;
+		this.vlc.onPaused = this.onPaused;
+		this.vlc.onStopped = this.onStopped;
 	    }
 
-	    this.playerInterfaceInit();
-	    this.vlc.onTimeChanged = this.onTimeChanged;
-	    this.vlc.onPositionChanged = this.onPositionChanged;
-	    this.vlc.onPlaying = this.onPlaying;
-	    this.vlc.onPaused = this.onPaused;
-	    this.vlc.onStopped = this.onStopped;
+
 	},
 	onDestroy: function () {
-	    this.vlc.stop();
+	    if (this.vlc_not_installed) {
+
+	    } else {
+		this.vlc.stop();
+	    }
 	},
 	onActiveModeChanged: function (new_state) {
 
