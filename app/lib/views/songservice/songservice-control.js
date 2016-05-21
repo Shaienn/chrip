@@ -219,7 +219,7 @@
 			if (prevSong.length > 0) {
 
 			    currentSong.removeClass('active');
-			    prevSong.find('.playlistItem').trigger('click');
+			    prevSong.find('.item-container').trigger('click');
 			    prevSong.addClass('active');
 
 			}
@@ -235,7 +235,7 @@
 			if (nextSong.length > 0) {
 
 			    currentSong.removeClass('active');
-			    nextSong.find('.playlistItem').trigger('click');
+			    nextSong.find('.item-container').trigger('click');
 			    nextSong.addClass('active');
 
 			}

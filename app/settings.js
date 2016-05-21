@@ -20,8 +20,8 @@ var Settings = {};
     Settings.GeneralSettings = {
 	user_db: "/db/user.db",
 	global_db: "/db/global.db",
-	//updateServer: "http://185.46.9.150:8080",
-	updateServer: "http://localhost:3000",
+	updateServer: "http://185.46.9.150",
+//	updateServer: "http://localhost:3000",
 	update_period: 300000,
 	appMode: 'songservice',
 	presentation_monitor: 0,

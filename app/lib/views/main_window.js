@@ -147,6 +147,11 @@
 		App.Database.loadSettings().then(function () {
 
 		    App.Update.init();
+		    
+		    
+		    //App.Database.convert();
+		    
+		    //return;
 
 		    /* Menu */
 

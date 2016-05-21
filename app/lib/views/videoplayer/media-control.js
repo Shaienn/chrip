@@ -10,6 +10,7 @@
 	volDrag: false,
 	main_context: null,
 	vlc_not_installed: false,
+	no_gl_context: false,
 	contexts: [],
 	vlc: null,
 	ui: {
@@ -116,9 +117,13 @@
 		this.vlc = this.wcjs.createPlayer();
 
 		this.vlc.onFrameReady = function (frame) {
-		    that.main_context.render(frame, frame.width, frame.height, frame.uOffset, frame.vOffset);
-		    for (var i = 0; i < that.contexts.length; i++) {
-			that.contexts[i].render(frame, frame.width, frame.height, frame.uOffset, frame.vOffset);
+		    if (that.no_gl_context) {
+			console.log("We can`t configure GL context. Sorry");
+		    } else {
+			that.main_context.render(frame, frame.width, frame.height, frame.uOffset, frame.vOffset);
+			for (var i = 0; i < that.contexts.length; i++) {
+			    that.contexts[i].render(frame, frame.width, frame.height, frame.uOffset, frame.vOffset);
+			}
 		    }
 		}
 	    } catch (e) {
@@ -136,6 +141,7 @@
 		this.main_context = require("webgl-video-renderer").setupCanvas(this.ui.canvas[0]);
 		if (typeof this.main_context == "undefined") {
 		    console.log("We can`t configure GL context. Sorry");
+		    this.no_gl_context = true;
 		    return;
 		}
 
@@ -202,10 +208,11 @@
 	},
 	addVideoContext: function (context_canvas) {
 	    var new_context = require("webgl-video-renderer").setupCanvas(context_canvas);
-	    if (typeof new_context != "undefined") {
+	    if (typeof new_context !== "undefined") {
 		this.contexts.push(new_context);
 	    } else {
 		console.log("We can`t configure GL context. Sorry");
+		this.no_gl_context = true;
 	    }
 	},
 	playerInterfaceInit: function () {

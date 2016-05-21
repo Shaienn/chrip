@@ -190,69 +190,66 @@
 	    });
 	    return d.promise;
 	},
-//        convert: function () {
-//
-//           App.Database.global_db.exec("ALTER TABLE Songs ADD COLUMN text TEXT");
-//           App.Database.global_db.each("SELECT * FROM Authors", function (err, row) {
-//
-//                if (err != null) {
-//                    win.error("Load author failed. Got error: " + err);
-//                }
-//
-//                //win.log("Author - " + row);
-//
-//                /* Select songs */
-//
-//                var stmt =App.Database.global_db.prepare("SELECT Songs.* FROM Songs WHERE Songs.author_id LIKE ? ORDER BY Songs.name");
-//                stmt.each(row.author_id, function (err, row) {
-//
-//                    if (err != null) {
-//                        win.error("Load songs failed. Got error: " + err);
-//                        return;
-//                    }
-//
-//                    win.log("Song - " + row.song_id);
-//
-//
-//                    /* Load Texts */
-//
-//                    var stmt =App.Database.global_db.prepare("SELECT * FROM Texts WHERE song_id LIKE ? ORDER BY part_id");
-//                    stmt.all(row.song_id, function (err, rows) {
-//
-//
-//                        var song_id = null;
-//                        var songText = "";
-//
-//                        rows.forEach(function (item, i, arr) {
-//
-//
-//                            song_id = parseInt(item.song_id);
-//
-//                            songText += "\r\n{start_of_slide}\r\n";
-//                            songText += item.text;
-//                            songText += "\r\n{end_of_slide}\r\n";
-//
-//                        });
-//
-//                        win.log(JSON.stringify(song_id));
-//
-//                        if (typeof song_id == 'undefined') {
-//                            return;
-//                        }
-//
-//
-//                        var stmt =App.Database.global_db.prepare("UPDATE Songs SET text = ? WHERE song_id = ?");
-//                        stmt.run(songText, song_id);
-//
-//                    });
-//
-//                });
-//
-//            });
-//
-//
-//        },directory_path
+	convert: function () {
 
+	    App.Database.global_db.exec("ALTER TABLE Songs ADD COLUMN text TEXT");
+	    App.Database.global_db.each("SELECT * FROM Authors", function (err, row) {
+
+		if (err != null) {
+		    win.error("Load author failed. Got error: " + err);
+		}
+
+		//win.log("Author - " + row);
+
+		/* Select songs */
+
+		var stmt = App.Database.global_db.prepare("SELECT Songs.* FROM Songs WHERE Songs.author_id LIKE ? ORDER BY Songs.name");
+		stmt.each(row.author_id, function (err, row) {
+
+		    if (err != null) {
+			win.error("Load songs failed. Got error: " + err);
+			return;
+		    }
+
+		    win.log("Song - " + row.song_id);
+
+
+		    /* Load Texts */
+
+		    var stmt = App.Database.global_db.prepare("SELECT * FROM Texts WHERE song_id LIKE ? ORDER BY part_id");
+		    stmt.all(row.song_id, function (err, rows) {
+
+
+			var song_id = null;
+			var songText = "";
+
+			rows.forEach(function (item, i, arr) {
+
+
+			    song_id = parseInt(item.song_id);
+
+			    songText += "\r\n{sos}\r\n";
+			    songText += item.text;
+			    songText += "\r\n{eos}\r\n";
+
+			});
+
+			win.log(JSON.stringify(song_id));
+
+			if (typeof song_id == 'undefined') {
+			    return;
+			}
+
+
+			var stmt = App.Database.global_db.prepare("UPDATE Songs SET text = ? WHERE song_id = ?");
+			stmt.run(songText, song_id);
+
+		    });
+
+		});
+
+	    });
+	},
 	checkFileUsage: function (file) {
 	    var d = Q.defer();
 	    console.log(file);
